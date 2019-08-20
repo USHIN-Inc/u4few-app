@@ -1,0 +1,7 @@
+$padding: 32px;
+
+.Rim {
+    display: grid;
+    grid-template-columns: $padding 1fr $padding;
+    grid-template-rows: $padding 1fr $padding;
+}
