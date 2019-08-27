@@ -1,7 +1,18 @@
-$padding: 32px;
+$padding: 64px;
 
 .Rim {
+    position: relative;
     display: grid;
     grid-template-columns: $padding 1fr $padding;
     grid-template-rows: $padding 1fr $padding;
+}
+
+.Rim > .label {
+    position: absolute;
+    font-size: 1rem;
+    background-color: #fff;
+    top: -.75rem;
+    right: 5rem;
+    padding: 0px 2px;
+    z-index: 1;
 }

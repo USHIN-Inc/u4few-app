@@ -1,10 +1,26 @@
 import React from 'react';
-import './Region.css';
+import Node from './Node'
+import './Region.scss';
 
 function Region(props) {
+  const nodes = [];
+
+  props.nodes.forEach(n => {
+    nodes.push(
+      <Node
+        key={n.id}
+        id={n.id}
+        title={n.title}
+        category={n.category}
+      />
+    )
+  })
+
+  const classVar = "Region border " + props.type;
+
   return (
-    <div className="Region border border-dark">
-      {props.children}
+    <div className={classVar}>
+      {nodes}
     </div>
   );
 }
