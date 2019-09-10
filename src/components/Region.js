@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 import Node from './Node'
-import './Region.scss';
+import './Region.scss'
 
-function Region(props) {
-  const nodes = [];
+function Region (props) {
+  const nodes = []
 
   props.nodes.forEach(n => {
     nodes.push(
@@ -16,13 +16,13 @@ function Region(props) {
     )
   })
 
-  const classVar = "Region border " + props.type;
+  const classVar = 'Region border ' + props.type
 
   return (
     <div className={classVar}>
       {nodes}
     </div>
-  );
+  )
 }
 
-export default Region;
+export default Region

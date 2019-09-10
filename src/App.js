@@ -1,24 +1,20 @@
-
-import React, { useState } from 'react';
+import React from 'react'
 import SemanticScreen from './components/SemanticScreen'
-import './App.css';
+import './App.css'
 
-function App() {
-  const [open, setOpen] = useState(true)
-    
+function App () {
   return (
-    <div className="App">
+    <div className='App'>
       <SemanticScreen
-        focus="U4U"
-        user={USER} />
+        user={USER}
+      />
     </div>
-  );
+  )
 }
 
 const USER = {
   id: 1,
   username: 'alexg',
-  email: 'hiimalexjgarcia@gmail.com',
   nodes: [
     {
       id: 1,
@@ -31,12 +27,6 @@ const USER = {
       title: 'Frontend',
       category: 'topic',
       parent_id: 5
-    },
-    {
-      id: 3,
-      title: 'Documentation',
-      category: 'topic',
-      parent_id: 1
     },
     {
       id: 4,
@@ -57,6 +47,6 @@ const USER = {
       parent_id: 5
     }
   ]
-};
+}
 
-export default App;
+export default App
