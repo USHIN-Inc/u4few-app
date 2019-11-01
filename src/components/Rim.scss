@@ -1,18 +1,18 @@
-$padding: 64px;
+$padding: 4rem;
 
 .Rim {
-    position: relative;
-    display: grid;
-    grid-template-columns: $padding 1fr $padding;
-    grid-template-rows: $padding 1fr $padding;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax($padding, auto) auto minmax($padding, auto);
+  grid-template-rows: minmax($padding, auto) auto minmax($padding, auto);
 }
 
 .Rim > .label {
-    position: absolute;
-    font-size: 1rem;
-    background-color: #fff;
-    top: -.75rem;
-    right: 5rem;
-    padding: 0px 2px;
-    z-index: 1;
+  position: absolute;
+  font-size: 1rem;
+  background-color: #fff;
+  top: -.75rem;
+  right: 0rem;
+  padding: 0px 2px;
+  z-index: 1;
 }

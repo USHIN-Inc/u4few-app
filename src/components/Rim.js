@@ -3,11 +3,12 @@ import Region from './Region'
 import './Rim.scss'
 
 function Rim (props) {
-  const nodes = props.nodes
+  const nodes = props.nodes || []
+  const user = props.user || { id: 1, username: 'anonymous' }
 
   return (
     <div className='Rim'>
-      <div className='label rounded bg-info'>{props.label}</div>
+      <div className='label bg-info rounded'>{user.username}</div>
       <Region type='Facts' nodes={nodes.filter(n => n.category === 'fact')} />
       <Region type='Merits' nodes={nodes.filter(n => n.category === 'merit')} />
       <Region type='People' nodes={nodes.filter(n => n.category === 'person')} />

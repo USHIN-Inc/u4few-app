@@ -6,45 +6,42 @@ function App () {
   return (
     <div className='App'>
       <SemanticScreen
-        user={USER}
+        data={DATA}
       />
     </div>
   )
 }
 
-const USER = {
-  id: 1,
-  username: 'alexg',
+const DATA = {
+  user: {
+    id: 1,
+    username: 'alexg'
+  },
   nodes: [
     {
       id: 1,
       title: 'U4U',
-      category: 'topic',
-      parent_id: null
+      category: 'topic'
     },
     {
       id: 2,
       title: 'Frontend',
-      category: 'topic',
-      parent_id: 5
+      category: 'topic'
     },
     {
       id: 4,
       title: '@alex Finish the frontend for U4U, like, soon!',
-      category: 'action',
-      parent_id: 2
+      category: 'action'
     },
     {
       id: 5,
       title: 'Development Team',
-      category: 'person',
-      parent_id: 1
+      category: 'person'
     },
     {
       id: 6,
       title: 'Alex Garcia',
-      category: 'person',
-      parent_id: 5
+      category: 'person'
     }
   ]
 }
