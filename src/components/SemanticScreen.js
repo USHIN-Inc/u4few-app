@@ -5,8 +5,8 @@ import FocusRegion from './FocusRegion'
 import './SemanticScreen.css'
 
 function SemanticScreen (props) {
-  const user = props.data.user || { id: 1, username: 'anonymous' }
-  const nodes = props.data.nodes || []
+  const user = props.user || { id: 1, username: 'anonymous' }
+  const nodes = props.nodes || []
 
   return (
     <div className='SemanticScreen border'>

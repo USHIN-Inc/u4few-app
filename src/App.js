@@ -6,7 +6,8 @@ function App () {
   return (
     <div className='App'>
       <SemanticScreen
-        data={DATA}
+        user={DATA.user}
+        nodes={DATA.nodes}
       />
     </div>
   )
