@@ -8,7 +8,7 @@ function Rim (props) {
 
   return (
     <div className='Rim'>
-      <div className='label bg-info rounded'>{user.username}</div>
+      <div className='banner'>{user.username}</div>
       <Region type='Facts' points={points.filter(n => n.category === 'fact')} />
       <Region type='Merits' points={points.filter(n => n.category === 'merit')} />
       <Region type='People' points={points.filter(n => n.category === 'person')} />

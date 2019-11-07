@@ -7,12 +7,25 @@ $padding: 4rem;
   grid-template-rows: minmax($padding, auto) auto minmax($padding, auto);
 }
 
-.Rim > .label {
+.Rim > .banner {
   position: absolute;
+  text-align: center;
   font-size: 1rem;
-  background-color: #fff;
   top: -.75rem;
-  right: 0rem;
-  padding: 0px 2px;
+  right: .5rem;
+  padding: 0;
   z-index: 1;
+  color: #000; /* to be customized by user */
+}
+
+.Rim > .banner:before {
+  content: '';
+  position: absolute;
+  background-image: url(./../images/banner.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  filter: opacity(.33) drop-shadow(0 0 0 #0f0); /* to be customized by user */
 }
