@@ -1,38 +1,56 @@
 import React, { useState } from 'react'
-import Node from './Node'
+import Point from './Point'
+import PointInput from './PointInput'
 import './Region.scss'
 import uuidv4 from 'uuid/v4'
 import { singularize } from 'inflected'
 
 function Region (props) {
   const type = props.type || ''
-  const [nodes, setNodes] = useState(props.nodes || [])
+  const [points, setPoints] = useState(props.points || [])
+  const [pointInputs, setPointInputs] = useState([])
+
+  function handleOnClick (e) {
+    e.preventDefault()
+
+    if (pointInputs.length >= 1) {
+      return
+    }
+
+    setPointInputs([
+      ...pointInputs,
+      {
+        id: uuidv4(),
+        title: 'New Point'
+      }
+    ])
+  }
+
+  function handleDragEnter (e) {
+    e.target.classList.add('bg-dark')
+  }
+
+  function handleDragLeave (e) {
+    e.target.classList.remove('bg-dark')
+  }
 
   function handleDragOver (e) {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
-    console.log(e)
-  }
-
-  function handleDragEnter (e) {
-    e.target.classList.add('bg-light')
-  }
-
-  function handleDragLeave (e) {
-    e.target.classList.remove('bg-light')
   }
 
   function handleDrop (e) {
     e.preventDefault()
-    e.target.classList.remove('bg-light')
+    e.target.classList.remove('bg-dark')
 
-    let title = e.dataTransfer.getData('text/plain')
-    title = title.trim()
+    const title = e.dataTransfer.getData('text/plain').trim()
 
-    if (title === '') return
+    if (title === '' || (type === 'Focus' && points.length > 0)) {
+      return
+    }
 
-    setNodes([
-      ...nodes,
+    setPoints([
+      ...points,
       {
         id: uuidv4(),
         title: title,
@@ -41,10 +59,10 @@ function Region (props) {
     ])
   }
 
-  const displayedNodes = []
-  nodes.forEach(n => {
-    displayedNodes.push(
-      <Node
+  const displayedPoints = []
+  points.forEach(n => {
+    displayedPoints.push(
+      <Point
         key={n.id}
         id={n.id}
         title={n.title}
@@ -53,15 +71,28 @@ function Region (props) {
     )
   })
 
+  const displayedPointInputs = []
+  pointInputs.forEach(n => {
+    displayedPointInputs.push(
+      <PointInput
+        key={n.id}
+        id={n.id}
+        title={n.title}
+      />
+    )
+  })
+
   return (
     <div
       className={'Region border ' + type}
+      onClick={handleOnClick}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {displayedNodes}
+      {displayedPoints}
+      {displayedPointInputs}
     </div>
   )
 }

@@ -1,18 +1,18 @@
 import React from 'react'
 import Rim from './Rim'
 import SummaryRim from './SummaryRim'
-import FocusRegion from './FocusRegion'
+import Region from './Region'
 import './SemanticScreen.css'
 
 function SemanticScreen (props) {
   const user = props.user || { id: 1, username: 'anonymous' }
-  const nodes = props.nodes || []
+  const points = props.points || []
 
   return (
     <div className='SemanticScreen border'>
       <SummaryRim>
-        <Rim user={user} nodes={nodes}>
-          <FocusRegion />
+        <Rim user={user} points={points}>
+          <Region type='Focus' />
         </Rim>
       </SummaryRim>
     </div>

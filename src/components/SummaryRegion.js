@@ -1,15 +1,15 @@
 import React from 'react'
-import Node from './Node'
+import Point from './Point'
 import './SummaryRegion.scss'
 
 function SummaryRegion (props) {
-  const nodes = props.nodes || []
+  const points = props.points || []
   const type = props.type || []
-  const displayedNodes = []
+  const displayedPoints = []
 
-  nodes.forEach(n => {
-    displayedNodes.push(
-      <Node
+  points.forEach(n => {
+    displayedPoints.push(
+      <Point
         key={n.id}
         id={n.id}
         title={n.title}
@@ -20,7 +20,7 @@ function SummaryRegion (props) {
 
   return (
     <div className={'SummaryRegion border ' + type}>
-      {displayedNodes}
+      {displayedPoints}
     </div>
   )
 }

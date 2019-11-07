@@ -3,19 +3,19 @@ import SummaryRegion from './SummaryRegion'
 import './SummaryRim.scss'
 
 function SummaryRim (props) {
-  const nodes = props.nodes || []
+  const points = props.points || []
 
   return (
     <div className='SummaryRim'>
-      <SummaryRegion type='Facts' nodes={nodes.filter(n => n.category === 'fact')} />
-      <SummaryRegion type='Merits' nodes={nodes.filter(n => n.category === 'merit')} />
-      <SummaryRegion type='People' nodes={nodes.filter(n => n.category === 'person')} />
-      <SummaryRegion type='Thoughts' nodes={nodes.filter(n => n.category === 'thought')} />
+      <SummaryRegion type='Facts' points={points.filter(n => n.category === 'fact')} />
+      <SummaryRegion type='Merits' points={points.filter(n => n.category === 'merit')} />
+      <SummaryRegion type='People' points={points.filter(n => n.category === 'person')} />
+      <SummaryRegion type='Thoughts' points={points.filter(n => n.category === 'thought')} />
       {props.children}
-      <SummaryRegion type='Actions' nodes={nodes.filter(n => n.category === 'action')} />
-      <SummaryRegion type='Needs' nodes={nodes.filter(n => n.category === 'need')} />
-      <SummaryRegion type='Feelings' nodes={nodes.filter(n => n.category === 'feeling')} />
-      <SummaryRegion type='Topics' nodes={nodes.filter(n => n.category === 'topic')} />
+      <SummaryRegion type='Actions' points={points.filter(n => n.category === 'action')} />
+      <SummaryRegion type='Needs' points={points.filter(n => n.category === 'need')} />
+      <SummaryRegion type='Feelings' points={points.filter(n => n.category === 'feeling')} />
+      <SummaryRegion type='Topics' points={points.filter(n => n.category === 'topic')} />
     </div>
   )
 }

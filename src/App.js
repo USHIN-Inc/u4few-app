@@ -5,20 +5,16 @@ import './App.css'
 function App () {
   return (
     <div className='App'>
-      <SemanticScreen
-        user={DATA.user}
-        nodes={DATA.nodes}
-      />
+      <SemanticScreen />
     </div>
   )
 }
 
-const DATA = {
+const testAppState = {
   user: {
-    id: 1,
     username: 'alexg'
   },
-  nodes: [
+  points: [
     {
       id: 1,
       title: 'U4U',
