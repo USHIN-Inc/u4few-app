@@ -1,6 +1,11 @@
 .Region {
     text-align: center;
     &.Focus {
-    	min-height: 2rem;
+      min-height: 2rem;
+    }
+    & > .RegionInner {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
     }
 }

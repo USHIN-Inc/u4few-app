@@ -91,8 +91,10 @@ function Region (props) {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {displayedPoints}
-      {displayedPointInputs}
+      <div className='RegionInner'>
+        {displayedPoints}
+        {displayedPointInputs}
+      </div>
     </div>
   )
 }
