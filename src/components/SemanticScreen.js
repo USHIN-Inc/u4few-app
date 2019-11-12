@@ -5,7 +5,7 @@ import Region from './Region'
 import './SemanticScreen.css'
 
 function SemanticScreen (props) {
-  const user = props.user || { id: 1, username: 'anonymous' }
+  const user = props.user || { id: 1, username: 'anonymous', rimColor: { background: 'inherit', text: 'inherit' } }
   const points = props.points || []
 
   return (

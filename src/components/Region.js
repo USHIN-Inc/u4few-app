@@ -10,28 +10,36 @@ function Region (props) {
   const [points, setPoints] = useState(props.points || [])
   const [pointInputs, setPointInputs] = useState([])
 
-  function handleOnClick (e) {
+  if (points.length === 0 && pointInputs.length === 0 && type === 'Focus') {
+    setPointInputs([
+      {
+        id: uuidv4(),
+        placeholderContent: 'Tap, type, or paste anywhere...'
+      }
+    ])
+  }
+
+  function handleClick (e) {
     e.preventDefault()
 
-    if (pointInputs.length >= 1) {
+    if (pointInputs.length > 0 || (type === 'Focus' && points.length > 0)) {
       return
     }
 
     setPointInputs([
       ...pointInputs,
       {
-        id: uuidv4(),
-        title: 'New Point'
+        id: uuidv4()
       }
     ])
   }
 
   function handleDragEnter (e) {
-    e.target.classList.add('bg-dark')
+    e.target.classList.add('bg-light')
   }
 
   function handleDragLeave (e) {
-    e.target.classList.remove('bg-dark')
+    e.target.classList.remove('bg-light')
   }
 
   function handleDragOver (e) {
@@ -41,11 +49,11 @@ function Region (props) {
 
   function handleDrop (e) {
     e.preventDefault()
-    e.target.classList.remove('bg-dark')
+    e.target.classList.remove('bg-light')
 
-    const title = e.dataTransfer.getData('text/plain').trim()
+    const content = e.dataTransfer.getData('text/plain').trim()
 
-    if (title === '' || (type === 'Focus' && points.length > 0)) {
+    if (content === '' || (type === 'Focus' && points.length > 0)) {
       return
     }
 
@@ -53,10 +61,58 @@ function Region (props) {
       ...points,
       {
         id: uuidv4(),
-        title: title,
+        content: content,
         category: singularize(type).toLowerCase()
       }
     ])
+  }
+
+  function handlePointInputSubmit (e) {
+    e.preventDefault()
+
+    const content = e.target[0].value
+    const id = e.target[0].id
+
+    if (content === '' || (type === 'Focus' && points.length > 0)) {
+      return
+    }
+
+    setPoints([
+      ...points,
+      {
+        id: uuidv4(),
+        content: content,
+        category: singularize(type).toLowerCase()
+      }
+    ])
+
+    setPointInputs(
+      pointInputs.filter(point => point.id !== id)
+    )
+  }
+
+  function handlePointInputBlur (e) {
+    e.preventDefault()
+
+    const content = e.target.value
+    const id = e.target.id
+
+    if (content === '' || (type === 'Focus' && points.length > 0)) {
+      return
+    }
+
+    setPoints([
+      ...points,
+      {
+        id: uuidv4(),
+        content: content,
+        category: singularize(type).toLowerCase()
+      }
+    ])
+
+    setPointInputs(
+      pointInputs.filter(point => point.id !== id)
+    )
   }
 
   const displayedPoints = []
@@ -65,7 +121,7 @@ function Region (props) {
       <Point
         key={n.id}
         id={n.id}
-        title={n.title}
+        content={n.content}
         category={n.category}
       />
     )
@@ -77,7 +133,9 @@ function Region (props) {
       <PointInput
         key={n.id}
         id={n.id}
-        title={n.title}
+        placeholderContent={n.placeholderContent}
+        onPointInputSubmit={handlePointInputSubmit}
+        onPointInputBlur={handlePointInputBlur}
       />
     )
   })
@@ -85,7 +143,7 @@ function Region (props) {
   return (
     <div
       className={'Region border ' + type}
-      onClick={handleOnClick}
+      onClick={handleClick}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}

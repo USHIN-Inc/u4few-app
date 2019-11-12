@@ -3,17 +3,19 @@ import './PointInput.css'
 
 function PointInput (props) {
   const id = props.id || ''
-  const title = props.title || 'New Point'
+  const placeholderContent = props.placeholderContent || ''
 
   return (
     <div className='PointInput'>
-      <input
-        className='form-control'
-        type='text'
-        autoFocus
-        defaultValue={title}
-        id={id}
-      />
+      <form onSubmit={props.onPointInputSubmit}>
+        <textarea
+          className='form-control'
+          autoFocus
+          id={id}
+          placeholder={placeholderContent}
+          onBlur={props.onPointInputBlur}
+        />
+      </form>
     </div>
   )
 }

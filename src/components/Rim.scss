@@ -15,7 +15,6 @@ $padding: 4rem;
   right: .5rem;
   padding: 0;
   z-index: 1;
-  color: #000; /* to be customized by user */
 }
 
 .Rim > .banner:before {
@@ -27,5 +26,5 @@ $padding: 4rem;
   width: 100%;
   height: 100%;
   z-index: -1;
-  filter: opacity(.33) drop-shadow(0 0 0 #0f0); /* to be customized by user */
+  filter: opacity(.33); /* to be customized by user */
 }
