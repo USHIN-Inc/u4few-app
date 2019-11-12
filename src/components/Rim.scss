@@ -1,0 +1,30 @@
+$padding: 4rem;
+
+.Rim {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax($padding, auto) auto minmax($padding, auto);
+  grid-template-rows: minmax($padding, auto) auto minmax($padding, auto);
+}
+
+.Rim > .banner {
+  position: absolute;
+  text-align: center;
+  font-size: 1rem;
+  top: -.75rem;
+  right: .5rem;
+  padding: 0;
+  z-index: 1;
+}
+
+.Rim > .banner:before {
+  content: '';
+  position: absolute;
+  background-image: url(./../images/banner.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  filter: opacity(.33); /* to be customized by user */
+}
