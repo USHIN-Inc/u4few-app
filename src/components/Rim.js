@@ -4,41 +4,24 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Region from './Region';
 import SessionContext from '../contexts/SessionContext';
+import Banner from './UserBanner';
 
 const Rim = ({ children }) => {
   const { session } = useContext(SessionContext);
-  const { points, rimColor, username } = session;
+  const { rimColor } = session;
 
   return (
     <RimView backgroundColor={rimColor.backgroundColor} color={rimColor.text}>
-      <Banner color={rimColor.text}>{username}</Banner>
-      <Region type="Facts" points={points.filter(n => n.category === 'fact')} />
-      <Region
-        type="Merits"
-        points={points.filter(n => n.category === 'merit')}
-      />
-      <Region
-        type="People"
-        points={points.filter(n => n.category === 'person')}
-      />
-      <Region
-        type="Thoughts"
-        points={points.filter(n => n.category === 'thought')}
-      />
+      <Banner />
+      <Region type="Facts" />
+      <Region type="Merits" />
+      <Region type="People" />
+      <Region type="Thoughts" />
       {children}
-      <Region
-        type="Actions"
-        points={points.filter(n => n.category === 'action')}
-      />
-      <Region type="Needs" points={points.filter(n => n.category === 'need')} />
-      <Region
-        type="Feelings"
-        points={points.filter(n => n.category === 'feeling')}
-      />
-      <Region
-        type="Topics"
-        points={points.filter(n => n.category === 'topic')}
-      />
+      <Region type="Actions" />
+      <Region type="Needs" />
+      <Region type="Feelings" />
+      <Region type="Topics" />
     </RimView>
   );
 };
@@ -55,29 +38,6 @@ const RimView = styled.div`
   background: ${props =>
     props.backgroundColor ? props.backgroundColor : 'inherit'};
   color: ${props => (props.color ? props.color : 'inherit')};
-`;
-
-const Banner = styled.div`
-  position: absolute;
-  text-align: center;
-  font-size: 1rem;
-  top: -0.75rem;
-  right: 0.5rem;
-  padding: 0;
-  z-index: 1;
-  color: ${props => (props.color ? props.color : 'inherit')};
-
-  &:before {
-    content: '';
-    position: absolute;
-    background-image: url(${require('../images/banner.png')});
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    filter: opacity(0.33);
-  }
 `;
 
 export default Rim;

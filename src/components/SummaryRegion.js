@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import Point from './Point';
 
 const SummaryRegion = ({ points, type }) => {
+  console.log('summaryRegion', type, points);
+
   const displayedPoints = points.map(n => (
     <Point key={n.id} id={n.id} title={n.title} category={n.category} />
   ));
@@ -18,12 +20,11 @@ const SummaryRegion = ({ points, type }) => {
 
 SummaryRegion.defaultProps = {
   points: [],
-  type: '',
 };
 
 SummaryRegion.propTypes = {
   points: PropTypes.array,
-  type: PropTypes.string,
+  type: PropTypes.string.isRequired,
 };
 
 const SummaryRegionView = styled.div`
