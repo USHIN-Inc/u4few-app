@@ -5,16 +5,6 @@ import styled from 'styled-components';
 import SessionContext from '../contexts/SessionContext';
 import UserSettingsModal from './UserSettingsModal';
 
-/*
-  This banner will handle the update of user settings
-  username, rimcolor (rimcolor.text && rimcolor.backgroundColor)
-  TODO:
-    * Form for handling the fields
-    * update function
-  The update function will work directly with the context so
-  this should be easy 3.1415zi
-*/
-
 const Banner = () => {
   const { session } = useContext(SessionContext);
   const { rimColor, username } = session;

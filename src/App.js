@@ -11,7 +11,7 @@ const Wrapper = styled.div`
 
 const testAppState = {
   me: {
-    username: 'alexg',
+    username: 'anonymous',
     rimColor: {
       text: '#111',
       background: '#eee',
