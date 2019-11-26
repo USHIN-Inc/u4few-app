@@ -1,90 +1,97 @@
-import React from 'react'
-import SemanticScreen from './components/SemanticScreen'
-import './App.css'
+import React from 'react';
+import styled from 'styled-components';
+import useLocalStorage from './hooks/useLocalStorage';
 
-function App () {
-  return (
-    <div className='App'>
-      <SemanticScreen
-        suser={testAppState.me}
-        spoints={testAppState.me.points}
-      />
+import SessionContext from './contexts/SessionContext';
+import SemanticScreen from './components/SemanticScreen';
 
-    </div>
-  )
-}
+const Wrapper = styled.div`
+  height: 100%;
+`;
 
 const testAppState = {
   me: {
     username: 'alexg',
     rimColor: {
       text: '#111',
-      background: '#eee'
+      background: '#eee',
     },
     points: [
       {
-        id: 1,
+        id: '1',
         content: 'U4U',
-        category: 'topic'
+        category: 'topic',
       },
       {
-        id: 2,
+        id: '2',
         content: 'Frontend',
-        category: 'topic'
+        category: 'topic',
       },
       {
-        id: 4,
+        id: '4',
         content: '@alex Finish the frontend for U4U, like, soon!',
-        category: 'action'
+        category: 'action',
       },
       {
-        id: 5,
+        id: '5',
         content: 'Development Team',
-        category: 'person'
+        category: 'person',
       },
       {
-        id: 6,
+        id: '6',
         content: 'Alex Garcia',
-        category: 'person'
-      }
-    ]
+        category: 'person',
+      },
+    ],
   },
   users: [
     {
       username: 'paula',
       rimColor: {
         text: '#fff',
-        background: '#00f'
+        background: '#00f',
       },
       points: [
         {
           id: 1,
           content: 'U4U',
-          category: 'topic'
+          category: 'topic',
         },
         {
           id: 2,
           content: 'Frontend',
-          category: 'topic'
+          category: 'topic',
         },
         {
           id: 4,
           content: '@alex Finish the frontend for U4U, like, soon!',
-          category: 'action'
+          category: 'action',
         },
         {
           id: 5,
           content: 'Development Team',
-          category: 'person'
+          category: 'person',
         },
         {
           id: 6,
           content: 'Alex Garcia',
-          category: 'person'
-        }
-      ]
-    }
-  ]
-}
+          category: 'person',
+        },
+      ],
+    },
+  ],
+};
 
-export default App
+const App = () => {
+  const [session, setSession] = useLocalStorage('session', testAppState.me);
+
+  return (
+    <SessionContext.Provider value={{ session, setSession }}>
+      <Wrapper>
+        <SemanticScreen />
+      </Wrapper>
+    </SessionContext.Provider>
+  );
+};
+
+export default App;

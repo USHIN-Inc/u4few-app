@@ -1,160 +1,208 @@
-import React, { useState } from 'react'
-import Point from './Point'
-import PointInput from './PointInput'
-import './Region.scss'
-import uuidv4 from 'uuid/v4'
-import { singularize } from 'inflected'
+import React, { useState, useContext } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import uuidv4 from 'uuid/v4';
+import { singularize } from 'inflected';
+import Point from './Point';
+import PointInput from './PointInput';
+import SessionContext from '../contexts/SessionContext';
 
-function Region (props) {
-  const type = props.type || ''
-  const [points, setPoints] = useState(props.points || [])
-  const [pointInputs, setPointInputs] = useState([])
+const Region = ({ type }) => {
+  const { session, setSession } = useContext(SessionContext);
 
-  if (points.length === 0 && pointInputs.length === 0 && type === 'Focus') {
-    setPointInputs([
-      {
-        id: uuidv4(),
-        placeholderContent: 'Tap, type, or paste anywhere...'
-      }
-    ])
+  const [hover, setHover] = useState(false);
+
+  const { points } = session;
+
+  const _points = points.filter(
+    point => point.category === singularize(type).toLocaleLowerCase()
+  );
+
+  const [pointInput, setPointInput] = useState(null);
+
+  // Starts the Focus region with a pointInput
+  if (!pointInput && _points.length === 0 && type === 'Focus') {
+    setPointInput({
+      id: uuidv4(),
+      placeholderContent: 'Tap, type, or paste anywhere...',
+    });
   }
 
-  function handleClick (e) {
-    e.preventDefault()
+  /*
+    handles the creation of the PointInput for a new
+    Point in a Region
+  */
+  function handleClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    // prevents Focus area from having more that one point
+    if (type === 'Focus') {
+      return;
+    }
+    setPointInput({
+      id: uuidv4(),
+      placeholderContent: `new ${singularize(type).toLowerCase()}`,
+    });
+  }
 
-    if (pointInputs.length > 0 || (type === 'Focus' && points.length > 0)) {
-      return
+  function handleDragEnter(e) {
+    e.preventDefault();
+    setHover(true);
+    console.log(type, 'handleDragEnter');
+  }
+
+  function handleDragLeave(e) {
+    e.preventDefault();
+    setHover(false);
+    console.log(type, 'handleDragLeave');
+  }
+
+  // this method is required to implement the
+  // drag drop zone
+  function handleDragOver(e) {
+    e.preventDefault();
+  }
+
+  // this function updates the point
+  // category to the current region type
+  function handleDrop(e) {
+    e.preventDefault();
+    setHover(false);
+    e.target.classList.remove('bg-light');
+    console.log(type, 'handleDrop');
+
+    const pointId = e.dataTransfer.getData('text');
+
+    if (type === 'Focus' && _points.length > 0) {
+      return;
     }
 
-    setPointInputs([
-      ...pointInputs,
-      {
-        id: uuidv4()
+    // update the point to this area
+    const newPoints = points.map(point => {
+      if (point.id === pointId) {
+        return { ...point, category: `${singularize(type).toLowerCase()}` };
       }
-    ])
+      return point;
+    });
+    setSession({
+      ...session,
+      points: newPoints,
+    });
   }
 
-  function handleDragEnter (e) {
-    e.target.classList.add('bg-light')
-  }
-
-  function handleDragLeave (e) {
-    e.target.classList.remove('bg-light')
-  }
-
-  function handleDragOver (e) {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
-  }
-
-  function handleDrop (e) {
-    e.preventDefault()
-    e.target.classList.remove('bg-light')
-
-    const content = e.dataTransfer.getData('text/plain').trim()
-
-    if (content === '' || (type === 'Focus' && points.length > 0)) {
-      return
+  /*
+    this function saves the point to this region
+    useState hook
+   */
+  function handlePointInputSubmit(e) {
+    const { id, content } = e;
+    if (content === '') {
+      setPointInput(null);
+      return;
     }
-
-    setPoints([
-      ...points,
-      {
-        id: uuidv4(),
-        content: content,
-        category: singularize(type).toLowerCase()
-      }
-    ])
+    setSession({
+      ...session,
+      points: [
+        ...session.points,
+        {
+          id,
+          content,
+          category: singularize(type).toLowerCase(),
+        },
+      ],
+    });
+    setPointInput(null);
   }
 
-  function handlePointInputSubmit (e) {
-    e.preventDefault()
+  /*
+    there is a requirement so save on blur
+    that is currently not the case here
+  */
+  function handlePointInputBlur(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const content = e.target.value;
 
-    const content = e.target[0].value
-    const id = e.target[0].id
-
-    if (content === '' || (type === 'Focus' && points.length > 0)) {
-      return
+    if (content === '') {
+      setPointInput(null);
     }
-
-    setPoints([
-      ...points,
-      {
-        id: uuidv4(),
-        content: content,
-        category: singularize(type).toLowerCase()
-      }
-    ])
-
-    setPointInputs(
-      pointInputs.filter(point => point.id !== id)
-    )
   }
 
-  function handlePointInputBlur (e) {
-    e.preventDefault()
-
-    const content = e.target.value
-    const id = e.target.id
-
-    if (content === '' || (type === 'Focus' && points.length > 0)) {
-      return
-    }
-
-    setPoints([
-      ...points,
-      {
-        id: uuidv4(),
-        content: content,
-        category: singularize(type).toLowerCase()
-      }
-    ])
-
-    setPointInputs(
-      pointInputs.filter(point => point.id !== id)
-    )
+  function handlePointInputCancel(e) {
+    e.stopPropagation();
+    setPointInput(null);
   }
 
-  const displayedPoints = []
-  points.forEach(n => {
-    displayedPoints.push(
-      <Point
-        key={n.id}
-        id={n.id}
-        content={n.content}
-        category={n.category}
-      />
-    )
-  })
-
-  const displayedPointInputs = []
-  pointInputs.forEach(n => {
-    displayedPointInputs.push(
-      <PointInput
-        key={n.id}
-        id={n.id}
-        placeholderContent={n.placeholderContent}
-        onPointInputSubmit={handlePointInputSubmit}
-        onPointInputBlur={handlePointInputBlur}
-      />
-    )
-  })
+  const displayedPoints = _points.map(point => (
+    <Point
+      key={point.id}
+      id={point.id}
+      content={point.content}
+      category={point.category}
+    />
+  ));
 
   return (
-    <div
-      className={'Region border ' + type}
+    <RegionView
+      className={`border ${type}`}
       onClick={handleClick}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div className='RegionInner'>
+      <RegionInnerView type={type} hover={hover}>
         {displayedPoints}
-        {displayedPointInputs}
-      </div>
-    </div>
-  )
-}
+        {pointInput && (
+          <PointInput
+            id={pointInput.id}
+            placeholderContent={pointInput.placeholderContent}
+            onPointInputBlur={handlePointInputBlur}
+            handleCancel={handlePointInputCancel}
+            onPointInputSubmit={handlePointInputSubmit}
+          />
+        )}
+      </RegionInnerView>
+    </RegionView>
+  );
+};
 
-export default Region
+Region.propTypes = {
+  type: PropTypes.string.isRequired,
+};
+
+const RegionView = styled.div`
+  text-align: center;
+  &:focus {
+    min-height: 4rem;
+  }
+`;
+
+const RegionInnerView = styled.div`
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+
+  ${({ hover, type }) =>
+    hover &&
+    `
+    &:before {
+      position: absolute;
+      diplay: flex;
+      flex-grow: 1;
+      height: 100%;
+      width: 100%;
+      top: 0;
+      font-size: 24px;
+      color: #4D4D4D;
+      font-weight: bold;
+      background: #F5F5F5;
+      content: '${type}'
+    }
+  `}
+`;
+
+export default Region;
