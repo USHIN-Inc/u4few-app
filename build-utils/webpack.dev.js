@@ -16,7 +16,7 @@ module.exports = {
     modules: false,
   },
   devServer: {
-    contentBase: './dist',
+    contentBase: './build',
     hot: true,
     disableHostCheck: true,
     stats: {

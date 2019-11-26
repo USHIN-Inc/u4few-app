@@ -12,8 +12,8 @@ You will also see any lint errors in the console.
 
 ### `yarn build`
 
-Builds the app for production to the `dist` folder.
+Builds the app for production to the `build` folder.
 
 ### `yarn build:analyze`
 
-Builds the app for production to the `dist` folder where we can open in our web browser report.html and stats.html
+Builds the app for production to the `build` folder where we can open in our web browser report.html and stats.html
