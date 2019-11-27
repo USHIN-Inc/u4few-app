@@ -97,7 +97,7 @@ Point.propTypes = {
 
 const PointView = styled.div`
   display: inline-block;
-  font-size: 0.66rem;
+  font-size: 1rem;
   padding: 8px;
   margin: 2px;
 `;

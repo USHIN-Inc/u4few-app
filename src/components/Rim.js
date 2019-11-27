@@ -11,7 +11,7 @@ const Rim = ({ children }) => {
   const { rimColor } = session;
 
   return (
-    <RimView backgroundColor={rimColor.backgroundColor} color={rimColor.text}>
+    <RimView backgroundColor={rimColor.background} color={rimColor.text}>
       <Banner />
       <Region type="Facts" />
       <Region type="Merits" />
@@ -35,8 +35,8 @@ const RimView = styled.div`
   display: grid;
   grid-template-columns: minmax(4rem, auto) auto minmax(4rem, auto);
   grid-template-rows: minmax(4rem, auto) auto minmax(4rem, auto);
-  background: ${props =>
-    props.backgroundColor ? props.backgroundColor : 'inherit'};
+  background-color: ${props =>
+    props.backgroundColor ? props.backgroundColor : 'red'};
   color: ${props => (props.color ? props.color : 'inherit')};
 `;
 
