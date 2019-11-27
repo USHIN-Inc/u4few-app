@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import SessionContext from '../contexts/SessionContext';
 import PointInput from './PointInput';
+import PointView from './PointView';
 
-const Point = ({ id, content }) => {
+const Point = ({ id, content, category, uid }) => {
   const { session, setSession } = useContext(SessionContext);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -28,7 +29,6 @@ const Point = ({ id, content }) => {
   // this seems ok, but we can add like a image
   // to represent the point for a ux/ui upgrade
   function handleDragStart(e) {
-    console.log(e.target);
     e.dataTransfer.setData('text', e.target.id);
     e.dataTransfer.dropEffect = 'move';
   }
@@ -58,12 +58,11 @@ const Point = ({ id, content }) => {
     setIsEditing(false);
   }
 
-  if (isEditing) {
+  if (session.uid === uid && isEditing) {
     return (
       <PointInput
         id={id}
         initialValue={content}
-        // onPointInputBlur={handleUpdate}
         handleCancel={handleCancel}
         handleDelete={deletePoint}
         onPointInputSubmit={handleUpdate}
@@ -71,8 +70,19 @@ const Point = ({ id, content }) => {
     );
   }
 
+  if (isEditing) {
+    return (
+      <PointView
+        user={uid}
+        content={content}
+        category={category}
+        handleCancel={handleCancel}
+      />
+    );
+  }
+
   return (
-    <PointView
+    <PointPreview
       className="border rounded"
       id={id}
       draggable
@@ -82,7 +92,7 @@ const Point = ({ id, content }) => {
       title={content}
     >
       {contentExcerpt}
-    </PointView>
+    </PointPreview>
   );
 };
 
@@ -93,9 +103,11 @@ Point.defaultProps = {
 Point.propTypes = {
   id: PropTypes.string.isRequired,
   content: PropTypes.string,
+  category: PropTypes.string.isRequired,
+  uid: PropTypes.string.isRequired,
 };
 
-const PointView = styled.div`
+const PointPreview = styled.div`
   display: inline-block;
   font-size: 1rem;
   padding: 8px;

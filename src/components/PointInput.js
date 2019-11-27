@@ -13,6 +13,7 @@ import { Formik, Form, Field } from 'formik';
 
 const PointInput = ({
   id,
+  uid,
   initialValue,
   handleCancel,
   handleDelete,
@@ -24,6 +25,7 @@ const PointInput = ({
     initialValues={{ content: initialValue }}
     onSubmit={e => {
       e.id = id;
+      e.uid = uid;
       onPointInputSubmit(e);
     }}
   >
@@ -69,12 +71,6 @@ const PointInput = ({
   </Formik>
 );
 
-const Button = styled.button`
-  border: none;
-  background: none;
-  outline: none;
-`;
-
 PointInput.defaultProps = {
   id: '',
   initialValue: '',
@@ -86,6 +82,7 @@ PointInput.defaultProps = {
 
 PointInput.propTypes = {
   id: PropTypes.string,
+  uid: PropTypes.string,
   initialValue: PropTypes.string,
   placeholderContent: PropTypes.string,
   onPointInputSubmit: PropTypes.func.isRequired,
@@ -93,5 +90,11 @@ PointInput.propTypes = {
   handleCancel: PropTypes.func,
   handleDelete: PropTypes.func,
 };
+
+const Button = styled.button`
+  border: none;
+  background: none;
+  outline: none;
+`;
 
 export default PointInput;

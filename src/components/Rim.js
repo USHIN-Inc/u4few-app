@@ -35,6 +35,7 @@ const RimView = styled.div`
   display: grid;
   grid-template-columns: minmax(4rem, auto) auto minmax(4rem, auto);
   grid-template-rows: minmax(4rem, auto) auto minmax(4rem, auto);
+  /* background-color: red; */
   background-color: ${props =>
     props.backgroundColor ? props.backgroundColor : 'red'};
   color: ${props => (props.color ? props.color : 'inherit')};

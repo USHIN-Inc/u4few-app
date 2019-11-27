@@ -9,14 +9,21 @@ import SessionContext from '../contexts/SessionContext';
 
 const Region = ({ type }) => {
   const { session, setSession } = useContext(SessionContext);
-
-  const [hover, setHover] = useState(false);
-
-  const { points } = session;
+  const { points, users } = session;
 
   const _points = points.filter(
     point => point.category === singularize(type).toLocaleLowerCase()
   );
+
+  users.forEach(user => {
+    user.points.forEach(point => {
+      if (point.category === singularize(type).toLowerCase()) {
+        _points.push(point);
+      }
+    });
+  });
+
+  const [hover, setHover] = useState(false);
 
   const [pointInput, setPointInput] = useState(null);
 
@@ -24,6 +31,7 @@ const Region = ({ type }) => {
   if (!pointInput && _points.length === 0 && type === 'Focus') {
     setPointInput({
       id: uuidv4(),
+      uid: session.uid,
       placeholderContent: 'Tap, type, or paste anywhere...',
     });
   }
@@ -41,6 +49,7 @@ const Region = ({ type }) => {
     }
     setPointInput({
       id: uuidv4(),
+      uid: session.uid,
       placeholderContent: `new ${singularize(type).toLowerCase()}`,
     });
   }
@@ -48,13 +57,11 @@ const Region = ({ type }) => {
   function handleDragEnter(e) {
     e.preventDefault();
     setHover(true);
-    console.log(type, 'handleDragEnter');
   }
 
   function handleDragLeave(e) {
     e.preventDefault();
     setHover(false);
-    console.log(type, 'handleDragLeave');
   }
 
   // this method is required to implement the
@@ -69,7 +76,6 @@ const Region = ({ type }) => {
     e.preventDefault();
     setHover(false);
     e.target.classList.remove('bg-light');
-    console.log(type, 'handleDrop');
 
     const pointId = e.dataTransfer.getData('text');
 
@@ -95,7 +101,8 @@ const Region = ({ type }) => {
     useState hook
    */
   function handlePointInputSubmit(e) {
-    const { id, content } = e;
+    const { id, content, uid } = e;
+
     if (content === '') {
       setPointInput(null);
       return;
@@ -106,6 +113,7 @@ const Region = ({ type }) => {
         ...session.points,
         {
           id,
+          uid,
           content,
           category: singularize(type).toLowerCase(),
         },
@@ -139,6 +147,7 @@ const Region = ({ type }) => {
       id={point.id}
       content={point.content}
       category={point.category}
+      uid={point.uid}
     />
   ));
 
@@ -156,6 +165,7 @@ const Region = ({ type }) => {
         {pointInput && (
           <PointInput
             id={pointInput.id}
+            uid={pointInput.uid}
             placeholderContent={pointInput.placeholderContent}
             onPointInputBlur={handlePointInputBlur}
             handleCancel={handlePointInputCancel}
@@ -185,7 +195,6 @@ const RegionInnerView = styled.div`
   flex-grow: 1;
   justify-content: center;
   align-items: center;
-
   ${({ hover, type }) =>
     hover &&
     `

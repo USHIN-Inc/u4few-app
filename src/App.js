@@ -12,7 +12,12 @@ const Wrapper = styled.div`
 `;
 
 const App = () => {
-  const [session, setSession] = useLocalStorage('session', initialAppState.me);
+  // useLocalStorage only uses initial state if there is
+  // not a localStorage yet in memory
+  const [session, setSession] = useLocalStorage('session', {
+    ...initialAppState.me,
+    users: initialAppState.users,
+  });
 
   return (
     <SessionContext.Provider value={{ session, setSession }}>
