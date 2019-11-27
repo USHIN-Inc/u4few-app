@@ -5,7 +5,7 @@ import SessionContext from '../contexts/SessionContext';
 import PointInput from './PointInput';
 import PointView from './PointView';
 
-const Point = ({ id, content, category, uid }) => {
+const Point = ({ id, content, category, uid, username }) => {
   const { session, setSession } = useContext(SessionContext);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -77,6 +77,7 @@ const Point = ({ id, content, category, uid }) => {
         content={content}
         category={category}
         handleCancel={handleCancel}
+        username={username}
       />
     );
   }
@@ -98,6 +99,7 @@ const Point = ({ id, content, category, uid }) => {
 
 Point.defaultProps = {
   content: '',
+  username: null,
 };
 
 Point.propTypes = {
@@ -105,6 +107,7 @@ Point.propTypes = {
   content: PropTypes.string,
   category: PropTypes.string.isRequired,
   uid: PropTypes.string.isRequired,
+  username: PropTypes.string,
 };
 
 const PointPreview = styled.div`

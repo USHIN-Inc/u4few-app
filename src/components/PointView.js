@@ -6,11 +6,18 @@ import Badge from 'react-bootstrap/Badge';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-const PointView = ({ content, category, handleCancel }) => (
-  <Card>
+const PointView = ({ content, category, handleCancel, username }) => (
+  <Card style={{ width: '80%' }}>
     <Card.Body>
-      <Card.Subtitle style={{ textAlign: 'left' }}>
+      <Card.Subtitle
+        style={{
+          textAlign: 'left',
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
         <Badge variant="light">{category}</Badge>
+        <Badge variant="primary">author: {username}</Badge>
       </Card.Subtitle>
       <br />
       <Card.Text>{content}</Card.Text>
@@ -39,6 +46,7 @@ const Button = styled.button`
 `;
 
 PointView.propTypes = {
+  username: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   category: PropTypes.string.isRequired,
   handleCancel: PropTypes.func.isRequired,

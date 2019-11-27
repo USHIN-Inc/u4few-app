@@ -18,7 +18,7 @@ const Region = ({ type }) => {
   users.forEach(user => {
     user.points.forEach(point => {
       if (point.category === singularize(type).toLowerCase()) {
-        _points.push(point);
+        _points.push({ ...point, username: user.username });
       }
     });
   });
@@ -148,6 +148,7 @@ const Region = ({ type }) => {
       content={point.content}
       category={point.category}
       uid={point.uid}
+      username={point.username}
     />
   ));
 
