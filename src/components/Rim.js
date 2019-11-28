@@ -19,8 +19,8 @@ const Rim = ({ children }) => {
       <Region type="Thoughts" />
       {children}
       <Region type="Actions" />
-      <Region type="Needs" />
       <Region type="Feelings" />
+      <Region type="Needs" />
       <Region type="Topics" />
     </RimView>
   );

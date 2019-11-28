@@ -79,7 +79,13 @@ const Region = ({ type }) => {
 
     const pointId = e.dataTransfer.getData('text');
 
-    if (type === 'Focus' && _points.length > 0) {
+    if (
+      (type === 'Focus' && _points.length > 0) ||
+      (type === 'Focus' && pointInput)
+    ) {
+      if (pointInput) {
+        setPointInput(null);
+      }
       return;
     }
 
@@ -102,7 +108,6 @@ const Region = ({ type }) => {
    */
   function handlePointInputSubmit(e) {
     const { id, content, uid } = e;
-
     if (content === '') {
       setPointInput(null);
       return;
