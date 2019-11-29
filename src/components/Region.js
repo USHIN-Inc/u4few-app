@@ -188,6 +188,30 @@ Region.propTypes = {
 };
 
 const RegionView = styled.div`
+  &.Facts {
+    grid-area: facts;
+  }
+  &.Merits {
+    grid-area: merits;
+  }
+  &.People {
+    grid-area: people;
+  }
+  &.Thoughts {
+    grid-area: thoughts;
+  }
+  &.Actions {
+    grid-area: actions;
+  }
+  &.Feelings {
+    grid-area: feelings;
+  }
+  &.Needs {
+    grid-area: needs;
+  }
+  &.Topics {
+    grid-area: topics;
+  }
   text-align: center;
   &:focus {
     min-height: 4rem;
