@@ -8,7 +8,6 @@ import PointView from './PointView';
 const Point = ({ id, content, category, uid, username }) => {
   const { session, setSession } = useContext(SessionContext);
   const [isEditing, setIsEditing] = useState(false);
-
   function deletePoint(e) {
     e.stopPropagation();
     setSession({
@@ -16,6 +15,8 @@ const Point = ({ id, content, category, uid, username }) => {
       points: session.points.filter(point => point.id !== id),
     });
   }
+
+  const isDraggable = uid === session.uid;
 
   const contentExcerpt =
     content.length > 8 ? `${content.substring(0, 5).trim()}...` : content;
@@ -86,7 +87,7 @@ const Point = ({ id, content, category, uid, username }) => {
     <PointPreview
       className="border rounded"
       id={id}
-      draggable
+      draggable={isDraggable}
       onClick={handleClick}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}

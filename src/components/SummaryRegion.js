@@ -12,6 +12,8 @@ const SummaryRegion = ({ points, type }) => {
 
   const [isShowing, setIsShowing] = useState(false);
 
+  const [pointId, setPointId] = useState(null);
+
   function handleShow() {
     setIsShowing(true);
   }
@@ -39,6 +41,8 @@ const SummaryRegion = ({ points, type }) => {
   function handleDrop(e) {
     e.preventDefault();
     console.log(e.target);
+    const id = e.dataTransfer.getData('text');
+    setPointId(id);
     handleShow();
   }
 
@@ -55,7 +59,14 @@ const SummaryRegion = ({ points, type }) => {
       >
         {displayedPoints}
       </SummaryRegionView>
-      <TagsModal show={isShowing} handleClose={handleClose} type={type} />
+      {isShowing && (
+        <TagsModal
+          show={isShowing}
+          handleClose={handleClose}
+          type={type}
+          pointId={pointId}
+        />
+      )}
     </>
   );
 };

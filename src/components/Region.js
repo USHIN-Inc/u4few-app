@@ -54,6 +54,9 @@ const Region = ({ type }) => {
     });
   }
 
+  /*
+    Start of drag events
+  */
   function handleDragEnter(e) {
     e.preventDefault();
     setHover(true);
@@ -64,14 +67,10 @@ const Region = ({ type }) => {
     setHover(false);
   }
 
-  // this method is required to implement the
-  // drag drop zone
   function handleDragOver(e) {
     e.preventDefault();
   }
 
-  // this function updates the point
-  // category to the current region type
   function handleDrop(e) {
     e.preventDefault();
     setHover(false);
@@ -101,6 +100,9 @@ const Region = ({ type }) => {
       points: newPoints,
     });
   }
+  /*
+    end of drag events
+  */
 
   /*
     this function saves the point to this region
