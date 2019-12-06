@@ -75,7 +75,10 @@ PointInput.defaultProps = {
   id: '',
   initialValue: '',
   placeholderContent: '',
-  onPointInputBlur: null,
+  onPointInputBlur: e => {
+    e.stopPropagation();
+    e.preventDefault();
+  },
   handleCancel: null,
   handleDelete: null,
 };

@@ -1,73 +1,18 @@
 /* eslint-disable global-require */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Point from './Point';
-import TagsModal from './TagsModal';
 
 const SummaryRegion = ({ points, type }) => {
   const displayedPoints = points.map(n => (
     <Point key={n.id} id={n.id} title={n.title} category={n.category} />
   ));
 
-  const [isShowing, setIsShowing] = useState(false);
-
-  const [pointId, setPointId] = useState(null);
-
-  function handleShow() {
-    setIsShowing(true);
-  }
-
-  function handleClose() {
-    setIsShowing(false);
-  }
-
-  /*
-    Here starts the handling of drag events
-  */
-
-  function handleDragEnter(e) {
-    e.preventDefault();
-  }
-
-  function handleDragLeave(e) {
-    e.preventDefault();
-  }
-
-  function handleDragOver(e) {
-    e.preventDefault();
-  }
-
-  function handleDrop(e) {
-    e.preventDefault();
-    console.log(e.target);
-    const id = e.dataTransfer.getData('text');
-    setPointId(id);
-    handleShow();
-  }
-
   return (
-    <>
-      <SummaryRegionView
-        className={`border ${type}`}
-        type={type}
-        onClick={handleShow}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-      >
-        {displayedPoints}
-      </SummaryRegionView>
-      {isShowing && (
-        <TagsModal
-          show={isShowing}
-          handleClose={handleClose}
-          type={type}
-          pointId={pointId}
-        />
-      )}
-    </>
+    <SummaryRegionView className={`border ${type}`}>
+      {displayedPoints}
+    </SummaryRegionView>
   );
 };
 
@@ -91,14 +36,14 @@ const SummaryRegionView = styled.div`
   &.Topics {
     position: relative;
   }
-  &.Facts:after,
-  &.Merits:after,
-  &.People:after,
-  &.Thoughts:after,
-  &.Actions:after,
-  &.Needs:after,
-  &.Feelings:after,
-  &.Topics:after {
+  &.Facts:before,
+  &.Merits:before,
+  &.People:before,
+  &.Thoughts:before,
+  &.Actions:before,
+  &.Needs:before,
+  &.Feelings:before,
+  &.Topics:before {
     content: '';
     background-size: contain;
     background-repeat: no-repeat;
@@ -108,35 +53,35 @@ const SummaryRegionView = styled.div`
     opacity: 0.33;
     z-index: -1;
   }
-  &.Facts:after {
+  &.Facts:before {
     background-image: url(${require('./../images/square.svg')});
     background-position: top left;
   }
-  &.Merits:after {
+  &.Merits:before {
     background-image: url(${require('./../images/star.svg')});
     background-position: top center;
   }
-  &.People:after {
+  &.People:before {
     background-image: url(${require('./../images/banner.svg')});
     background-position: top right;
   }
-  &.Thoughts:after {
+  &.Thoughts:before {
     background-image: url(${require('./../images/circle.svg')});
     background-position: center left;
   }
-  &.Actions:after {
+  &.Actions:before {
     background-image: url(${require('./../images/arrow.svg')});
     background-position: center right;
   }
-  &.Needs:after {
+  &.Needs:before {
     background-image: url(${require('./../images/heart.svg')});
     background-position: bottom left;
   }
-  &.Feelings:after {
+  &.Feelings:before {
     background-image: url(${require('./../images/triangle.svg')});
     background-position: bottom center;
   }
-  &.Topics:after {
+  &.Topics:before {
     background-image: url(${require('./../images/trapezoid.svg')});
     background-position: bottom right;
   }

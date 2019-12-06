@@ -18,7 +18,6 @@ const Banner = () => {
   function handleOpen() {
     setEditing(true);
   }
-
   return (
     <>
       <BannerView color={rimColor.text} onClick={handleOpen}>
@@ -39,6 +38,7 @@ const BannerView = styled.div`
   z-index: 1;
   cursor: pointer;
   color: ${props => (props.color ? props.color : 'inherit')};
+
   &:before {
     content: '';
     position: absolute;

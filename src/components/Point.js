@@ -2,21 +2,23 @@ import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import SessionContext from '../contexts/SessionContext';
+import DragContext from '../contexts/DragContext';
 import PointInput from './PointInput';
 import PointView from './PointView';
 
-const Point = ({ id, content, category, uid, username }) => {
+const Point = ({ point }) => {
+  const { id, content, category, subCategory, uid, username } = point;
   const { session, setSession } = useContext(SessionContext);
+  const { setDragPoint, setRegion } = useContext(DragContext);
   const [isEditing, setIsEditing] = useState(false);
+
   function deletePoint(e) {
     e.stopPropagation();
     setSession({
       ...session,
-      points: session.points.filter(point => point.id !== id),
+      points: session.points.filter(_point => _point.id !== id),
     });
   }
-
-  const isDraggable = uid === session.uid;
 
   const contentExcerpt =
     content.length > 8 ? `${content.substring(0, 5).trim()}...` : content;
@@ -30,24 +32,28 @@ const Point = ({ id, content, category, uid, username }) => {
   // this seems ok, but we can add like a image
   // to represent the point for a ux/ui upgrade
   function handleDragStart(e) {
+    setDragPoint(point);
     e.dataTransfer.setData('text', e.target.id);
     e.dataTransfer.dropEffect = 'move';
   }
 
   // TODO: check if operation was successful
   function handleDragEnd(e) {
-    console.log(e);
+    e.preventDefault();
+    e.stopPropagation();
+    setDragPoint(null);
+    setRegion('');
   }
 
   function handleUpdate(e) {
     if (e.content !== content) {
       setSession({
         ...session,
-        points: session.points.map(point => {
-          if (point.id === e.id) {
-            return { ...point, content: e.content };
+        points: session.points.map(_point => {
+          if (_point.id === e.id) {
+            return { ..._point, content: e.content };
           }
-          return point;
+          return _point;
         }),
       });
     }
@@ -82,40 +88,47 @@ const Point = ({ id, content, category, uid, username }) => {
       />
     );
   }
+  const isDraggable = uid === session.uid;
 
   return (
     <PointPreview
-      className="border rounded"
+      // className="border rounded"
       id={id}
       draggable={isDraggable}
       onClick={handleClick}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      title={content}
     >
-      {contentExcerpt}
+      <Text>{contentExcerpt}</Text>
+      <SubCategoryText>{subCategory}</SubCategoryText>
     </PointPreview>
   );
 };
 
-Point.defaultProps = {
-  content: '',
-  username: null,
-};
-
 Point.propTypes = {
-  id: PropTypes.string.isRequired,
-  content: PropTypes.string,
-  category: PropTypes.string.isRequired,
-  uid: PropTypes.string.isRequired,
-  username: PropTypes.string,
+  point: PropTypes.object.isRequired,
 };
 
 const PointPreview = styled.div`
-  display: inline-block;
+  border-radius: 4px;
+  border: 1px solid gray;
+  display: flex;
+  flex-flow: column;
   font-size: 1rem;
-  padding: 8px;
-  margin: 2px;
+  padding: 4px;
+  margin: 8px;
+`;
+
+const Text = styled.p`
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: bold;
+`;
+
+const SubCategoryText = styled.p`
+  margin: 0;
+  font-size: 0.8rem;
 `;
 
 export default Point;

@@ -41,16 +41,12 @@ const SummaryRim = ({ points, children }) => (
   </Summary>
 );
 
-/*
-  i want to find a way to modify the grid colum and row
-  size on hover to give the user some feedback
-*/
 const Summary = styled.div`
   position: relative;
   height: 100%;
   display: grid;
-  grid-template-columns: 2rem auto 2rem;
-  grid-template-rows: 2rem auto 2rem;
+  grid-template-columns: 1rem auto 1rem;
+  grid-template-rows: 1rem auto 1rem;
 `;
 
 SummaryRim.defaultProps = {

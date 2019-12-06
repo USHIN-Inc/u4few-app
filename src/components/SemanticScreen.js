@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Rim from './Rim';
 import SummaryRim from './SummaryRim';
-import Region from './Region';
+import DragContext from '../contexts/DragContext';
 
-const SemanticScreen = () => (
-  <SummaryRim>
-    <Rim>
-      <Region type="Focus" />
-    </Rim>
-  </SummaryRim>
-);
+const SemanticScreen = () => {
+  const [dragPoint, setDragPoint] = useState(null);
+  const [region, setRegion] = useState('');
+  return (
+    <DragContext.Provider
+      value={{
+        dragPoint,
+        setDragPoint,
+        region,
+        setRegion,
+      }}
+    >
+      <SummaryRim>
+        <Rim />
+      </SummaryRim>
+    </DragContext.Provider>
+  );
+};
 
 export default SemanticScreen;

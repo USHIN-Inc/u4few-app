@@ -1,33 +1,35 @@
 /* eslint-disable global-require */
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Region from './Region';
+import Region from './Region/Region';
 import SessionContext from '../contexts/SessionContext';
 import Banner from './UserBanner';
+import DragContext from '../contexts/DragContext';
 
-const Rim = ({ children }) => {
+const Rim = () => {
   const { session } = useContext(SessionContext);
+  const { setRegion } = useContext(DragContext);
   const { rimColor } = session;
 
   return (
-    <RimView backgroundColor={rimColor.background} color={rimColor.text}>
+    <RimView
+      onClick={() => setRegion('')}
+      onDragEnter={() => setRegion('')}
+      backgroundColor={rimColor.background}
+      color={rimColor.text}
+    >
       <Banner />
       <Region type="Facts" />
       <Region type="Merits" />
       <Region type="People" />
       <Region type="Thoughts" />
-      {children}
+      <Region type="Focus" />
       <Region type="Actions" />
       <Region type="Feelings" />
       <Region type="Needs" />
       <Region type="Topics" />
     </RimView>
   );
-};
-
-Rim.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 const RimView = styled.div`
@@ -39,6 +41,8 @@ const RimView = styled.div`
     'facts merits people'
     'thoughts . actions'
     'needs feelings topics';
+  justify-items: center;
+  align-items: center;
   background-color: ${props =>
     props.backgroundColor ? props.backgroundColor : 'red'};
   color: ${props => (props.color ? props.color : 'inherit')};
