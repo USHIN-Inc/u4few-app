@@ -142,7 +142,7 @@ const RegionActive = ({ region }) => {
     e.target.style.padding = '24px';
     statusLongHover = setTimeout(() => {
       setSubCategory(null);
-    }, 500);
+    }, 1);
   }
   function handleStatusDragLeave(e) {
     cancelEvents(e);
