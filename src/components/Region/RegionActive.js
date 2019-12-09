@@ -12,8 +12,6 @@ import * as TAGS from '../../constants/tags';
 import SessionContext from '../../contexts/SessionContext';
 import DragContext from '../../contexts/DragContext';
 
-const Variants = ['primary', 'secondary', 'success', 'danger', 'warning'];
-
 function cancelEvents(e) {
   e.preventDefault();
   e.stopPropagation();
@@ -21,35 +19,14 @@ function cancelEvents(e) {
 
 const RegionActive = ({ region }) => {
   const { session, setSession } = useContext(SessionContext);
+  const { points } = session;
   const { setRegion } = useContext(DragContext);
   const currentTags = Object.keys(TAGS[region]);
   let longHoverEvent;
-  const [subCategory, setSubCategory] = useState(null);
+  const [category, setCategory] = useState(null);
   let subCategories;
-  if (subCategory) {
-    subCategories = TAGS[region][subCategory];
-  }
-
-  /*
-    #####  update the point category  #####
-  */
-
-  function updatePoint(pointId, category) {
-    const { points } = session;
-    const newPoints = points.map(point => {
-      if (point.id === pointId) {
-        return {
-          ...point,
-          subCategory: category,
-          category: singularize(region).toLowerCase(),
-        };
-      }
-      return point;
-    });
-    setSession({
-      ...session,
-      points: newPoints,
-    });
+  if (category) {
+    subCategories = TAGS[region][category];
   }
 
   /*
@@ -58,9 +35,9 @@ const RegionActive = ({ region }) => {
   function handleCategoryDragEnter(e) {
     cancelEvents(e);
     e.target.style.padding = '24px';
-    const category = e.target.getAttribute('name');
+    const targetName = e.target.getAttribute('name');
     longHoverEvent = setTimeout(() => {
-      setSubCategory(category);
+      setCategory(targetName);
     }, 750);
   }
 
@@ -76,25 +53,40 @@ const RegionActive = ({ region }) => {
 
   function handleCategoryDrop(e) {
     cancelEvents(e);
+    const pointId = e.dataTransfer.getData('text');
+    const targetName = e.target.getAttribute('name');
+    const newPoints = points.map(point => {
+      if (point.id === pointId) {
+        return {
+          ...point,
+          category: targetName,
+          subCategory: null,
+          region: singularize(region).toLowerCase(),
+        };
+      }
+      return point;
+    });
+    setSession({
+      ...session,
+      points: newPoints,
+    });
+    setRegion('');
   }
 
   function renderCategoriesTags(tags) {
-    return tags.map(label => {
-      const random = Math.floor(Math.random() * 5);
-      return (
-        <Category
-          key={label}
-          variant={Variants[random]}
-          name={label}
-          onDragOver={handleCategoryDragOver}
-          onDragEnter={handleCategoryDragEnter}
-          onDragLeave={handleCategoryDragLeave}
-          onDrop={handleCategoryDrop}
-        >
-          {label}
-        </Category>
-      );
-    });
+    return tags.map(label => (
+      <Category
+        key={label}
+        variant="secondary"
+        name={label}
+        onDragOver={handleCategoryDragOver}
+        onDragEnter={handleCategoryDragEnter}
+        onDragLeave={handleCategoryDragLeave}
+        onDrop={handleCategoryDrop}
+      >
+        {label}
+      </Category>
+    ));
   }
 
   /*
@@ -113,25 +105,36 @@ const RegionActive = ({ region }) => {
     cancelEvents(e);
     const pointId = e.dataTransfer.getData('text');
     const targetName = e.target.getAttribute('name');
-    updatePoint(pointId, targetName);
+    const newPoints = points.map(point => {
+      if (point.id === pointId) {
+        return {
+          ...point,
+          category,
+          subCategory: targetName,
+          region: singularize(region).toLowerCase(),
+        };
+      }
+      return point;
+    });
+    setSession({
+      ...session,
+      points: newPoints,
+    });
     setRegion('');
   }
   function renderSubCategoriesTags(tags) {
-    return tags.map(label => {
-      const random = Math.floor(Math.random() * 5);
-      return (
-        <Category
-          key={label}
-          variant={Variants[random]}
-          name={label}
-          onDragEnter={handleSubCategoryDragEnter}
-          onDragLeave={handleSubCategoryDragLeave}
-          onDrop={handleSubCategoryDrop}
-        >
-          {label}
-        </Category>
-      );
-    });
+    return tags.map(label => (
+      <Category
+        key={label}
+        variant="secondary"
+        name={label}
+        onDragEnter={handleSubCategoryDragEnter}
+        onDragLeave={handleSubCategoryDragLeave}
+        onDrop={handleSubCategoryDrop}
+      >
+        {label}
+      </Category>
+    ));
   }
   /*
     status event handlers
@@ -141,8 +144,8 @@ const RegionActive = ({ region }) => {
     cancelEvents(e);
     e.target.style.padding = '24px';
     statusLongHover = setTimeout(() => {
-      setSubCategory(null);
-    }, 1);
+      setCategory(null);
+    }, 500);
   }
   function handleStatusDragLeave(e) {
     cancelEvents(e);
@@ -154,21 +157,37 @@ const RegionActive = ({ region }) => {
   */
   function handleRegionOnDrop(e) {
     cancelEvents(e);
+    const pointId = e.dataTransfer.getData('text');
+    const newPoints = points.map(point => {
+      if (point.id === pointId) {
+        return {
+          ...point,
+          category: null,
+          subCategory: null,
+          region: singularize(region).toLowerCase(),
+        };
+      }
+      return point;
+    });
+    setSession({
+      ...session,
+      points: newPoints,
+    });
     setRegion('');
   }
   return (
     <RegionActiveView onDrop={handleRegionOnDrop}>
       <CategoryContainer>
-        {subCategory
+        {category
           ? renderSubCategoriesTags(subCategories)
           : renderCategoriesTags(currentTags)}
       </CategoryContainer>
       <Status
         onDragEnter={handleStatusDragEnter}
         onDragLeave={handleStatusDragLeave}
-        variant="info"
+        variant="secondary"
       >
-        {!subCategory ? region : subCategory}
+        {!category ? region : category}
       </Status>
     </RegionActiveView>
   );

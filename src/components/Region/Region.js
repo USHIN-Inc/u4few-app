@@ -10,17 +10,17 @@ import DragContext from '../../contexts/DragContext';
 const Region = ({ type }) => {
   const { session, setSession } = useContext(SessionContext);
   const { region, setRegion } = useContext(DragContext);
-  const { points, users } = session;
+  const { points, users, rimColor } = session;
 
   const [pointInput, setPointInput] = useState(null);
 
   const _points = points.filter(
-    point => point.category === singularize(type).toLocaleLowerCase()
+    point => point.region === singularize(type).toLocaleLowerCase()
   );
 
   users.forEach(user => {
     user.points.forEach(point => {
-      if (point.category === singularize(type).toLowerCase()) {
+      if (point.region === singularize(type).toLowerCase()) {
         _points.push({ ...point, username: user.username });
       }
     });
@@ -63,7 +63,8 @@ const Region = ({ type }) => {
       if (point.id === pointId) {
         return {
           ...point,
-          category: `${singularize(type).toLowerCase()}`,
+          region: `${singularize(type).toLowerCase()}`,
+          category: null,
           subCategory: null,
         };
       }
@@ -75,19 +76,25 @@ const Region = ({ type }) => {
     });
   }
 
-  const classes = `${type} ${region === type ? 'active' : ''}
-    ${region !== type && region !== '' ? 'small' : ''}`;
-
+  let classes = `${type} ${region === type ? 'active' : ''}`;
+  classes += `${region !== type && region !== '' ? 'small' : ''}`;
+  classes += ` ${region}-active`;
+  console.log(classes);
   const isActive = region === type;
+  const isSmall = region !== '' && region !== type;
 
   if (type === 'Focus') {
-    if (pointInput && pointInput.category === 'focus') {
+    if (pointInput && pointInput.region === 'focu') {
       setRegion('Focus');
     } else if (region === 'Focus' && !pointInput) {
       setRegion('');
     }
     return (
-      <RegionView onDrop={handleDrop} className={`${classes}`}>
+      <RegionView
+        background={rimColor.background}
+        onDrop={handleDrop}
+        className={`${classes}`}
+      >
         <RegionPassive
           pointInput={pointInput}
           setPointInput={setPointInput}
@@ -100,19 +107,22 @@ const Region = ({ type }) => {
 
   return (
     <RegionView
+      background={rimColor.background}
       className={classes}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {isActive && <RegionActive region={type} />}
-      {!isActive && (
+      {isActive ? (
+        <RegionActive region={type} />
+      ) : (
         <RegionPassive
           pointInput={pointInput}
           setPointInput={setPointInput}
           points={_points}
           region={type}
+          isSmall={isSmall}
         />
       )}
     </RegionView>
@@ -124,19 +134,22 @@ Region.propTypes = {
 };
 
 const RegionView = styled.div`
-  width: 30vw;
-  height: 30vh;
+  width: 32vw;
+  height: 31.7vh;
   transition: all 0.5s;
-  border-radius: 4px;
-  border: 1px solid gray;
+  /* border: 1px solid gray; */
+  background-color: ${props => props.background};
+
   &.active {
-    width: 45vw;
-    height: 45vh;
+    width: 80vw;
+    height: 80vh;
   }
+
   &.small {
-    width: 16vw;
-    height: 16vh;
+    width: 6vw;
+    height: 6.8vh;
   }
+
   &.Facts {
     grid-area: facts;
   }
@@ -162,9 +175,6 @@ const RegionView = styled.div`
     grid-area: topics;
   }
   text-align: center;
-  &:focus {
-    min-height: 4rem;
-  }
 `;
 
 export default Region;

@@ -7,7 +7,7 @@ import PointInput from './PointInput';
 import PointView from './PointView';
 
 const Point = ({ point }) => {
-  const { id, content, category, subCategory, uid, username } = point;
+  const { id, content, region, category, subCategory, uid, username } = point;
   const { session, setSession } = useContext(SessionContext);
   const { setDragPoint, setRegion } = useContext(DragContext);
   const [isEditing, setIsEditing] = useState(false);
@@ -69,6 +69,9 @@ const Point = ({ point }) => {
     return (
       <PointInput
         id={id}
+        region={region}
+        category={category}
+        subCategory={subCategory}
         initialValue={content}
         handleCancel={handleCancel}
         handleDelete={deletePoint}
@@ -82,13 +85,24 @@ const Point = ({ point }) => {
       <PointView
         user={uid}
         content={content}
+        region={region}
         category={category}
+        subCategory={subCategory}
         handleCancel={handleCancel}
         username={username}
       />
     );
   }
   const isDraggable = uid === session.uid;
+
+  let subText;
+  if (subCategory) {
+    subText = subCategory;
+  } else if (category) {
+    subText = category;
+  } else {
+    subText = region;
+  }
 
   return (
     <PointPreview
@@ -100,7 +114,7 @@ const Point = ({ point }) => {
       onDragEnd={handleDragEnd}
     >
       <Text>{contentExcerpt}</Text>
-      <SubCategoryText>{subCategory}</SubCategoryText>
+      {subText !== 'focu' && <SubCategoryText>{subText}</SubCategoryText>}
     </PointPreview>
   );
 };

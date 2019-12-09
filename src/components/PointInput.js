@@ -11,9 +11,24 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Formik, Form, Field } from 'formik';
 
+function getText(region, category, subCategory) {
+  if (subCategory === '' && category === '') {
+    return `${region}`;
+  }
+
+  if (subCategory === '' && category !== '') {
+    return `${region} :${category}`;
+  }
+
+  return `${region} :${category} :${subCategory}`;
+}
+
 const PointInput = ({
   id,
   uid,
+  region,
+  category,
+  subCategory,
   initialValue,
   handleCancel,
   handleDelete,
@@ -32,6 +47,10 @@ const PointInput = ({
     {({ handleSubmit }) => (
       <Form style={{ width: '80%' }}>
         <Card>
+          <CardHeader>
+            {getText(region, category, subCategory)}
+            {/* {region} : {category} : {subCategory} */}
+          </CardHeader>
           <Field
             onClick={e => e.stopPropagation()}
             className="form-control"
@@ -74,6 +93,8 @@ const PointInput = ({
 PointInput.defaultProps = {
   id: '',
   initialValue: '',
+  category: '',
+  subCategory: '',
   placeholderContent: '',
   onPointInputBlur: e => {
     e.stopPropagation();
@@ -86,6 +107,9 @@ PointInput.defaultProps = {
 PointInput.propTypes = {
   id: PropTypes.string,
   uid: PropTypes.string,
+  region: PropTypes.string.isRequired,
+  category: PropTypes.string,
+  subCategory: PropTypes.string,
   initialValue: PropTypes.string,
   placeholderContent: PropTypes.string,
   onPointInputSubmit: PropTypes.func.isRequired,
@@ -93,6 +117,14 @@ PointInput.propTypes = {
   handleCancel: PropTypes.func,
   handleDelete: PropTypes.func,
 };
+
+const CardHeader = styled(Card.Header)`
+  padding: 4px;
+  height: 20px;
+  font-size: 12px;
+  text-align: left;
+  justify-content: center;
+`;
 
 const Button = styled.button`
   border: none;

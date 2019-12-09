@@ -6,7 +6,26 @@ import Badge from 'react-bootstrap/Badge';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-const PointView = ({ content, category, handleCancel, username }) => (
+function getText(region, category, subCategory) {
+  if (subCategory === '' && category === '') {
+    return `${region}`;
+  }
+
+  if (subCategory === '' && category !== '') {
+    return `${region} :${category}`;
+  }
+
+  return `${region} :${category} :${subCategory}`;
+}
+
+const PointView = ({
+  content,
+  region,
+  category,
+  subCategory,
+  handleCancel,
+  username,
+}) => (
   <Card style={{ width: '80%' }}>
     <Card.Body>
       <Card.Subtitle
@@ -16,7 +35,7 @@ const PointView = ({ content, category, handleCancel, username }) => (
           justifyContent: 'space-between',
         }}
       >
-        <Badge variant="light">{category}</Badge>
+        <Badge variant="light">{getText(region, category, subCategory)}</Badge>
         <Badge variant="primary">author: {username}</Badge>
       </Card.Subtitle>
       <br />
@@ -45,10 +64,17 @@ const Button = styled.button`
   outline: none;
 `;
 
+PointView.defaultProps = {
+  category: '',
+  subCategory: '',
+};
+
 PointView.propTypes = {
   username: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
-  category: PropTypes.string.isRequired,
+  region: PropTypes.string.isRequired,
+  category: PropTypes.string,
+  subCategory: PropTypes.string,
   handleCancel: PropTypes.func.isRequired,
 };
 

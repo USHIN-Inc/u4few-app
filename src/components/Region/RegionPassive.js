@@ -11,7 +11,13 @@ import renderPoints from './renderPoints';
 import SessionContext from '../../contexts/SessionContext';
 import PointInput from '../PointInput';
 
-const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
+const RegionPassive = ({
+  points,
+  region,
+  pointInput,
+  setPointInput,
+  isSmall,
+}) => {
   const { session, setSession } = useContext(SessionContext);
 
   // const [pointInput, setPointInput] = useState(null);
@@ -22,7 +28,7 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
       id: uuidv4(),
       uid: session.uid,
       placeholderContent: 'Tap, type, or paste anywhere...',
-      category: singularize(region).toLowerCase(),
+      region: singularize(region).toLowerCase(),
     });
   }
 
@@ -37,7 +43,7 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
       id: uuidv4(),
       uid: session.uid,
       placeholderContent: `new ${singularize(region).toLowerCase()}`,
-      category: singularize(region).toLowerCase(),
+      region: singularize(region).toLowerCase(),
     });
   }
 
@@ -59,7 +65,7 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
           id,
           uid,
           content,
-          category: singularize(region).toLowerCase(),
+          region: singularize(region).toLowerCase(),
         },
       ],
     });
@@ -87,11 +93,12 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
 
   return (
     <RegionPassiveView onClick={handleClick}>
-      {renderPoints(points)}
+      {!isSmall && renderPoints(points)}
       {pointInput && (
         <PointInput
           id={pointInput.id}
           uid={pointInput.uid}
+          region={pointInput.region}
           placeholderContent={pointInput.placeholderContent}
           onPointInputBlur={handlePointInputBlur}
           handleCancel={handlePointInputCancel}
@@ -111,6 +118,7 @@ RegionPassive.propTypes = {
   region: PropTypes.string.isRequired,
   pointInput: PropTypes.object,
   setPointInput: PropTypes.func.isRequired,
+  isSmall: PropTypes.bool.isRequired,
 };
 
 const RegionPassiveView = styled.div`
