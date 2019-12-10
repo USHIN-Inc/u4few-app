@@ -7,9 +7,10 @@ import Banner from './UserBanner';
 import DragContext from '../contexts/DragContext';
 
 const Rim = () => {
-  const { session } = useContext(SessionContext);
+  const {
+    session: { rimColor },
+  } = useContext(SessionContext);
   const { setRegion } = useContext(DragContext);
-  const { rimColor } = session;
 
   return (
     <RimView
@@ -48,10 +49,6 @@ const RimView = styled.div`
     align-self: center;
     justify-self: center;
   }
-  > .Focus.active {
-    width: 83vw;
-    height: 80vh;
-  }
   > .Merits.Focus-active {
     width: 83vw;
   }
@@ -69,10 +66,6 @@ const RimView = styled.div`
   > .Actions {
     align-self: center;
     justify-self: end;
-  }
-  > .Actions.active {
-    width: 83vw;
-    height: 80vh;
   }
   > .Topics.Actions-active {
     width: 83vw;
@@ -92,10 +85,6 @@ const RimView = styled.div`
     align-self: start;
     justify-self: end;
   }
-  > .People.active {
-    width: 83vw;
-    height: 80vh;
-  }
   > .Actions.People-active {
     width: 83vw;
   }
@@ -113,10 +102,6 @@ const RimView = styled.div`
   > .Merits {
     align-self: start;
     justify-self: center;
-  }
-  > .Merits.active {
-    width: 83vw;
-    height: 80vh;
   }
   > .Facts.Merits-active {
     height: 80vh;
@@ -136,10 +121,6 @@ const RimView = styled.div`
     align-self: start;
     justify-self: start;
   }
-  > .Facts.active {
-    width: 83vw;
-    height: 80vh;
-  }
   > .Merits.Facts-active {
     height: 80vh;
   }
@@ -157,10 +138,6 @@ const RimView = styled.div`
   > .Thoughts {
     align-self: center;
     justify-self: start;
-  }
-  > .Thoughts.active {
-    width: 83vw;
-    height: 80vh;
   }
   > .Focus.Thoughts-active {
     height: 80vh;
@@ -180,10 +157,6 @@ const RimView = styled.div`
     align-self: end;
     justify-self: start;
   }
-  > .Feelings.active {
-    width: 83vw;
-    height: 80vh;
-  }
   > .Needs.Feelings-active {
     height: 80vh;
   }
@@ -202,10 +175,6 @@ const RimView = styled.div`
     align-self: end;
     justify-self: center;
   }
-  > .Needs.active {
-    width: 83vw;
-    height: 80vh;
-  }
   > .Feelings.Needs-active {
     height: 80vh;
   }
@@ -223,10 +192,6 @@ const RimView = styled.div`
   > .Topics {
     align-self: end;
     justify-self: end;
-  }
-  > .Topics.active {
-    width: 83vw;
-    height: 80vh;
   }
   > .Feelings.Topics-active {
     height: 80vh;

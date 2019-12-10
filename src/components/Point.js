@@ -6,8 +6,10 @@ import DragContext from '../contexts/DragContext';
 import PointInput from './PointInput';
 import PointView from './PointView';
 
-const Point = ({ point }) => {
-  const { id, content, region, category, subCategory, uid, username } = point;
+const Point = ({
+  point,
+  point: { id, content, region, category, subCategory, uid, username },
+}) => {
   const { session, setSession } = useContext(SessionContext);
   const { setDragPoint, setRegion } = useContext(DragContext);
   const [isEditing, setIsEditing] = useState(false);
@@ -128,7 +130,6 @@ const PointPreview = styled.div`
   border: 1px solid gray;
   display: flex;
   flex-flow: column;
-  font-size: 1rem;
   padding: 4px;
   margin: 8px;
 `;
@@ -136,13 +137,13 @@ const PointPreview = styled.div`
 const Text = styled.p`
   margin: 0;
   padding: 0;
-  font-size: 1rem;
+  font-size: 1em;
   font-weight: bold;
 `;
 
 const SubCategoryText = styled.p`
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.8em;
 `;
 
 export default Point;

@@ -41,6 +41,7 @@ const UserSettingsModal = ({ show, handleClose }) => {
 
   function updateSession(values) {
     const { username, textColor, backgroundColor } = values;
+    console.log(backgroundColor);
     setSession({
       ...session,
       username,
@@ -56,7 +57,7 @@ const UserSettingsModal = ({ show, handleClose }) => {
     initialValues: {
       username: session.username,
       textColor: session.rimColor.text,
-      backgroundColor: session.rimColor.backgroundColor,
+      backgroundColor: session.rimColor.background,
     },
     validationSchema: Yup.object({
       username: Yup.string().required('Required'),

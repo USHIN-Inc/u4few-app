@@ -18,6 +18,7 @@ module.exports = {
   devServer: {
     contentBase: './build',
     hot: true,
+    host: '0.0.0.0',
     disableHostCheck: true,
     stats: {
       children: false,

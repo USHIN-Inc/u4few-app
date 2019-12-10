@@ -45,8 +45,8 @@ const Summary = styled.div`
   position: relative;
   height: 100%;
   display: grid;
-  grid-template-columns: 1rem auto 1rem;
-  grid-template-rows: 1rem auto 1rem;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto auto;
 `;
 
 SummaryRim.defaultProps = {

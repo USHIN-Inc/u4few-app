@@ -1,4 +1,4 @@
-/*
+/* 
   this Component will show the active region
   * list of tags
   * region label and current status indicator
@@ -7,7 +7,6 @@ import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Alert from 'react-bootstrap/Alert';
-import { singularize } from 'inflected';
 import * as TAGS from '../../constants/tags';
 import SessionContext from '../../contexts/SessionContext';
 import DragContext from '../../contexts/DragContext';
@@ -30,7 +29,7 @@ const RegionActive = ({ region }) => {
   }
 
   /*
-    Categories handlers
+    Categories handlers 
   */
   function handleCategoryDragEnter(e) {
     cancelEvents(e);
@@ -61,7 +60,7 @@ const RegionActive = ({ region }) => {
           ...point,
           category: targetName,
           subCategory: null,
-          region: singularize(region).toLowerCase(),
+          region,
         };
       }
       return point;
@@ -111,7 +110,7 @@ const RegionActive = ({ region }) => {
           ...point,
           category,
           subCategory: targetName,
-          region: singularize(region).toLowerCase(),
+          region,
         };
       }
       return point;
@@ -152,7 +151,7 @@ const RegionActive = ({ region }) => {
     e.target.style.padding = '16px';
     clearTimeout(statusLongHover);
   }
-  /*
+  /* 
     Active Region handlers
   */
   function handleRegionOnDrop(e) {
@@ -164,7 +163,7 @@ const RegionActive = ({ region }) => {
           ...point,
           category: null,
           subCategory: null,
-          region: singularize(region).toLowerCase(),
+          region,
         };
       }
       return point;

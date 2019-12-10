@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { singularize } from 'inflected';
 import SessionContext from '../../contexts/SessionContext';
 import RegionPassive from './RegionPassive';
 import RegionActive from './RegionActive';
@@ -14,19 +13,17 @@ const Region = ({ type }) => {
 
   const [pointInput, setPointInput] = useState(null);
 
-  const _points = points.filter(
-    point => point.region === singularize(type).toLocaleLowerCase()
-  );
+  const _points = points.filter(point => point.region === type);
 
   users.forEach(user => {
     user.points.forEach(point => {
-      if (point.region === singularize(type).toLowerCase()) {
+      if (point.region === type) {
         _points.push({ ...point, username: user.username });
       }
     });
   });
 
-  /*
+  /* 
     ##### Drag Handlers #####
   */
   function handleDragEnter(e) {
@@ -63,7 +60,7 @@ const Region = ({ type }) => {
       if (point.id === pointId) {
         return {
           ...point,
-          region: `${singularize(type).toLowerCase()}`,
+          region: type,
           category: null,
           subCategory: null,
         };
@@ -84,7 +81,7 @@ const Region = ({ type }) => {
   const isSmall = region !== '' && region !== type;
 
   if (type === 'Focus') {
-    if (pointInput && pointInput.region === 'focu') {
+    if (pointInput && pointInput.region === 'Focus') {
       setRegion('Focus');
     } else if (region === 'Focus' && !pointInput) {
       setRegion('');
@@ -134,14 +131,13 @@ Region.propTypes = {
 };
 
 const RegionView = styled.div`
-  width: 32vw;
-  height: 31.7vh;
+  width: 30.5vw;
+  height: 30.5vh;
   transition: all 0.5s;
-  /* border: 1px solid gray; */
   background-color: ${props => props.background};
 
   &.active {
-    width: 80vw;
+    width: 83vw;
     height: 80vh;
   }
 

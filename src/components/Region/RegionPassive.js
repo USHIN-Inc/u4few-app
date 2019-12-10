@@ -28,7 +28,7 @@ const RegionPassive = ({
       id: uuidv4(),
       uid: session.uid,
       placeholderContent: 'Tap, type, or paste anywhere...',
-      region: singularize(region).toLowerCase(),
+      region,
     });
   }
 
@@ -43,7 +43,7 @@ const RegionPassive = ({
       id: uuidv4(),
       uid: session.uid,
       placeholderContent: `new ${singularize(region).toLowerCase()}`,
-      region: singularize(region).toLowerCase(),
+      region,
     });
   }
 
@@ -65,7 +65,7 @@ const RegionPassive = ({
           id,
           uid,
           content,
-          region: singularize(region).toLowerCase(),
+          region,
         },
       ],
     });
@@ -129,6 +129,8 @@ const RegionPassiveView = styled.div`
   flex-grow: 1;
   justify-content: center;
   align-items: center;
+  overflow: auto;
+  font-size: 12px;
 `;
 
 export default RegionPassive;
