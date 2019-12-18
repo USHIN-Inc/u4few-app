@@ -1,22 +1,25 @@
-import React from 'react'
-import Rim from './Rim'
-import SummaryRim from './SummaryRim'
-import Region from './Region'
-import './SemanticScreen.css'
+import React, { useState } from 'react';
+import Rim from './Rim';
+import SummaryRim from './SummaryRim';
+import DragContext from '../contexts/DragContext';
 
-function SemanticScreen (props) {
-  const user = props.user || { id: 1, username: 'anonymous', rimColor: { background: 'inherit', text: 'inherit' } }
-  const points = props.points || []
-
+const SemanticScreen = () => {
+  const [dragPoint, setDragPoint] = useState(null);
+  const [region, setRegion] = useState('');
   return (
-    <div className='SemanticScreen border'>
+    <DragContext.Provider
+      value={{
+        dragPoint,
+        setDragPoint,
+        region,
+        setRegion,
+      }}
+    >
       <SummaryRim>
-        <Rim user={user} points={points}>
-          <Region type='Focus' />
-        </Rim>
+        <Rim />
       </SummaryRim>
-    </div>
-  )
-}
+    </DragContext.Provider>
+  );
+};
 
-export default SemanticScreen
+export default SemanticScreen;
