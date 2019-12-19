@@ -94,7 +94,6 @@ const Region = ({ type }) => {
   let classes = `${type} ${region === type ? 'active' : ''}`;
   classes += `${region !== type && region !== '' ? 'small' : ''}`;
   classes += ` ${region}-active`;
-  console.log(classes);
   const isActive = region === type;
   const isSmall = region !== '' && region !== type;
 
@@ -115,6 +114,7 @@ const Region = ({ type }) => {
           setPointInput={setPointInput}
           points={_points}
           region={type}
+          isSmall={isSmall}
         />
       </RegionView>
     );
