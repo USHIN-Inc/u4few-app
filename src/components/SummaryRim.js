@@ -21,58 +21,30 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import SummaryRegion from './SummaryRegion';
 
-const SummaryRim = ({ points, children }) => (
-  <Summary>
-    <SummaryRegion
-      type="Facts"
-      points={points.filter(n => n.category === 'fact')}
-    />
-    <SummaryRegion
-      type="Merits"
-      points={points.filter(n => n.category === 'merit')}
-    />
-    <SummaryRegion
-      type="People"
-      points={points.filter(n => n.category === 'person')}
-    />
-    <SummaryRegion
-      type="Thoughts"
-      points={points.filter(n => n.category === 'thought')}
-    />
+const SummaryRim = ({ children }) => (
+  <Summary id="rim">
+    <SummaryRegion type="Facts" />
+    <SummaryRegion type="Merits" />
+    <SummaryRegion type="People" />
+    <SummaryRegion type="Thoughts" />
     {children}
-    <SummaryRegion
-      type="Actions"
-      points={points.filter(n => n.category === 'action')}
-    />
-    <SummaryRegion
-      type="Needs"
-      points={points.filter(n => n.category === 'need')}
-    />
-    <SummaryRegion
-      type="Feelings"
-      points={points.filter(n => n.category === 'feeling')}
-    />
-    <SummaryRegion
-      type="Topics"
-      points={points.filter(n => n.category === 'topic')}
-    />
+    <SummaryRegion type="Actions" />
+    <SummaryRegion type="Needs" />
+    <SummaryRegion type="Feelings" />
+    <SummaryRegion type="Topics" />
   </Summary>
 );
 
 const Summary = styled.div`
   position: relative;
   height: 100%;
+  width: 100%;
   display: grid;
-  grid-template-columns: auto auto auto;
-  grid-template-rows: auto auto auto;
+  grid-template-columns: 2rem auto 2rem;
+  grid-template-rows: 2rem auto 2rem;
 `;
 
-SummaryRim.defaultProps = {
-  points: [],
-};
-
 SummaryRim.propTypes = {
-  points: PropTypes.array,
   children: PropTypes.node.isRequired,
 };
 

@@ -16,28 +16,44 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React, { useState } from 'react';
-import Rim from './Rim';
+import React from 'react';
+import styled from 'styled-components';
+import Rim from './Rim/Rim';
 import SummaryRim from './SummaryRim';
-import DragContext from '../contexts/DragContext';
+import RightPanel from './RightPanel';
+import TopPanel from './TopPanel';
 
-const SemanticScreen = () => {
-  const [dragPoint, setDragPoint] = useState(null);
-  const [region, setRegion] = useState('');
-  return (
-    <DragContext.Provider
-      value={{
-        dragPoint,
-        setDragPoint,
-        region,
-        setRegion,
-      }}
-    >
-      <SummaryRim>
-        <Rim />
-      </SummaryRim>
-    </DragContext.Provider>
-  );
-};
+const SemanticScreen = () => (
+  <Container id="semanticScreen">
+    <SummaryRim>
+      <Rim />
+    </SummaryRim>
+    <TopPanel />
+    <RightPanel />
+  </Container>
+);
+
+const Container = styled.div`
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  grid-template-rows: min-content 1fr;
+  grid-template-areas:
+    'topPanel topPanel'
+    'rim rightPanel';
+
+  > #topPanel {
+    grid-area: topPanel;
+  }
+
+  > #rim {
+    grid-area: rim;
+  }
+
+  > #rightPanel {
+    grid-area: rightPanel;
+  }
+`;
 
 export default SemanticScreen;

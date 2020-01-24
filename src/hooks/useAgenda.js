@@ -16,12 +16,36 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import { createContext } from 'react';
 
-const SessionContext = createContext({
-  session: null,
-  setSession: () => {},
-  users: [],
-});
+import uuidv4 from 'uuid';
+import useLocalStorage from './useLocalStorage';
 
-export default SessionContext;
+export default function useAgenda() {
+  const [agendaItems, setAgendaItems] = useLocalStorage('agendaItems', [
+    { id: 1, text: 'Add an Item' },
+  ]);
+
+  function createAgendaItem(text) {
+    setAgendaItems([
+      ...agendaItems,
+      {
+        id: uuidv4(),
+        text,
+      },
+    ]);
+  }
+
+  function destroyAgendaItem(id) {
+    const newItems = agendaItems.filter(item => item.id !== id);
+    setAgendaItems(newItems);
+  }
+
+  const agenda = {
+    agendaItems,
+    setAgendaItems,
+    createAgendaItem,
+    destroyAgendaItem,
+  };
+
+  return agenda;
+}

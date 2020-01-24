@@ -17,18 +17,32 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Point from './Point';
+import UiContext from '../contexts/UiContext';
 
 const SummaryRegion = ({ points, type }) => {
+  const { toggleSidePanel, topPanelOpen, setTopPanelOpen } = useContext(
+    UiContext
+  );
+
   const displayedPoints = points.map(n => (
     <Point key={n.id} id={n.id} title={n.title} category={n.category} />
   ));
 
+  function handleOnclick() {
+    if (type === 'Actions') {
+      toggleSidePanel();
+    }
+    if (type === 'Merits') {
+      setTopPanelOpen(!topPanelOpen);
+    }
+  }
+
   return (
-    <SummaryRegionView className={`border ${type}`}>
+    <SummaryRegionView className={`border ${type}`} onClick={handleOnclick}>
       {displayedPoints}
     </SummaryRegionView>
   );

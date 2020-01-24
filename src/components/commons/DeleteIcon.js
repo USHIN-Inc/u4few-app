@@ -16,13 +16,29 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import { createContext } from 'react';
 
-const DragContext = createContext({
-  dragPoint: null,
-  setDragPoint: () => {},
-  region: '',
-  setRegion: () => {},
-});
+import React from 'react';
+import styled from 'styled-components';
+import PropTypes from 'prop-types';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-export default DragContext;
+const DeleteIconButton = ({ handleClick }) => (
+  <Container role="button" onClick={handleClick}>
+    <Icon icon={faTimes} />
+  </Container>
+);
+
+DeleteIconButton.defaultProps = {
+  handleClick: () => {},
+};
+
+DeleteIconButton.propTypes = {
+  handleClick: PropTypes.func,
+};
+
+const Container = styled.div`
+  display: inline;
+`;
+
+export default DeleteIconButton;

@@ -26,7 +26,7 @@ import Alert from 'react-bootstrap/Alert';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { TwitterPicker } from 'react-color';
-import SessionContext from '../contexts/SessionContext';
+import DataContext from '../contexts/DataContext';
 
 const textColors = [
   '#CB5400',
@@ -55,27 +55,24 @@ const backgroundColors = [
 ];
 
 const UserSettingsModal = ({ show, handleClose }) => {
-  const { session, setSession } = useContext(SessionContext);
+  const {
+    session: {
+      updateUserSettings,
+      session: { me },
+    },
+  } = useContext(DataContext);
 
   function updateSession(values) {
     const { username, textColor, backgroundColor } = values;
-    console.log(backgroundColor);
-    setSession({
-      ...session,
-      username,
-      rimColor: {
-        text: textColor,
-        background: backgroundColor,
-      },
-    });
+    updateUserSettings(textColor, backgroundColor, username);
     handleClose();
   }
 
   const formik = useFormik({
     initialValues: {
-      username: session.username,
-      textColor: session.rimColor.text,
-      backgroundColor: session.rimColor.background,
+      username: me.username,
+      textColor: me.rimColor.text,
+      backgroundColor: me.rimColor.background,
     },
     validationSchema: Yup.object({
       username: Yup.string().required('Required'),

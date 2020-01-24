@@ -43,7 +43,6 @@ function getText(region, category, subCategory) {
 
 const PointInput = ({
   id,
-  uid,
   region,
   category,
   subCategory,
@@ -58,17 +57,13 @@ const PointInput = ({
     initialValues={{ content: initialValue }}
     onSubmit={e => {
       e.id = id;
-      e.uid = uid;
       onPointInputSubmit(e);
     }}
   >
     {({ handleSubmit }) => (
       <Form style={{ width: '80%' }}>
         <Card>
-          <CardHeader>
-            {getText(region, category, subCategory)}
-            {/* {region} : {category} : {subCategory} */}
-          </CardHeader>
+          <CardHeader>{getText(region, category, subCategory)}</CardHeader>
           <Field
             onClick={e => e.stopPropagation()}
             className="form-control"
@@ -124,7 +119,6 @@ PointInput.defaultProps = {
 
 PointInput.propTypes = {
   id: PropTypes.string,
-  uid: PropTypes.string,
   region: PropTypes.string.isRequired,
   category: PropTypes.string,
   subCategory: PropTypes.string,
