@@ -32,27 +32,8 @@ const Section = ({ title, children }) => {
     setOpen(!open);
   }
 
-  const [sectionSize, setSectionSize] = useState('small');
-  function toggleSectionSize() {
-    switch (sectionSize) {
-      case 'small':
-        setSectionSize('medium');
-        break;
-      case 'medium':
-        setSectionSize('large');
-        break;
-      case 'large':
-        setSectionSize('small');
-        break;
-      default:
-        console.log('error');
-        break;
-    }
-  }
-
   const classes = [];
 
-  classes.push(`section--size-${sectionSize}`);
   classes.push(open ? 'section--open' : 'section--closed');
   classes.push(`right-panel--${sidePanelState}`);
 
@@ -86,62 +67,22 @@ const Title = styled.h3`
 const SectionContainer = styled.div`
   margin: 8px;
   border-bottom: 1px solid lightgray;
-  overflow-y: scroll;
-  transition: width 1s;
-
-  &.right-panel--closed {
-    max-width: 0px;
-  }
-
+  overflow-y: hidden;
+  width: auto;
+  transition: max-height 1s;
+  height: auto;
+  max-height: 200vh;
   &.right-panel--open {
     max-width: calc(512px - 128px - 32px);
   }
-
   &.right-panel--open-2 {
     max-width: calc(512px + 128px - 32px);
   }
-
   &.right-panel--open-3 {
     max-width: calc(1024px - 32px);
   }
-
-  &.section--size-small {
-    width: calc(512px - 128px - 32px);
-  }
-
-  &.section--size-medium {
-    width: calc(512px + 128px - 32px);
-  }
-  &.section--size-large {
-    width: calc(1024px - 32px);
-  }
-
-  &.section--open {
-    animation: open 1s ease-in;
-    animation-fill-mode: forwards;
-
-    @keyframes open {
-      from {
-        height: 48px;
-      }
-      to {
-        height: 80%;
-      }
-    }
-  }
-
   &.section--closed {
-    animation: close 1s ease-in;
-    animation-fill-mode: forwards;
-
-    @keyframes close {
-      0% {
-        height: 80%;
-      }
-      100% {
-        height: 48px;
-      }
-    }
+    max-height: 48px;
   }
 `;
 

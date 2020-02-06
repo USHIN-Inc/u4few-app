@@ -42,7 +42,7 @@ export default function useSession() {
 
   function updateUserSettings(textColor, backgroundColor, username) {
     setSession({
-      ...setSession,
+      ...session,
       me: {
         ...session.me,
         username,

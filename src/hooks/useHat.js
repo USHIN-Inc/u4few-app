@@ -21,8 +21,22 @@ import { useState } from 'react';
 import useLocalStorage from './useLocalStorage';
 
 const useHat = () => {
-  const [hats, setHats] = useLocalStorage('hats', [{ name: 'development' }]);
+  const [hats, setHats] = useLocalStorage('hats', [
+    { name: 'development', hatIndex: 0, colorIndex: 0 },
+    { name: 'kindwoman', hatIndex: 2, colorIndex: 2 },
+  ]);
   const [selectedHat, setSelectedHat] = useState(undefined);
+
+  function changeHatIcon(name, hatIndex, colorIndex) {
+    setHats(
+      hats.map(h => {
+        if (h.name === name) {
+          return { name, hatIndex, colorIndex };
+        }
+        return h;
+      })
+    );
+  }
 
   function updateSelectedHat(name) {
     setSelectedHat(name);
@@ -36,7 +50,7 @@ const useHat = () => {
       return;
     }
     // if name !inUse dave the new hat
-    setHats([...hats, { name }]);
+    setHats([...hats, { name, hatIndex: 0, colorIndex: 0 }]);
   }
 
   function destroyHat(name) {
@@ -44,7 +58,14 @@ const useHat = () => {
     setHats(hats.filter(h => h.name !== name)); // go and try do this on java ha!
   }
 
-  return { hats, createHat, destroyHat, selectedHat, updateSelectedHat };
+  return {
+    hats,
+    createHat,
+    destroyHat,
+    selectedHat,
+    changeHatIcon,
+    updateSelectedHat,
+  };
 };
 
 export default useHat;

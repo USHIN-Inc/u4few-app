@@ -34,8 +34,8 @@ const Hats = () => {
   const [search, setSearch] = useState('');
 
   function handleCreateHat(value) {
-    setSearch('');
     createHat(value);
+    setSearch('');
   }
 
   function byQuery(query) {
@@ -51,8 +51,9 @@ const Hats = () => {
   return (
     <Section title="Hats">
       <>
+        {/* eslint-disable-next-line react/button-has-type */}
         <SimpleForm
-          placeholder="Search / new Hat"
+          placeholder="search / new Hat"
           onChange={handleChange}
           onSubmit={handleCreateHat}
         />

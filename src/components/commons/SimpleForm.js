@@ -25,6 +25,7 @@ const SimpleForm = ({ placeholder, onSubmit, onChange }) => {
 
   function handleCreateItem(e) {
     e.preventDefault();
+    e.stopPropagation();
     if (value !== '') onSubmit(value);
     setValue('');
   }
@@ -42,10 +43,16 @@ const SimpleForm = ({ placeholder, onSubmit, onChange }) => {
     }
   }
 
+  function handleInputClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
   return (
     <div className="input-group mb-3">
       <input
         type="text"
+        onClick={handleInputClick}
         value={value}
         onChange={handleChange}
         className="form-control"

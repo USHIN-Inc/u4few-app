@@ -31,6 +31,17 @@ const Agenda = () => {
 
   const title = `Agenda ${new Date().toDateString()}`;
 
+  function handleDelete(e, id) {
+    e.preventDefault();
+    e.stopPropagation();
+    destroyAgendaItem(id);
+  }
+
+  function handleClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
   return (
     <Section title={title}>
       <>
@@ -40,11 +51,10 @@ const Agenda = () => {
             <ListGroup.Item
               key={item.id}
               className="d-flex justify-content-between align-items-center"
+              onClick={handleClick}
             >
               {item.text}
-              <DeleteIconButton
-                handleClick={() => destroyAgendaItem(item.id)}
-              />
+              <DeleteIconButton handleClick={e => handleDelete(e, item.id)} />
             </ListGroup.Item>
           ))}
         </ListGroup>

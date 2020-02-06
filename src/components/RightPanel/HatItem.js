@@ -17,7 +17,7 @@
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import {
@@ -35,28 +35,31 @@ const colorOptions = ['black', 'red', 'blue', 'green'];
 
 const HatItem = ({ hat }) => {
   const {
-    hat: { destroyHat, selectedHat, updateSelectedHat },
+    hat: { destroyHat, selectedHat, updateSelectedHat, changeHatIcon },
   } = useContext(DataContext);
-
-  const [hatIndex, setHatIndex] = useState(0);
-  const [colorIndex, setColoIndex] = useState(0);
 
   function handleHatIconChange(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (hatIndex === hatOptions.length - 1) {
-      setHatIndex(0);
-      if (colorIndex === colorOptions.length - 1) {
-        setColoIndex(0);
+    let newHat;
+    let newColor;
+    if (hat.hatIndex === hatOptions.length - 1) {
+      newHat = 0;
+      if (hat.colorIndex === colorOptions.length - 1) {
+        newColor = 0;
       } else {
-        setColoIndex(colorIndex + 1);
+        newColor = hat.colorIndex + 1;
       }
     } else {
-      setHatIndex(hatIndex + 1);
+      newHat = hat.hatIndex + 1;
+      newColor = hat.colorIndex;
     }
+    changeHatIcon(hat.name, newHat, newColor);
   }
 
-  function handleHatSelection() {
+  function handleHatSelection(e) {
+    e.preventDefault();
+    e.stopPropagation();
     if (selectedHat !== hat.name) {
       updateSelectedHat(hat.name);
     } else {
@@ -73,7 +76,6 @@ const HatItem = ({ hat }) => {
   if (hat.name === selectedHat) {
     className += ' border-info bg-light';
   }
-
   return (
     <ListGroup.Item
       draggable
@@ -82,8 +84,8 @@ const HatItem = ({ hat }) => {
       className={className}
     >
       <Icon
-        color={colorOptions[colorIndex]}
-        icon={hatOptions[hatIndex]}
+        color={colorOptions[hat.colorIndex]}
+        icon={hatOptions[hat.hatIndex]}
         onClick={handleHatIconChange}
       />
       {hat.name}
