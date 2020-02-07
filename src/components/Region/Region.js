@@ -16,18 +16,22 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import SessionContext from '../../contexts/SessionContext';
 import RegionPassive from './RegionPassive';
 import RegionActive from './RegionActive';
-import DragContext from '../../contexts/DragContext';
+import DataContext from '../../contexts/DataContext';
 
-const Region = ({ type }) => {
-  const { session, setSession } = useContext(SessionContext);
-  const { region, setRegion } = useContext(DragContext);
-  const { points, users, rimColor } = session;
+const Region = ({ type, dispatch, rimState }) => {
+  const {
+    session: {
+      session: { users },
+      updatePoint,
+      session,
+    },
+  } = useContext(DataContext);
+  const { points, rimColor } = session.me;
 
   const [pointInput, setPointInput] = useState(null);
 
@@ -41,81 +45,109 @@ const Region = ({ type }) => {
     });
   });
 
-  /* 
+  /*
     ##### Drag Handlers #####
   */
+  let longEvent;
+
   function handleDragEnter(e) {
     e.preventDefault();
     e.stopPropagation();
-    setRegion(type);
+    if (rimState.region !== type && rimState.region !== 'none') {
+      dispatch({ type: `deactivate${rimState.region}` });
+      window.clearTimeout(longEvent);
+      longEvent = setTimeout(() => {
+        dispatch({ type: `activate${type}` });
+      }, 1000);
+    } else if (rimState.region === 'none') {
+      window.clearTimeout(longEvent);
+      longEvent = setTimeout(() => {
+        // setRegion(type);
+        dispatch({ type: `activate${type}` });
+      }, 1000);
+    }
   }
 
   function handleDragLeave(e) {
     e.preventDefault();
+    window.clearTimeout(longEvent);
   }
 
-  // this method is required to implement the
-  // drag drop zone
   function handleDragOver(e) {
     e.preventDefault();
   }
 
-  // this function updates the point
-  // category to the current region type
   function handleDrop(e) {
+    // updates the point category
     e.preventDefault();
-    e.target.classList.remove('bg-light');
-
-    // TODO: update this to use DragContext
-    const pointId = e.dataTransfer.getData('text');
-
+    clearTimeout(longEvent);
     if (type === 'Focus' && _points.length > 0) {
       return;
     }
 
+    if (rimState.region !== 'none') {
+      dispatch({ type: `deactivate${rimState.region}` });
+    }
+
+    const pointId = e.dataTransfer.getData('text');
+
     // update the point to this area
-    const newPoints = points.map(point => {
-      if (point.id === pointId) {
-        return {
-          ...point,
-          region: type,
-          category: null,
-          subCategory: null,
-        };
-      }
-      return point;
-    });
-    setSession({
-      ...session,
-      points: newPoints,
+    updatePoint(pointId, {
+      region: type,
+      category: undefined,
+      subCategory: undefined,
     });
   }
+  // End Drag Handlers
 
-  let classes = `${type} ${region === type ? 'active' : ''}`;
-  classes += `${region !== type && region !== '' ? 'small' : ''}`;
-  classes += ` ${region}-active`;
-  const isActive = region === type;
-  const isSmall = region !== '' && region !== type;
+  // handles which region to show
+  const isActive = rimState.region === type;
+
+  /*
+    The following logic handles when to show the points
+    in order for the rim animations to look good the
+    points should be hidden while resizing
+  */
+  const [isSmall, setIsSmall] = useState(true);
+  const [timeOut, setTimeOut] = useState(null);
+  useEffect(() => {
+    if (rimState.region === 'none') {
+      setTimeOut(
+        setTimeout(() => {
+          setIsSmall(false);
+        }, 1000)
+      );
+    }
+    if (rimState.region !== 'none' && rimState.region !== type) {
+      clearTimeout(timeOut);
+      setIsSmall(true);
+    }
+    // eslint-disable-next-line
+  }, [rimState.region, type, pointInput]);
+  // End of Is small logic
 
   if (type === 'Focus') {
-    if (pointInput && pointInput.region === 'Focus') {
-      setRegion('Focus');
-    } else if (region === 'Focus' && !pointInput) {
-      setRegion('');
+    if (pointInput) {
+      if (rimState.region !== 'Focus') dispatch({ type: 'activateFocus' });
+    } else if (rimState.region === 'Focus' && !pointInput) {
+      dispatch({ type: 'deactivateFocus' });
     }
     return (
       <RegionView
         background={rimColor.background}
         onDrop={handleDrop}
-        className={`${classes}`}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
       >
-        <RegionPassive
-          pointInput={pointInput}
-          setPointInput={setPointInput}
-          points={_points}
-          region={type}
-          isSmall={isSmall}
-        />
+        {!isSmall && (
+          <RegionPassive
+            pointInput={pointInput}
+            setPointInput={setPointInput}
+            points={_points}
+            region={type}
+          />
+        )}
       </RegionView>
     );
   }
@@ -123,21 +155,18 @@ const Region = ({ type }) => {
   return (
     <RegionView
       background={rimColor.background}
-      className={classes}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {isActive ? (
-        <RegionActive region={type} />
-      ) : (
+      {isActive && <RegionActive region={type} dispatch={dispatch} />}
+      {!isActive && !isSmall && (
         <RegionPassive
           pointInput={pointInput}
           setPointInput={setPointInput}
           points={_points}
           region={type}
-          isSmall={isSmall}
         />
       )}
     </RegionView>
@@ -146,48 +175,15 @@ const Region = ({ type }) => {
 
 Region.propTypes = {
   type: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  rimState: PropTypes.object.isRequired,
 };
 
 const RegionView = styled.div`
-  width: 30.5vw;
-  height: 30.5vh;
-  transition: all 0.5s;
+  width: 100%;
+  height: 100%;
+  transition: all 1s;
   background-color: ${props => props.background};
-
-  &.active {
-    width: 83vw;
-    height: 80vh;
-  }
-
-  &.small {
-    width: 6vw;
-    height: 6.8vh;
-  }
-
-  &.Facts {
-    grid-area: facts;
-  }
-  &.Merits {
-    grid-area: merits;
-  }
-  &.People {
-    grid-area: people;
-  }
-  &.Thoughts {
-    grid-area: thoughts;
-  }
-  &.Actions {
-    grid-area: actions;
-  }
-  &.Feelings {
-    grid-area: feelings;
-  }
-  &.Needs {
-    grid-area: needs;
-  }
-  &.Topics {
-    grid-area: topics;
-  }
   text-align: center;
 `;
 

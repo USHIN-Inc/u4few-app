@@ -19,25 +19,22 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import SessionContext from '../contexts/SessionContext';
-import DragContext from '../contexts/DragContext';
 import PointInput from './PointInput';
 import PointView from './PointView';
+import DataContext from '../contexts/DataContext';
 
 const Point = ({
-  point,
-  point: { id, content, region, category, subCategory, uid, username },
+  point: { id, content, region, category, subCategory, uid, username, hat },
 }) => {
-  const { session, setSession } = useContext(SessionContext);
-  const { setDragPoint, setRegion } = useContext(DragContext);
+  const {
+    session: { session, destroyPoint, putHatOn, updatePoint },
+  } = useContext(DataContext);
+
   const [isEditing, setIsEditing] = useState(false);
 
   function deletePoint(e) {
     e.stopPropagation();
-    setSession({
-      ...session,
-      points: session.points.filter(_point => _point.id !== id),
-    });
+    destroyPoint(id);
   }
 
   const contentExcerpt =
@@ -52,30 +49,25 @@ const Point = ({
   // this seems ok, but we can add like a image
   // to represent the point for a ux/ui upgrade
   function handleDragStart(e) {
-    setDragPoint(point);
     e.dataTransfer.setData('text', e.target.id);
     e.dataTransfer.dropEffect = 'move';
+  }
+
+  // handles the dropping of hats
+  function handleDrop(e) {
+    const hatName = e.dataTransfer.getData('hat');
+    putHatOn(id, hatName);
   }
 
   // TODO: check if operation was successful
   function handleDragEnd(e) {
     e.preventDefault();
     e.stopPropagation();
-    setDragPoint(null);
-    setRegion('');
   }
 
   function handleUpdate(e) {
     if (e.content !== content) {
-      setSession({
-        ...session,
-        points: session.points.map(_point => {
-          if (_point.id === e.id) {
-            return { ..._point, content: e.content };
-          }
-          return _point;
-        }),
-      });
+      updatePoint(id, { content: e.content });
     }
     setIsEditing(!isEditing);
   }
@@ -85,7 +77,7 @@ const Point = ({
     setIsEditing(false);
   }
 
-  if (session.uid === uid && isEditing) {
+  if (session.me.uid === uid && isEditing) {
     return (
       <PointInput
         id={id}
@@ -113,7 +105,7 @@ const Point = ({
       />
     );
   }
-  const isDraggable = uid === session.uid;
+  const isDraggable = uid === session.me.uid;
 
   let subText;
   if (subCategory) {
@@ -126,15 +118,16 @@ const Point = ({
 
   return (
     <PointPreview
-      // className="border rounded"
       id={id}
       draggable={isDraggable}
       onClick={handleClick}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onDrop={handleDrop}
     >
+      {hat && <SubCategoryText>{hat}</SubCategoryText>}
       <Text>{contentExcerpt}</Text>
-      {subText !== 'focu' && <SubCategoryText>{subText}</SubCategoryText>}
+      <SubCategoryText>{subText}</SubCategoryText>
     </PointPreview>
   );
 };

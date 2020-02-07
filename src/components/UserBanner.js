@@ -20,12 +20,17 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 
-import SessionContext from '../contexts/SessionContext';
+import DataContext from '../contexts/DataContext';
 import UserSettingsModal from './UserSettingsModal';
 
 const Banner = () => {
-  const { session } = useContext(SessionContext);
-  const { rimColor, username } = session;
+  const {
+    session: {
+      session: {
+        me: { rimColor, username },
+      },
+    },
+  } = useContext(DataContext);
 
   const [editing, setEditing] = useState(false);
 

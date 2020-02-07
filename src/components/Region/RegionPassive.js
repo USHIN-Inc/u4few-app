@@ -20,46 +20,48 @@
   This component will handle showing the small region
   and will show only the small points stuff
 */
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 import { singularize } from 'inflected';
 import renderPoints from './renderPoints';
-import SessionContext from '../../contexts/SessionContext';
+import DataContext from '../../contexts/DataContext';
 import PointInput from '../PointInput';
 
-const RegionPassive = ({
-  points,
-  region,
-  pointInput,
-  setPointInput,
-  isSmall,
-}) => {
-  const { session, setSession } = useContext(SessionContext);
+const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
+  const {
+    session: {
+      createPoint,
+      me: { uid },
+    },
+    hat: { selectedHat },
+  } = useContext(DataContext);
 
-  // const [pointInput, setPointInput] = useState(null);
-
-  // Starts the Focus region with a pointInput
-  if (!pointInput && points.length === 0 && region === 'Focus') {
-    setPointInput({
-      id: uuidv4(),
-      uid: session.uid,
-      placeholderContent: 'Tap, type, or paste anywhere...',
-      region,
-    });
-  }
+  // make this behavior run only once
+  useEffect(() => {
+    // Starts the Focus region with a pointInput
+    if (!pointInput && points.length === 0 && region === 'Focus') {
+      setPointInput({
+        id: uuidv4(),
+        uid,
+        placeholderContent: 'Tap, type, or paste anywhere...',
+        region,
+      });
+    }
+    /* eslint-disable-next-line */
+  }, []);
 
   function handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
     // prevents Focus area from having more that one point
-    if (region === 'Focus') {
+    if (region === 'Focus' && points.length > 0) {
       return;
     }
     setPointInput({
       id: uuidv4(),
-      uid: session.uid,
+      uid,
       placeholderContent: `new ${singularize(region).toLowerCase()}`,
       region,
     });
@@ -70,23 +72,12 @@ const RegionPassive = ({
     useState hook
    */
   function handlePointInputSubmit(e) {
-    const { id, content, uid } = e;
+    const { id, content } = e;
     if (content === '') {
       setPointInput(null);
       return;
     }
-    setSession({
-      ...session,
-      points: [
-        ...session.points,
-        {
-          id,
-          uid,
-          content,
-          region,
-        },
-      ],
-    });
+    createPoint({ id, uid, content, region, hat: selectedHat });
     setPointInput(null);
   }
 
@@ -111,11 +102,10 @@ const RegionPassive = ({
 
   return (
     <RegionPassiveView onClick={handleClick}>
-      {!isSmall && renderPoints(points)}
+      {renderPoints(points)}
       {pointInput && (
         <PointInput
           id={pointInput.id}
-          uid={pointInput.uid}
           region={pointInput.region}
           placeholderContent={pointInput.placeholderContent}
           onPointInputBlur={handlePointInputBlur}
@@ -136,7 +126,6 @@ RegionPassive.propTypes = {
   region: PropTypes.string.isRequired,
   pointInput: PropTypes.object,
   setPointInput: PropTypes.func.isRequired,
-  isSmall: PropTypes.bool.isRequired,
 };
 
 const RegionPassiveView = styled.div`

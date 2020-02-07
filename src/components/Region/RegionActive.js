@@ -16,7 +16,7 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-/* 
+/*
   this Component will show the active region
   * list of tags
   * region label and current status indicator
@@ -26,18 +26,18 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Alert from 'react-bootstrap/Alert';
 import * as TAGS from '../../constants/tags';
-import SessionContext from '../../contexts/SessionContext';
-import DragContext from '../../contexts/DragContext';
+import DataContext from '../../contexts/DataContext';
+import useDebounce from '../../hooks/useDebounce';
 
 function cancelEvents(e) {
   e.preventDefault();
   e.stopPropagation();
 }
 
-const RegionActive = ({ region }) => {
-  const { session, setSession } = useContext(SessionContext);
-  const { points } = session;
-  const { setRegion } = useContext(DragContext);
+const RegionActive = ({ region, dispatch }) => {
+  const {
+    session: { updatePoint },
+  } = useContext(DataContext);
   const currentTags = Object.keys(TAGS[region]);
   let longHoverEvent;
   const [category, setCategory] = useState(null);
@@ -47,7 +47,7 @@ const RegionActive = ({ region }) => {
   }
 
   /*
-    Categories handlers 
+    Categories handlers
   */
   function handleCategoryDragEnter(e) {
     cancelEvents(e);
@@ -72,22 +72,8 @@ const RegionActive = ({ region }) => {
     cancelEvents(e);
     const pointId = e.dataTransfer.getData('text');
     const targetName = e.target.getAttribute('name');
-    const newPoints = points.map(point => {
-      if (point.id === pointId) {
-        return {
-          ...point,
-          category: targetName,
-          subCategory: null,
-          region,
-        };
-      }
-      return point;
-    });
-    setSession({
-      ...session,
-      points: newPoints,
-    });
-    setRegion('');
+    updatePoint(pointId, { category: targetName, subCategory: null, region });
+    dispatch({ type: `deactivate${region}` });
   }
 
   function renderCategoriesTags(tags) {
@@ -122,22 +108,8 @@ const RegionActive = ({ region }) => {
     cancelEvents(e);
     const pointId = e.dataTransfer.getData('text');
     const targetName = e.target.getAttribute('name');
-    const newPoints = points.map(point => {
-      if (point.id === pointId) {
-        return {
-          ...point,
-          category,
-          subCategory: targetName,
-          region,
-        };
-      }
-      return point;
-    });
-    setSession({
-      ...session,
-      points: newPoints,
-    });
-    setRegion('');
+    updatePoint(pointId, { category, subCategory: targetName, region });
+    dispatch({ type: `deactivate${region}` });
   }
   function renderSubCategoriesTags(tags) {
     return tags.map(label => (
@@ -169,49 +141,43 @@ const RegionActive = ({ region }) => {
     e.target.style.padding = '16px';
     clearTimeout(statusLongHover);
   }
-  /* 
+  /*
     Active Region handlers
   */
   function handleRegionOnDrop(e) {
     cancelEvents(e);
     const pointId = e.dataTransfer.getData('text');
-    const newPoints = points.map(point => {
-      if (point.id === pointId) {
-        return {
-          ...point,
-          category: null,
-          subCategory: null,
-          region,
-        };
-      }
-      return point;
-    });
-    setSession({
-      ...session,
-      points: newPoints,
-    });
-    setRegion('');
+    updatePoint(pointId, { category: null, subCategory: null, region });
+    dispatch({ type: `deactivate${region}` });
   }
+
+  const visible = useDebounce(true, 1000);
+
   return (
     <RegionActiveView onDrop={handleRegionOnDrop}>
-      <CategoryContainer>
-        {category
-          ? renderSubCategoriesTags(subCategories)
-          : renderCategoriesTags(currentTags)}
-      </CategoryContainer>
-      <Status
-        onDragEnter={handleStatusDragEnter}
-        onDragLeave={handleStatusDragLeave}
-        variant="secondary"
-      >
-        {!category ? region : category}
-      </Status>
+      {visible && (
+        <>
+          <CategoryContainer>
+            {category
+              ? renderSubCategoriesTags(subCategories)
+              : renderCategoriesTags(currentTags)}
+          </CategoryContainer>
+          <Status
+            onDragEnter={handleStatusDragEnter}
+            onDragLeave={handleStatusDragLeave}
+            variant="secondary"
+          >
+            {!category ? region : category}
+          </Status>
+        </>
+      )}
     </RegionActiveView>
   );
 };
 
 RegionActive.propTypes = {
   region: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 const CategoryContainer = styled.div`
