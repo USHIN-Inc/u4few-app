@@ -106,7 +106,7 @@ const PanelContainer = styled.div`
   align-items: center;
   width: 100%;
   padding-left: 32px;
-  background: #f5f5f5;
+  background: white;
   transition: height 1s;
   ${props =>
     props.open

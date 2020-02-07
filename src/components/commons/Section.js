@@ -72,15 +72,19 @@ const SectionContainer = styled.div`
   transition: max-height 1s;
   height: auto;
   max-height: 200vh;
+
   &.right-panel--open {
     max-width: calc(512px - 128px - 32px);
   }
+
   &.right-panel--open-2 {
     max-width: calc(512px + 128px - 32px);
   }
+
   &.right-panel--open-3 {
     max-width: calc(1024px - 32px);
   }
+
   &.section--closed {
     max-height: 48px;
   }

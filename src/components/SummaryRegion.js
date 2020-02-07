@@ -20,17 +20,13 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Point from './Point';
+// import Point from './Point';
 import UiContext from '../contexts/UiContext';
 
-const SummaryRegion = ({ points, type }) => {
+const SummaryRegion = ({ type }) => {
   const { toggleSidePanel, topPanelOpen, setTopPanelOpen } = useContext(
     UiContext
   );
-
-  const displayedPoints = points.map(n => (
-    <Point key={n.id} id={n.id} title={n.title} category={n.category} />
-  ));
 
   function handleOnclick() {
     if (type === 'Actions') {
@@ -41,19 +37,10 @@ const SummaryRegion = ({ points, type }) => {
     }
   }
 
-  return (
-    <SummaryRegionView className={`border ${type}`} onClick={handleOnclick}>
-      {displayedPoints}
-    </SummaryRegionView>
-  );
-};
-
-SummaryRegion.defaultProps = {
-  points: [],
+  return <SummaryRegionView className={`${type}`} onClick={handleOnclick} />;
 };
 
 SummaryRegion.propTypes = {
-  points: PropTypes.array,
   type: PropTypes.string.isRequired,
 };
 
