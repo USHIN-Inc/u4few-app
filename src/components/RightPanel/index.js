@@ -25,23 +25,19 @@ import Agenda from './Agenda';
 import Hats from './Hats';
 import TrashZone from './TrashZone';
 
-// TODO multiple sizes
-function stopClickEvents(e) {
-  e.preventDefault();
-  e.stopPropagation();
-}
-
 const RightPanel = () => {
-  const { sidePanelState } = useContext(UiContext);
+  const { sidePanelState, toggleSidePanel } = useContext(UiContext);
 
   const className = `panel__right--${sidePanelState}`;
 
+  function handleClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleSidePanel();
+  }
+
   return (
-    <PanelContainer
-      id="rightPanel"
-      onClick={stopClickEvents}
-      className={className}
-    >
+    <PanelContainer id="rightPanel" onClick={handleClick} className={className}>
       {sidePanelState !== 'closed' && <Hats />}
       {sidePanelState !== 'closed' && <Agenda />}
       <TrashZone sidePanelState={sidePanelState} />
@@ -51,7 +47,7 @@ const RightPanel = () => {
 
 const PanelContainer = styled.div`
   position: relative;
-  background: #f5f5f5;
+  background: white;
   transition: width 1s;
   overflow-y: scroll;
 
