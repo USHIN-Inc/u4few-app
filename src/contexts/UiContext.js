@@ -38,26 +38,13 @@ const UiContextProvider = ({ children }) => {
   function toggleSidePanel() {
     switch (sidePanelState) {
       case 'closed':
-        setSidePanelState('open-1');
-        break;
-      case 'open-1':
-        setSidePanelState('open-2');
-        break;
-      case 'open-2':
-        setSidePanelState('open-3');
-        break;
-      case 'open-3':
-        setSidePanelState('closed');
+        setSidePanelState('open');
         break;
       case 'open':
-        setSidePanelState('open-2');
+        setSidePanelState('closed');
         break;
       default:
         console.log('error');
-        break;
-    }
-    if (sidePanelState === 'closed') {
-      setSidePanelState('open');
     }
   }
 
