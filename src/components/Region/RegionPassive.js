@@ -31,14 +31,10 @@ import PointInput from '../PointInput';
 
 const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
   const {
-    session: {
-      createPoint,
-      me: { uid },
-    },
-    hat: { selectedHat },
+    semscreen: { createPoint },
+    me: { uid },
   } = useContext(DataContext);
 
-  // make this behavior run only once
   useEffect(() => {
     // Starts the Focus region with a pointInput
     if (!pointInput && points.length === 0 && region === 'Focus') {
@@ -77,7 +73,7 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
       setPointInput(null);
       return;
     }
-    createPoint({ id, uid, content, region, hat: selectedHat });
+    createPoint({ id, uid, content, region });
     setPointInput(null);
   }
 

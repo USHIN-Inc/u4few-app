@@ -21,17 +21,14 @@
 import React, { useContext } from 'react';
 import Region from '../Region/Region';
 import DataContext from '../../contexts/DataContext';
-import Banner from '../UserBanner';
+import Banner from '../Banner';
 import RimView from './RimView';
 import useRimReducer from './useRimReducer';
 
 const Rim = () => {
-  // i dont like this scaffolding
   const {
-    session: {
-      session: {
-        me: { rimColor },
-      },
+    semscreen: {
+      settings: { textColor, backgroundColor },
     },
   } = useContext(DataContext);
 
@@ -40,8 +37,8 @@ const Rim = () => {
   return (
     <RimView
       id="rim"
-      backgroundColor={rimColor.background}
-      color={rimColor.text}
+      backgroundColor={backgroundColor}
+      color={textColor}
       className={rimState.className}
     >
       <Banner />

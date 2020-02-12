@@ -26,7 +26,7 @@ import DataContext from '../../contexts/DataContext';
 
 const TrashZone = ({ sidePanelState }) => {
   const {
-    session: { destroyPoint },
+    semscreen: { destroyPoint },
   } = useContext(DataContext);
   const [active, setActive] = useState(false);
 

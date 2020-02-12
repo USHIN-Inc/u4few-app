@@ -23,6 +23,60 @@ const paulaid = uuidv4();
 const ws1 = uuidv4();
 const ws2 = uuidv4();
 
+const initialAppStateV2 = {
+  me: {
+    username: 'anonymous',
+    uid: meuid,
+  },
+  hats: [
+    {
+      name: 'test1',
+      id: ws1,
+      settings: {
+        textColor: '#111',
+        backgroundColor: '#eee',
+        hatIndex: 0,
+        hatColorIndex: 0,
+      },
+      points: [
+        {
+          id: '1',
+          content: 'U4U',
+          region: 'Topics',
+          uid: meuid,
+        },
+        {
+          id: '2',
+          content: 'Frontend',
+          region: 'Topics',
+          uid: meuid,
+        },
+        {
+          id: '4',
+          content: '@alex Finish the frontend for U4U, like, soon!',
+          region: 'Actions',
+          uid: meuid,
+        },
+        {
+          id: '5',
+          content: 'Development Team',
+          region: 'People',
+          uid: meuid,
+        },
+        {
+          id: '6',
+          content: 'Alex Garcia',
+          region: 'People',
+          uid: paulaid,
+        },
+      ],
+    },
+    // end of first workSpace
+  ],
+};
+
+export { initialAppStateV2 };
+
 const initialAppState = {
   currentWorkSpace: ws2,
   workSpaces: [

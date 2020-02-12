@@ -21,17 +21,17 @@ import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 
 import DataContext from '../contexts/DataContext';
-import UserSettingsModal from './UserSettingsModal';
+import UserSettingsModal from './SettingsModal';
 
 const Banner = () => {
   const {
-    session: {
-      session: {
-        me: { rimColor, username },
-      },
+    hats: {
+      selectedHat: { name },
+    },
+    semscreen: {
+      settings: { textColor },
     },
   } = useContext(DataContext);
-
   const [editing, setEditing] = useState(false);
 
   function handleClose() {
@@ -43,8 +43,8 @@ const Banner = () => {
   }
   return (
     <>
-      <BannerView color={rimColor.text} onClick={handleOpen}>
-        {username}
+      <BannerView color={textColor} onClick={handleOpen}>
+        {name || 'No selected hat'}
       </BannerView>
       <UserSettingsModal show={editing} handleClose={handleClose} />
     </>
@@ -54,7 +54,7 @@ const Banner = () => {
 const BannerView = styled.div`
   position: absolute;
   text-align: center;
-  font-size: 1rem;
+  font-size: 1.5rem;
   top: -0.75rem;
   right: 0.5rem;
   padding: 0;

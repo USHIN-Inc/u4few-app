@@ -27,7 +27,8 @@ const Point = ({
   point: { id, content, region, category, subCategory, uid, username, hat },
 }) => {
   const {
-    session: { session, destroyPoint, putHatOn, updatePoint },
+    semscreen: { destroyPoint, putHatOn, updatePoint },
+    me,
   } = useContext(DataContext);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -77,7 +78,7 @@ const Point = ({
     setIsEditing(false);
   }
 
-  if (session.me.uid === uid && isEditing) {
+  if (me.uid === uid && isEditing) {
     return (
       <PointInput
         id={id}
@@ -105,7 +106,7 @@ const Point = ({
       />
     );
   }
-  const isDraggable = uid === session.me.uid;
+  const isDraggable = uid === me.uid;
 
   let subText;
   if (subCategory) {

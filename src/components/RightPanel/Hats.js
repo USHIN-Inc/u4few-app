@@ -28,7 +28,7 @@ import HatItem from './HatItem';
 
 const Hats = () => {
   const {
-    hat: { hats, createHat },
+    hats: { hats, createHat },
   } = useContext(DataContext);
 
   const [search, setSearch] = useState('');

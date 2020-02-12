@@ -36,7 +36,7 @@ function cancelEvents(e) {
 
 const RegionActive = ({ region, dispatch }) => {
   const {
-    session: { updatePoint },
+    semscreen: { updatePoint },
   } = useContext(DataContext);
   const currentTags = Object.keys(TAGS[region]);
   let longHoverEvent;

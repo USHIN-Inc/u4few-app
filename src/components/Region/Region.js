@@ -25,25 +25,16 @@ import DataContext from '../../contexts/DataContext';
 
 const Region = ({ type, dispatch, rimState }) => {
   const {
-    session: {
-      session: { users },
+    semscreen: {
+      points,
       updatePoint,
-      session,
+      settings: { backgroundColor },
     },
   } = useContext(DataContext);
-  const { points, rimColor } = session.me;
 
   const [pointInput, setPointInput] = useState(null);
 
   const _points = points.filter(point => point.region === type);
-
-  users.forEach(user => {
-    user.points.forEach(point => {
-      if (point.region === type) {
-        _points.push({ ...point, username: user.username });
-      }
-    });
-  });
 
   /*
     ##### Drag Handlers #####
@@ -134,7 +125,7 @@ const Region = ({ type, dispatch, rimState }) => {
     }
     return (
       <RegionView
-        background={rimColor.background}
+        background={backgroundColor}
         onDrop={handleDrop}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
@@ -154,7 +145,7 @@ const Region = ({ type, dispatch, rimState }) => {
 
   return (
     <RegionView
-      background={rimColor.background}
+      background={backgroundColor}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
