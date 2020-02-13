@@ -20,7 +20,7 @@
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import UiContext from '../../contexts/UiContext';
+import UiContext from '../../context/UiContext';
 
 const Section = ({ title, children }) => {
   const { sidePanelState } = useContext(UiContext);

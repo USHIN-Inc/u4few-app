@@ -21,7 +21,7 @@ import React, { useContext, useState } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 import Section from '../commons/Section';
-import DataContext from '../../contexts/DataContext';
+import DataContext from '../../context/DataContext';
 import SimpleForm from '../commons/SimpleForm';
 
 import HatItem from './HatItem';

@@ -21,22 +21,25 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import PointInput from './PointInput';
 import PointView from './PointView';
-import DataContext from '../contexts/DataContext';
+import DataContext from '../context/DataContext';
+import RimContext from '../context/RimContext';
 
 const Point = ({
   point: { id, content, region, category, subCategory, uid, username, hat },
+  canOpen,
 }) => {
   const {
-    semscreen: { destroyPoint, putHatOn, updatePoint },
+    semscreen: { putHatOn, updatePoint },
     me,
   } = useContext(DataContext);
+  const {
+    state: { isEditing },
+    setIsEditing,
+    activateRegion,
+    deactivateRegion,
+  } = useContext(RimContext);
 
-  const [isEditing, setIsEditing] = useState(false);
-
-  function deletePoint(e) {
-    e.stopPropagation();
-    destroyPoint(id);
-  }
+  const [open, setOpen] = useState(false);
 
   const contentExcerpt =
     content.length > 8 ? `${content.substring(0, 5).trim()}...` : content;
@@ -44,7 +47,13 @@ const Point = ({
   function handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
-    setIsEditing(!isEditing);
+    console.log('click', isEditing, open);
+    if (isEditing) {
+      return;
+    }
+    setOpen(true);
+    setIsEditing(true);
+    activateRegion(region);
   }
 
   // this seems ok, but we can add like a image
@@ -70,15 +79,19 @@ const Point = ({
     if (e.content !== content) {
       updatePoint(id, { content: e.content });
     }
-    setIsEditing(!isEditing);
+    setOpen(false);
+    setIsEditing(false);
+    deactivateRegion(region);
   }
 
   function handleCancel(e) {
     e.stopPropagation();
+    setOpen(false);
     setIsEditing(false);
+    deactivateRegion(region);
   }
 
-  if (me.uid === uid && isEditing) {
+  if (me.uid === uid && open) {
     return (
       <PointInput
         id={id}
@@ -87,13 +100,13 @@ const Point = ({
         subCategory={subCategory}
         initialValue={content}
         handleCancel={handleCancel}
-        handleDelete={deletePoint}
         onPointInputSubmit={handleUpdate}
+        onPointInputBlur={() => deactivateRegion(region)}
       />
     );
   }
 
-  if (isEditing) {
+  if (open) {
     return (
       <PointView
         user={uid}
@@ -135,6 +148,7 @@ const Point = ({
 
 Point.propTypes = {
   point: PropTypes.object.isRequired,
+  canOpen: PropTypes.bool.isRequired,
 };
 
 const PointPreview = styled.div`

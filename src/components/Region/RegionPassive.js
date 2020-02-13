@@ -20,41 +20,39 @@
   This component will handle showing the small region
   and will show only the small points stuff
 */
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 import { singularize } from 'inflected';
-import renderPoints from './renderPoints';
-import DataContext from '../../contexts/DataContext';
+import DataContext from '../../context/DataContext';
 import PointInput from '../PointInput';
+import Point from '../Point';
+import RimContext from '../../context/RimContext';
 
 const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
   const {
     semscreen: { createPoint },
     me: { uid },
   } = useContext(DataContext);
-
-  useEffect(() => {
-    // Starts the Focus region with a pointInput
-    if (!pointInput && points.length === 0 && region === 'Focus') {
-      setPointInput({
-        id: uuidv4(),
-        uid,
-        placeholderContent: 'Tap, type, or paste anywhere...',
-        region,
-      });
-    }
-    /* eslint-disable-next-line */
-  }, []);
+  const {
+    state: { isEditing },
+    setIsEditing,
+    deactivateRegion,
+  } = useContext(RimContext);
 
   function handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
+    // TODO add condition to know if we can open
+    if (pointInput || isEditing) {
+      return;
+    }
     // prevents Focus area from having more that one point
     if (region === 'Focus' && points.length > 0) {
       return;
     }
+    setIsEditing(true);
     setPointInput({
       id: uuidv4(),
       uid,
@@ -71,40 +69,36 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
     const { id, content } = e;
     if (content === '') {
       setPointInput(null);
+      setIsEditing(false);
+      deactivateRegion(region);
       return;
     }
     createPoint({ id, uid, content, region });
     setPointInput(null);
-  }
-
-  /*
-    there is a requirement so save on blur
-    that is currently not the case here
-  */
-  function handlePointInputBlur(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const content = e.target.value;
-
-    if (content === '') {
-      setPointInput(null);
-    }
+    setIsEditing(false);
+    deactivateRegion(region);
   }
 
   function handlePointInputCancel(e) {
     e.stopPropagation();
     setPointInput(null);
+    setIsEditing(false);
+    deactivateRegion(region);
   }
+
+  const canOpen = !pointInput;
 
   return (
     <RegionPassiveView onClick={handleClick}>
-      {renderPoints(points)}
+      {points.map(point => (
+        <Point point={point} key={point.id} canOpen={canOpen} />
+      ))}
       {pointInput && (
         <PointInput
           id={pointInput.id}
           region={pointInput.region}
           placeholderContent={pointInput.placeholderContent}
-          onPointInputBlur={handlePointInputBlur}
+          onPointInputBlur={handlePointInputSubmit}
           handleCancel={handlePointInputCancel}
           onPointInputSubmit={handlePointInputSubmit}
         />

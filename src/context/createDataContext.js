@@ -1,3 +1,6 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable guard-for-in */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,21 +19,24 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React from 'react';
-import Point from '../Point';
+import React, { useReducer } from 'react';
 
-const renderPoints = points =>
-  points.map(point => (
-    <Point
-      point={point}
-      key={point.id}
-      id={point.id}
-      content={point.content}
-      category={point.category}
-      subCategory={point.subCategory}
-      uid={point.uid}
-      username={point.username}
-    />
-  ));
+export default (reducer, actions, defaultValue) => {
+  const Context = React.createContext();
 
-export default renderPoints;
+  const Provider = ({ children }) => {
+    const [state, dispatch] = useReducer(reducer, defaultValue);
+
+    const boundActions = {};
+    for (const key in actions) {
+      boundActions[key] = actions[key](dispatch);
+    }
+
+    return (
+      <Context.Provider value={{ state, ...boundActions }}>
+        {children}
+      </Context.Provider>
+    );
+  };
+  return { Context, Provider };
+};

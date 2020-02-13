@@ -22,7 +22,7 @@ import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import DataContext from '../../contexts/DataContext';
+import DataContext from '../../context/DataContext';
 
 const TrashZone = ({ sidePanelState }) => {
   const {

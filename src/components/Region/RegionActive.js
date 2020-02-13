@@ -16,28 +16,25 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-/*
-  this Component will show the active region
-  * list of tags
-  * region label and current status indicator
-*/
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Alert from 'react-bootstrap/Alert';
 import * as TAGS from '../../constants/tags';
-import DataContext from '../../contexts/DataContext';
+import DataContext from '../../context/DataContext';
 import useDebounce from '../../hooks/useDebounce';
+import RimContext from '../../context/RimContext';
 
 function cancelEvents(e) {
   e.preventDefault();
   e.stopPropagation();
 }
 
-const RegionActive = ({ region, dispatch }) => {
+const RegionActive = ({ region }) => {
   const {
     semscreen: { updatePoint },
   } = useContext(DataContext);
+  const { deactivateRegion } = useContext(RimContext);
   const currentTags = Object.keys(TAGS[region]);
   let longHoverEvent;
   const [category, setCategory] = useState(null);
@@ -73,7 +70,7 @@ const RegionActive = ({ region, dispatch }) => {
     const pointId = e.dataTransfer.getData('text');
     const targetName = e.target.getAttribute('name');
     updatePoint(pointId, { category: targetName, subCategory: null, region });
-    dispatch({ type: `deactivate${region}` });
+    deactivateRegion(region);
   }
 
   function renderCategoriesTags(tags) {
@@ -109,7 +106,7 @@ const RegionActive = ({ region, dispatch }) => {
     const pointId = e.dataTransfer.getData('text');
     const targetName = e.target.getAttribute('name');
     updatePoint(pointId, { category, subCategory: targetName, region });
-    dispatch({ type: `deactivate${region}` });
+    deactivateRegion(region);
   }
   function renderSubCategoriesTags(tags) {
     return tags.map(label => (
@@ -148,7 +145,7 @@ const RegionActive = ({ region, dispatch }) => {
     cancelEvents(e);
     const pointId = e.dataTransfer.getData('text');
     updatePoint(pointId, { category: null, subCategory: null, region });
-    dispatch({ type: `deactivate${region}` });
+    deactivateRegion(region);
   }
 
   const visible = useDebounce(true, 1000);
@@ -177,7 +174,6 @@ const RegionActive = ({ region, dispatch }) => {
 
 RegionActive.propTypes = {
   region: PropTypes.string.isRequired,
-  dispatch: PropTypes.func.isRequired,
 };
 
 const CategoryContainer = styled.div`

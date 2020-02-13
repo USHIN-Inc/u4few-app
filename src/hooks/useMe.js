@@ -16,8 +16,8 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import uuidV4 from 'uuid/v4';
 import useLocalStorage from './useLocalStorage';
+import { initialAppStateV2 } from '../constants/initialState';
 /*  me schema
     me: {
         username: string,
@@ -26,14 +26,9 @@ import useLocalStorage from './useLocalStorage';
     }
 */
 const useMe = () => {
-  const [me, setMe] = useLocalStorage('me', {
-    username: 'anonymous',
-    setUsername: () => {},
-    uid: uuidV4(),
-  });
-
+  const [me, setMe] = useLocalStorage('me', initialAppStateV2.me);
   function setUsername(newUsername) {
-    // here goes any validation for the username
+    // here goes any kind of validation for the username
     if (me.username === newUsername) {
       alert('That username is already in use');
       return;

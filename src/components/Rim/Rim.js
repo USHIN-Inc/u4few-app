@@ -20,10 +20,10 @@
 /* eslint-disable global-require */
 import React, { useContext } from 'react';
 import Region from '../Region/Region';
-import DataContext from '../../contexts/DataContext';
+import DataContext from '../../context/DataContext';
 import Banner from '../Banner';
 import RimView from './RimView';
-import useRimReducer from './useRimReducer';
+import RimContext from '../../context/RimContext';
 
 const Rim = () => {
   const {
@@ -31,26 +31,27 @@ const Rim = () => {
       settings: { textColor, backgroundColor },
     },
   } = useContext(DataContext);
-
-  const [rimState, dispatch] = useRimReducer();
+  const {
+    state: { className },
+  } = useContext(RimContext);
 
   return (
     <RimView
       id="rim"
       backgroundColor={backgroundColor}
       color={textColor}
-      className={rimState.className}
+      className={className}
     >
       <Banner />
-      <Region type="Facts" rimState={rimState} dispatch={dispatch} />
-      <Region type="Merits" rimState={rimState} dispatch={dispatch} />
-      <Region type="People" rimState={rimState} dispatch={dispatch} />
-      <Region type="Thoughts" rimState={rimState} dispatch={dispatch} />
-      <Region type="Focus" rimState={rimState} dispatch={dispatch} />
-      <Region type="Actions" rimState={rimState} dispatch={dispatch} />
-      <Region type="Feelings" rimState={rimState} dispatch={dispatch} />
-      <Region type="Needs" rimState={rimState} dispatch={dispatch} />
-      <Region type="Topics" rimState={rimState} dispatch={dispatch} />
+      <Region type="Facts" />
+      <Region type="Merits" />
+      <Region type="People" />
+      <Region type="Thoughts" />
+      <Region type="Focus" />
+      <Region type="Actions" />
+      <Region type="Feelings" />
+      <Region type="Needs" />
+      <Region type="Topics" />
     </RimView>
   );
 };

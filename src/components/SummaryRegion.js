@@ -20,8 +20,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-// import Point from './Point';
-import UiContext from '../contexts/UiContext';
+import UiContext from '../context/UiContext';
 
 const SummaryRegion = ({ type }) => {
   const { toggleSidePanel, topPanelOpen, setTopPanelOpen } = useContext(

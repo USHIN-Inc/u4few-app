@@ -25,7 +25,7 @@ import Form from 'react-bootstrap/Form';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { TwitterPicker } from 'react-color';
-import DataContext from '../contexts/DataContext';
+import DataContext from '../context/DataContext';
 
 const textColors = [
   '#CB5400',

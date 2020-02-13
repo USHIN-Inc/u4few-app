@@ -28,7 +28,7 @@ import {
 import ListGroup from 'react-bootstrap/ListGroup';
 
 import DeleteIcon from '../commons/DeleteIcon';
-import DataContext from '../../contexts/DataContext';
+import DataContext from '../../context/DataContext';
 
 const hatOptions = [faHatCowboy, faHatWizard, faGraduationCap];
 const colorOptions = ['black', 'red', 'blue', 'green'];

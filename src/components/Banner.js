@@ -20,7 +20,7 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 
-import DataContext from '../contexts/DataContext';
+import DataContext from '../context/DataContext';
 import UserSettingsModal from './SettingsModal';
 
 const Banner = () => {

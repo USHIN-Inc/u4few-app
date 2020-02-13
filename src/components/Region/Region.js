@@ -19,20 +19,44 @@
 import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import uuidv4 from 'uuid/v4';
 import RegionPassive from './RegionPassive';
 import RegionActive from './RegionActive';
-import DataContext from '../../contexts/DataContext';
+import DataContext from '../../context/DataContext';
+import RimContext from '../../context/RimContext';
 
-const Region = ({ type, dispatch, rimState }) => {
+const Region = ({ type }) => {
   const {
     semscreen: {
       points,
       updatePoint,
       settings: { backgroundColor },
     },
+    me: { uid },
   } = useContext(DataContext);
+  const {
+    state: { region, cloud, isEditing },
+    activateRegion,
+    deactivateRegion,
+  } = useContext(RimContext);
 
   const [pointInput, setPointInput] = useState(null);
+  useEffect(() => {
+    // Starts the Focus region with a pointInput
+    if (
+      !pointInput &&
+      points.filter(p => p.region === 'Focus').length === 0 &&
+      type === 'Focus'
+    ) {
+      setPointInput({
+        id: uuidv4(),
+        uid,
+        placeholderContent: 'Tap, type, or paste anywhere...',
+        region: type,
+      });
+    }
+    /* eslint-disable-next-line */
+  }, []);
 
   const _points = points.filter(point => point.region === type);
 
@@ -44,17 +68,17 @@ const Region = ({ type, dispatch, rimState }) => {
   function handleDragEnter(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (rimState.region !== type && rimState.region !== 'none') {
-      dispatch({ type: `deactivate${rimState.region}` });
+    if (region !== type && region !== 'none') {
+      // deactivateRegion(region);
       window.clearTimeout(longEvent);
       longEvent = setTimeout(() => {
-        dispatch({ type: `activate${type}` });
+        activateRegion(type, true);
       }, 1000);
-    } else if (rimState.region === 'none') {
+    } else if (region === 'none') {
       window.clearTimeout(longEvent);
       longEvent = setTimeout(() => {
         // setRegion(type);
-        dispatch({ type: `activate${type}` });
+        activateRegion(type, true);
       }, 1000);
     }
   }
@@ -76,8 +100,8 @@ const Region = ({ type, dispatch, rimState }) => {
       return;
     }
 
-    if (rimState.region !== 'none') {
-      dispatch({ type: `deactivate${rimState.region}` });
+    if (region !== 'none') {
+      deactivateRegion(region);
     }
 
     const pointId = e.dataTransfer.getData('text');
@@ -91,9 +115,6 @@ const Region = ({ type, dispatch, rimState }) => {
   }
   // End Drag Handlers
 
-  // handles which region to show
-  const isActive = rimState.region === type;
-
   /*
     The following logic handles when to show the points
     in order for the rim animations to look good the
@@ -102,26 +123,27 @@ const Region = ({ type, dispatch, rimState }) => {
   const [isSmall, setIsSmall] = useState(true);
   const [timeOut, setTimeOut] = useState(null);
   useEffect(() => {
-    if (rimState.region === 'none') {
+    if (region === 'none') {
       setTimeOut(
         setTimeout(() => {
           setIsSmall(false);
         }, 1000)
       );
     }
-    if (rimState.region !== 'none' && rimState.region !== type) {
+    if (region !== 'none' && region !== type) {
       clearTimeout(timeOut);
       setIsSmall(true);
     }
     // eslint-disable-next-line
-  }, [rimState.region, type, pointInput]);
+  }, [region, type, pointInput]);
   // End of Is small logic
 
   if (type === 'Focus') {
     if (pointInput) {
-      if (rimState.region !== 'Focus') dispatch({ type: 'activateFocus' });
-    } else if (rimState.region === 'Focus' && !pointInput) {
-      dispatch({ type: 'deactivateFocus' });
+      if (region !== 'Focus') activateRegion('Focus');
+    }
+    if (region === 'Focus' && !pointInput && !isEditing) {
+      deactivateRegion('Focus');
     }
     return (
       <RegionView
@@ -143,6 +165,11 @@ const Region = ({ type, dispatch, rimState }) => {
     );
   }
 
+  // open region if point input is active
+  if (pointInput && region !== type) {
+    activateRegion(type);
+  }
+
   return (
     <RegionView
       background={backgroundColor}
@@ -151,8 +178,8 @@ const Region = ({ type, dispatch, rimState }) => {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {isActive && <RegionActive region={type} dispatch={dispatch} />}
-      {!isActive && !isSmall && (
+      {cloud && region === type && <RegionActive region={type} />}
+      {!cloud && !isSmall && (
         <RegionPassive
           pointInput={pointInput}
           setPointInput={setPointInput}
@@ -166,8 +193,6 @@ const Region = ({ type, dispatch, rimState }) => {
 
 Region.propTypes = {
   type: PropTypes.string.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  rimState: PropTypes.object.isRequired,
 };
 
 const RegionView = styled.div`
