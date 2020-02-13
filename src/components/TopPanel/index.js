@@ -23,58 +23,14 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-import UiContext from '../../contexts/UiContext';
-import NewWorkSpaceForm from './NewWorkSpaceForm';
-import DataContext from '../../contexts/DataContext';
+import UiContext from '../../context/UiContext';
 
 const TopPanel = () => {
   const { topPanelOpen } = useContext(UiContext);
-  const {
-    workSpace: {
-      workSpaces,
-      switchWorkSpace,
-      currentWorkSpace,
-      destroyWorkSpace,
-    },
-    session: { setSession },
-  } = useContext(DataContext);
-
-  function handleDeleteWorkSpace(workSpaceId) {
-    if (window.confirm('are you sure you want to delete this workSpace')) {
-      destroyWorkSpace(workSpaceId);
-      // TODO: handle session undefined
-      // setSession(undefined);
-    }
-  }
 
   return (
     <PanelContainer id="topPanel" open={topPanelOpen}>
-      {topPanelOpen && (
-        <>
-          {workSpaces.map(workspace => {
-            if (workspace.id === currentWorkSpace) {
-              return (
-                <WorkSpace key={workspace.id}>
-                  {workspace.name}
-                  <DeleteIcon
-                    handleDelete={() => handleDeleteWorkSpace(workspace.id)}
-                  />
-                </WorkSpace>
-              );
-            }
-            return (
-              <WorkSpace
-                key={workspace.id}
-                onClick={() => switchWorkSpace(workspace.id, setSession)}
-              >
-                {workspace.name}
-              </WorkSpace>
-            );
-          })}
-        </>
-      )}
-
-      {topPanelOpen && workSpaces.length < 5 && <NewWorkSpaceForm />}
+      {topPanelOpen && <p>We are working on this</p>}
     </PanelContainer>
   );
 };
@@ -87,19 +43,6 @@ const DeleteIcon = ({ handleDelete }) => (
 DeleteIcon.propTypes = {
   handleDelete: PropTypes.func.isRequired,
 };
-
-const WorkSpace = styled.div`
-  min-width: 64px;
-  width: min-content;
-  height: 65px;
-  padding: 8px;
-  margin-right: 32px;
-  background-color: lightgray;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 4px;
-`;
 
 const PanelContainer = styled.div`
   display: flex;

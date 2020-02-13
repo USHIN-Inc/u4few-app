@@ -28,42 +28,44 @@ import {
 import ListGroup from 'react-bootstrap/ListGroup';
 
 import DeleteIcon from '../commons/DeleteIcon';
-import DataContext from '../../contexts/DataContext';
+import DataContext from '../../context/DataContext';
 
 const hatOptions = [faHatCowboy, faHatWizard, faGraduationCap];
 const colorOptions = ['black', 'red', 'blue', 'green'];
 
 const HatItem = ({ hat }) => {
   const {
-    hat: { destroyHat, selectedHat, updateSelectedHat, changeHatIcon },
+    hats: { destroyHat, selectedHat, switchSelectedHat, changeHatIcon },
   } = useContext(DataContext);
+  const { hatIndex, hatColorIndex } = hat.settings;
 
   function handleHatIconChange(e) {
     e.preventDefault();
     e.stopPropagation();
     let newHat;
     let newColor;
-    if (hat.hatIndex === hatOptions.length - 1) {
+    if (hatIndex === hatOptions.length - 1) {
       newHat = 0;
-      if (hat.colorIndex === colorOptions.length - 1) {
+      if (hatColorIndex === colorOptions.length - 1) {
         newColor = 0;
       } else {
-        newColor = hat.colorIndex + 1;
+        newColor = hatColorIndex + 1;
       }
     } else {
-      newHat = hat.hatIndex + 1;
-      newColor = hat.colorIndex;
+      newHat = hatIndex + 1;
+      newColor = hatColorIndex;
     }
-    changeHatIcon(hat.name, newHat, newColor);
+    changeHatIcon(hat.id, newHat, newColor);
   }
 
   function handleHatSelection(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (selectedHat !== hat.name) {
-      updateSelectedHat(hat.name);
+    if (selectedHat.id !== hat.id) {
+      switchSelectedHat(hat.id);
     } else {
-      updateSelectedHat(undefined);
+      // updateSelectedHat(undefined);
+      // TODO: add validation here
     }
   }
 
@@ -73,7 +75,7 @@ const HatItem = ({ hat }) => {
   }
 
   let className = 'd-flex justify-content-between align-items-center';
-  if (hat.name === selectedHat) {
+  if (hat.name === selectedHat.name) {
     className += ' border-info bg-light';
   }
   return (
@@ -84,12 +86,12 @@ const HatItem = ({ hat }) => {
       className={className}
     >
       <Icon
-        color={colorOptions[hat.colorIndex]}
-        icon={hatOptions[hat.hatIndex]}
+        color={colorOptions[hatColorIndex]}
+        icon={hatOptions[hatIndex]}
         onClick={handleHatIconChange}
       />
       {hat.name}
-      <DeleteIcon handleClick={() => destroyHat(hat.name)} />
+      <DeleteIcon handleClick={() => destroyHat(hat.id)} />
     </ListGroup.Item>
   );
 };

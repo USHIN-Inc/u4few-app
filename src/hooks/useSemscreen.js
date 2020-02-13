@@ -17,56 +17,56 @@
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import useLocalStorage from './useLocalStorage';
-import initialAppState from '../constants/initialState';
+/*
+    hat schema
+    {
+        name: string,
+        id: string,
+        settings: {
+            textColor: hexadecimal color,
+            backgroundColor: hexadecimal color,
+            hatIndex: number,
+            hatColorIndex: number,
+        },
+        points: [
+            ...
+            {
+                id: string,
+                uid: string,
+                username: string,
+                content: string,
+                region: string,
+                category: string optional,
+                subCategory: string optional,
+            }
+        ]
+    }
+*/
 
-export default function useSession() {
-  const [session, setSession] = useLocalStorage(
-    'session',
-    initialAppState.workSpaces[0]
-  );
-
-  const {
-    me: { points },
-  } = session;
+export default function useSemscreen(selectedHat, setSelectedHat, me) {
+  const { points, settings } = selectedHat;
 
   function _updatePointsArray(newPointsArray) {
-    setSession({
-      ...session,
-      me: {
-        ...session.me,
-        points: newPointsArray,
-      },
-    });
-  }
-
-  function updateUserSettings(textColor, backgroundColor, username) {
-    setSession({
-      ...session,
-      me: {
-        ...session.me,
-        username,
-        rimColor: {
-          text: textColor,
-          background: backgroundColor,
-        },
-      },
+    setSelectedHat({
+      ...selectedHat,
+      points: newPointsArray,
     });
   }
 
   function putHatOn(pointId, hat) {
     // search for the point
-    const point = session.me.points.find(p => p.id === pointId);
+    const point = points.find(p => p.id === pointId);
     // put hat on
     point.hat = hat;
-    // save to array
-    const newArray = [...points.filter(p => p.id !== pointId), point];
-    // update session
-    _updatePointsArray(newArray);
+    // save new changes
+    _updatePointsArray([...points.filter(p => p.id !== pointId), point]);
   }
 
   function createPoint(newPoint) {
-    const newArray = [...points, newPoint];
+    const newArray = [
+      ...points,
+      { ...newPoint, uid: me.uid, username: me.username },
+    ];
     _updatePointsArray(newArray);
   }
 
@@ -95,14 +95,23 @@ export default function useSession() {
     _updatePointsArray(newPointsArray);
   }
 
+  function updateSettings(newSettings) {
+    setSelectedHat({
+      ...selectedHat,
+      settings: {
+        ...settings,
+        ...newSettings,
+      },
+    });
+  }
+
   return {
-    session,
-    setSession,
-    me: session.me,
+    points,
     putHatOn,
-    updateUserSettings,
-    updatePoint,
     destroyPoint,
+    updatePoint,
     createPoint,
+    settings,
+    updateSettings,
   };
 }

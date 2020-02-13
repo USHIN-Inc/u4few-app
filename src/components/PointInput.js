@@ -22,11 +22,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import {
-  faTimes,
-  faCheck,
-  faTrashAlt,
-} from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { Formik, Form, Field } from 'formik';
 
 function getText(region, category, subCategory) {
@@ -48,10 +44,8 @@ const PointInput = ({
   subCategory,
   initialValue,
   handleCancel,
-  handleDelete,
   placeholderContent,
   onPointInputSubmit,
-  onPointInputBlur,
 }) => (
   <Formik
     initialValues={{ content: initialValue }}
@@ -73,7 +67,7 @@ const PointInput = ({
             name="content"
             as="textarea"
             rows="5"
-            onBlur={onPointInputBlur}
+            // onBlur={handleSubmit}
           />
           <Card.Footer
             style={{
@@ -91,11 +85,6 @@ const PointInput = ({
             <Button onClick={handleCancel}>
               <Icon icon={faTimes} color="red" />
             </Button>
-            {handleDelete && (
-              <Button onClick={handleDelete}>
-                <Icon icon={faTrashAlt} />
-              </Button>
-            )}
           </Card.Footer>
         </Card>
       </Form>
@@ -109,12 +98,7 @@ PointInput.defaultProps = {
   category: '',
   subCategory: '',
   placeholderContent: '',
-  onPointInputBlur: e => {
-    e.stopPropagation();
-    e.preventDefault();
-  },
   handleCancel: null,
-  handleDelete: null,
 };
 
 PointInput.propTypes = {
@@ -125,9 +109,7 @@ PointInput.propTypes = {
   initialValue: PropTypes.string,
   placeholderContent: PropTypes.string,
   onPointInputSubmit: PropTypes.func.isRequired,
-  onPointInputBlur: PropTypes.func,
   handleCancel: PropTypes.func,
-  handleDelete: PropTypes.func,
 };
 
 const CardHeader = styled(Card.Header)`

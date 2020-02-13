@@ -22,11 +22,10 @@ import PropTypes from 'prop-types';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Alert from 'react-bootstrap/Alert';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { TwitterPicker } from 'react-color';
-import DataContext from '../contexts/DataContext';
+import DataContext from '../context/DataContext';
 
 const textColors = [
   '#CB5400',
@@ -54,28 +53,28 @@ const backgroundColors = [
   '#CA6EFE',
 ];
 
-const UserSettingsModal = ({ show, handleClose }) => {
+// TODO: migrate to react form hook
+// TODO: add option to change hat name
+
+const SettingsModal = ({ show, handleClose }) => {
   const {
-    session: {
-      updateUserSettings,
-      session: { me },
-    },
+    semscreen: { settings, updateSettings },
   } = useContext(DataContext);
 
   function updateSession(values) {
-    const { username, textColor, backgroundColor } = values;
-    updateUserSettings(textColor, backgroundColor, username);
+    const { textColor, backgroundColor } = values;
+    updateSettings({ textColor, backgroundColor });
     handleClose();
   }
 
   const formik = useFormik({
     initialValues: {
-      username: me.username,
-      textColor: me.rimColor.text,
-      backgroundColor: me.rimColor.background,
+      // username: me.username,
+      textColor: settings.textColor,
+      backgroundColor: settings.backgroundColor,
     },
     validationSchema: Yup.object({
-      username: Yup.string().required('Required'),
+      // username: Yup.string().required('Required'),
       textColor: Yup.string(),
       backgroundColor: Yup.string(),
     }),
@@ -88,10 +87,10 @@ const UserSettingsModal = ({ show, handleClose }) => {
     <Modal show={show} onHide={handleClose}>
       <form>
         <Modal.Header closeButton>
-          <Modal.Title>User settings</Modal.Title>
+          <Modal.Title>Hat settings</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group controlId="formBasicEmail">
+          {/* <Form.Group controlId="formBasicEmail">
             <Form.Label>Username</Form.Label>
             <Form.Control
               name="username"
@@ -100,7 +99,7 @@ const UserSettingsModal = ({ show, handleClose }) => {
             {formik.touched.username && formik.errors.username ? (
               <Alert variant="danger">{formik.errors.username}</Alert>
             ) : null}
-          </Form.Group>
+          </Form.Group> */}
           <Form.Group>
             <Form.Label>Text color</Form.Label>
             <TwitterPicker
@@ -130,9 +129,9 @@ const UserSettingsModal = ({ show, handleClose }) => {
   );
 };
 
-UserSettingsModal.propTypes = {
+SettingsModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
 };
 
-export default UserSettingsModal;
+export default SettingsModal;

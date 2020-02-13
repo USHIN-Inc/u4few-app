@@ -20,55 +20,60 @@
 import React, { createContext } from 'react';
 import PropTypes from 'prop-types';
 import useAgenda from '../hooks/useAgenda';
-import useHat from '../hooks/useHat';
-import useSession from '../hooks/useSession';
-import useWorkSpace from '../hooks/useWorkSpace';
+import useHats from '../hooks/useHats';
+import useSemscreen from '../hooks/useSemscreen';
+import useMe from '../hooks/useMe';
 
 const DataContext = createContext({
+  me: {
+    username: undefined,
+    setUsername: () => {},
+    uid: undefined,
+  },
   agenda: {
     agendaItems: undefined,
     setAgendaItems: () => {},
     createAgendaItem: () => {},
     destroyAgendaItem: () => {},
   },
-  hat: {
+  hats: {
     hats: undefined,
     createHat: () => {},
     destroyHat: () => {},
-    selectedHat: () => {},
-    updateSelectedtHat: () => {},
+    selectedHat: undefined, // name, id, settings, points, we can pass this to to semscreen
+    setSelectedHat: () => {},
+    switchSelectedHat: () => {}, // we pass this function to the semscreen hook
+    changeHatIcon: () => {},
   },
-  session: {
-    session: undefined,
-    setSession: () => {},
+  semscreen: {
+    points: undefined,
     putHatOn: () => {},
     destroyPoint: () => {},
-    updateUserSettings: () => {},
     updatePoint: () => {},
-    createPoin: () => {},
-  },
-  workSpace: {
-    workSpaces: undefined,
-    switchWorkSpace: () => {},
-    createWorkSpace: () => {},
-    destroyWorkSpace: () => {},
+    createPoint: () => {},
+    settings: {
+      textColor: undefined, // string hex color
+      backgroundColor: undefined, // string hex color
+      hatIdex: undefined, // number
+      hatColorIndex: undefined, // number
+    },
+    updateSettings: () => {},
   },
 });
 
 const DataContextProvider = ({ children }) => {
+  const me = useMe();
   const agenda = useAgenda();
-  const hat = useHat();
-  const workSpace = useWorkSpace();
-
-  const session = useSession();
+  const hats = useHats();
+  const semscreen = useSemscreen(hats.selectedHat, hats.setSelectedHat, me);
 
   return (
     <DataContext.Provider
       value={{
+        me,
         agenda,
-        hat,
-        session,
-        workSpace,
+        hats,
+        semscreen,
       }}
     >
       {children}

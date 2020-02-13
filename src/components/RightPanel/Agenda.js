@@ -20,7 +20,7 @@
 import React, { useContext } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import DeleteIconButton from '../commons/DeleteIcon';
-import DataContext from '../../contexts/DataContext';
+import DataContext from '../../context/DataContext';
 import Section from '../commons/Section';
 import SimpleForm from '../commons/SimpleForm';
 
