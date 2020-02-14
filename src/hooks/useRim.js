@@ -16,8 +16,7 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
-import createDataContext from './createDataContext';
+import { useReducer } from 'react';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -44,43 +43,42 @@ function reducer(state, action) {
       return state;
   }
 }
-
-const activateRegion = dispatch => (region, cloud) => {
-  dispatch({
-    type: `activate`,
-    region,
-    className: `activate${region}`,
-    cloud,
-  });
-};
-
-const deactivateRegion = dispatch => region => {
-  dispatch({
-    type: `deactivate`,
-    region: 'none',
-    className: `deactivate${region}`,
-    cloud: false,
-  });
-};
-
-const setIsEditing = dispatch => value => {
-  dispatch({
-    type: 'set_editing',
-    isEditing: value,
-  });
-};
-
 const initialRimState = {
   className: 'passive',
   region: 'none',
   cloud: false,
   isEditing: false,
 };
-const { Provider, Context } = createDataContext(
-  reducer,
-  { activateRegion, deactivateRegion, setIsEditing },
-  initialRimState
-);
 
-export { Provider };
-export default Context;
+function useRim() {
+  const [state, dispatch] = useReducer(reducer, initialRimState);
+
+  const activateRegion = (region, cloud) => {
+    dispatch({
+      type: `activate`,
+      region,
+      className: `activate${region}`,
+      cloud,
+    });
+  };
+
+  const deactivateRegion = region => {
+    dispatch({
+      type: `deactivate`,
+      region: 'none',
+      className: `deactivate${region}`,
+      cloud: false,
+    });
+  };
+
+  const setIsEditing = value => {
+    dispatch({
+      type: 'set_editing',
+      isEditing: value,
+    });
+  };
+
+  return { state, activateRegion, deactivateRegion, setIsEditing };
+}
+
+export default useRim;

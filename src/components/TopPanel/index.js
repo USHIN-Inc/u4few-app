@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -22,15 +23,41 @@ import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import Tooltip from 'rc-tooltip';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 import UiContext from '../../context/UiContext';
+
+const { Handle } = Slider;
+
+const handle = props => {
+  // eslint-disable-next-line react/prop-types
+  const { value, dragging, index, ...restProps } = props;
+  return (
+    <Tooltip
+      prefixCls="rc-slider-tooltip"
+      overlay={value}
+      visible={dragging}
+      placement="top"
+      key={index}
+    >
+      <Handle value={value} {...restProps} />
+    </Tooltip>
+  );
+};
 
 const TopPanel = () => {
   const { topPanelOpen } = useContext(UiContext);
 
   return (
     <PanelContainer id="topPanel" open={topPanelOpen}>
-      {topPanelOpen && <p>We are working on this</p>}
+      {topPanelOpen && (
+        <div style={{ width: '80%' }}>
+          <p>Time travel</p>
+          <Slider min={0} max={20} defaultValue={3} handle={handle} />
+        </div>
+      )}
     </PanelContainer>
   );
 };

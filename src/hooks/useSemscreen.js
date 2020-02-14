@@ -44,7 +44,7 @@
 */
 
 export default function useSemscreen(selectedHat, setSelectedHat, me) {
-  const { points, settings } = selectedHat;
+  const { points, settings, name, id } = selectedHat;
 
   function _updatePointsArray(newPointsArray) {
     setSelectedHat({
@@ -106,6 +106,8 @@ export default function useSemscreen(selectedHat, setSelectedHat, me) {
   }
 
   return {
+    name,
+    id,
     points,
     putHatOn,
     destroyPoint,

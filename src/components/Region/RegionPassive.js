@@ -20,7 +20,7 @@
   This component will handle showing the small region
   and will show only the small points stuff
 */
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
@@ -28,23 +28,44 @@ import { singularize } from 'inflected';
 import DataContext from '../../context/DataContext';
 import PointInput from '../PointInput';
 import Point from '../Point';
-import RimContext from '../../context/RimContext';
+import UiContext from '../../context/UiContext';
 
-const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
+const RegionPassive = ({ points, region }) => {
   const {
     semscreen: { createPoint },
     me: { uid },
   } = useContext(DataContext);
   const {
-    state: { isEditing },
-    setIsEditing,
-    deactivateRegion,
-  } = useContext(RimContext);
+    rim: {
+      state: { isEditing },
+      setIsEditing,
+      activateRegion,
+      deactivateRegion,
+    },
+  } = useContext(UiContext);
 
+  const [pointInput, setPointInput] = useState(null);
+  useEffect(() => {
+    // Starts the Focus region with a pointInput
+    if (
+      !pointInput &&
+      points.filter(p => p.region === 'Focus').length === 0 &&
+      region === 'Focus'
+    ) {
+      activateRegion('Focus');
+      setPointInput({
+        id: uuidv4(),
+        uid,
+        placeholderContent: 'Tap, type, or paste anywhere...',
+        region,
+      });
+    }
+    /* eslint-disable-next-line */
+  }, []);
   function handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
-    // TODO add condition to know if we can open
+    // only allows one editor or point to be open at any given time
     if (pointInput || isEditing) {
       return;
     }
@@ -53,6 +74,7 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
       return;
     }
     setIsEditing(true);
+    activateRegion(region);
     setPointInput({
       id: uuidv4(),
       uid,
@@ -65,33 +87,30 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
     this function saves the point to this region
     useState hook
    */
-  function handlePointInputSubmit(e) {
-    const { id, content } = e;
-    if (content === '') {
-      setPointInput(null);
-      setIsEditing(false);
-      deactivateRegion(region);
-      return;
-    }
-    createPoint({ id, uid, content, region });
+  function _closePointInput() {
     setPointInput(null);
     setIsEditing(false);
     deactivateRegion(region);
+  }
+  function handlePointInputSubmit(e) {
+    const { id, content } = e;
+    if (content === '') {
+      _closePointInput();
+      return;
+    }
+    createPoint({ id, uid, content, region });
+    _closePointInput();
   }
 
   function handlePointInputCancel(e) {
     e.stopPropagation();
-    setPointInput(null);
-    setIsEditing(false);
-    deactivateRegion(region);
+    _closePointInput();
   }
-
-  const canOpen = !pointInput;
 
   return (
     <RegionPassiveView onClick={handleClick}>
       {points.map(point => (
-        <Point point={point} key={point.id} canOpen={canOpen} />
+        <Point point={point} key={point.id} />
       ))}
       {pointInput && (
         <PointInput
@@ -107,15 +126,9 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
   );
 };
 
-RegionPassive.defaultProps = {
-  pointInput: null,
-};
-
 RegionPassive.propTypes = {
   points: PropTypes.array.isRequired,
   region: PropTypes.string.isRequired,
-  pointInput: PropTypes.object,
-  setPointInput: PropTypes.func.isRequired,
 };
 
 const RegionPassiveView = styled.div`
