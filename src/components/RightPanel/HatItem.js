@@ -29,6 +29,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 import DeleteIcon from '../commons/DeleteIcon';
 import DataContext from '../../context/DataContext';
+import UiContext from '../../context/UiContext';
 
 const hatOptions = [faHatCowboy, faHatWizard, faGraduationCap];
 const colorOptions = ['black', 'red', 'blue', 'green'];
@@ -37,6 +38,13 @@ const HatItem = ({ hat }) => {
   const {
     hats: { destroyHat, selectedHat, switchSelectedHat, changeHatIcon },
   } = useContext(DataContext);
+  const {
+    rim: {
+      setIsEditing,
+      deactivateRegion,
+      state: { region },
+    },
+  } = useContext(UiContext);
   const { hatIndex, hatColorIndex } = hat.settings;
 
   function handleHatIconChange(e) {
@@ -62,6 +70,10 @@ const HatItem = ({ hat }) => {
     e.preventDefault();
     e.stopPropagation();
     if (selectedHat.id !== hat.id) {
+      if (region !== 'none') {
+        deactivateRegion(region);
+      }
+      setIsEditing(false);
       switchSelectedHat(hat.id);
     } else {
       // updateSelectedHat(undefined);

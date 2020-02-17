@@ -23,7 +23,7 @@ import Alert from 'react-bootstrap/Alert';
 import * as TAGS from '../../constants/tags';
 import DataContext from '../../context/DataContext';
 import useDebounce from '../../hooks/useDebounce';
-import RimContext from '../../context/RimContext';
+import UiContext from '../../context/UiContext';
 
 function cancelEvents(e) {
   e.preventDefault();
@@ -34,7 +34,9 @@ const RegionActive = ({ region }) => {
   const {
     semscreen: { updatePoint },
   } = useContext(DataContext);
-  const { deactivateRegion } = useContext(RimContext);
+  const {
+    rim: { deactivateRegion },
+  } = useContext(UiContext);
   const currentTags = Object.keys(TAGS[region]);
   let longHoverEvent;
   const [category, setCategory] = useState(null);

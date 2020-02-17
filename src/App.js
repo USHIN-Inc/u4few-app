@@ -23,7 +23,6 @@ import SemanticScreen from './components/SemanticScreen';
 
 import { UiContextProvider } from './context/UiContext';
 import { DataContextProvider } from './context/DataContext';
-import { Provider as RimContextProvider } from './context/RimContext';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -33,11 +32,9 @@ const Wrapper = styled.div`
 const App = () => (
   <DataContextProvider>
     <UiContextProvider>
-      <RimContextProvider>
-        <Wrapper>
-          <SemanticScreen />
-        </Wrapper>
-      </RimContextProvider>
+      <Wrapper>
+        <SemanticScreen />
+      </Wrapper>
     </UiContextProvider>
   </DataContextProvider>
 );

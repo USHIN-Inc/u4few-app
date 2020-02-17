@@ -23,7 +23,7 @@ import Region from '../Region/Region';
 import DataContext from '../../context/DataContext';
 import Banner from '../Banner';
 import RimView from './RimView';
-import RimContext from '../../context/RimContext';
+import UiContext from '../../context/UiContext';
 
 const Rim = () => {
   const {
@@ -32,8 +32,10 @@ const Rim = () => {
     },
   } = useContext(DataContext);
   const {
-    state: { className },
-  } = useContext(RimContext);
+    rim: {
+      state: { className },
+    },
+  } = useContext(UiContext);
 
   return (
     <RimView

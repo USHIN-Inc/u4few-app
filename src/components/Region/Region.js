@@ -19,11 +19,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import uuidv4 from 'uuid/v4';
 import RegionPassive from './RegionPassive';
 import RegionActive from './RegionActive';
 import DataContext from '../../context/DataContext';
-import RimContext from '../../context/RimContext';
+import UiContext from '../../context/UiContext';
 
 const Region = ({ type }) => {
   const {
@@ -32,31 +31,14 @@ const Region = ({ type }) => {
       updatePoint,
       settings: { backgroundColor },
     },
-    me: { uid },
   } = useContext(DataContext);
   const {
-    state: { region, cloud, isEditing },
-    activateRegion,
-    deactivateRegion,
-  } = useContext(RimContext);
-
-  const [pointInput, setPointInput] = useState(null);
-  useEffect(() => {
-    // Starts the Focus region with a pointInput
-    if (
-      !pointInput &&
-      points.filter(p => p.region === 'Focus').length === 0 &&
-      type === 'Focus'
-    ) {
-      setPointInput({
-        id: uuidv4(),
-        uid,
-        placeholderContent: 'Tap, type, or paste anywhere...',
-        region: type,
-      });
-    }
-    /* eslint-disable-next-line */
-  }, []);
+    rim: {
+      state: { region, cloud },
+      activateRegion,
+      deactivateRegion,
+    },
+  } = useContext(UiContext);
 
   const _points = points.filter(point => point.region === type);
 
@@ -68,8 +50,11 @@ const Region = ({ type }) => {
   function handleDragEnter(e) {
     e.preventDefault();
     e.stopPropagation();
+    if (type === 'Focus') {
+      return;
+    }
     if (region !== type && region !== 'none') {
-      // deactivateRegion(region);
+      deactivateRegion(region);
       window.clearTimeout(longEvent);
       longEvent = setTimeout(() => {
         activateRegion(type, true);
@@ -135,40 +120,8 @@ const Region = ({ type }) => {
       setIsSmall(true);
     }
     // eslint-disable-next-line
-  }, [region, type, pointInput]);
+  }, [region, type]);
   // End of Is small logic
-
-  if (type === 'Focus') {
-    if (pointInput) {
-      if (region !== 'Focus') activateRegion('Focus');
-    }
-    if (region === 'Focus' && !pointInput && !isEditing) {
-      deactivateRegion('Focus');
-    }
-    return (
-      <RegionView
-        background={backgroundColor}
-        onDrop={handleDrop}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-      >
-        {!isSmall && (
-          <RegionPassive
-            pointInput={pointInput}
-            setPointInput={setPointInput}
-            points={_points}
-            region={type}
-          />
-        )}
-      </RegionView>
-    );
-  }
-
-  // open region if point input is active
-  if (pointInput && region !== type) {
-    activateRegion(type);
-  }
 
   return (
     <RegionView
@@ -178,15 +131,10 @@ const Region = ({ type }) => {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {cloud && region === type && <RegionActive region={type} />}
-      {!cloud && !isSmall && (
-        <RegionPassive
-          pointInput={pointInput}
-          setPointInput={setPointInput}
-          points={_points}
-          region={type}
-        />
+      {type !== 'Focus' && cloud && region === type && (
+        <RegionActive region={type} />
       )}
+      {!cloud && !isSmall && <RegionPassive points={_points} region={type} />}
     </RegionView>
   );
 };

@@ -22,22 +22,24 @@ import styled from 'styled-components';
 import PointInput from './PointInput';
 import PointView from './PointView';
 import DataContext from '../context/DataContext';
-import RimContext from '../context/RimContext';
+import UiContext from '../context/UiContext';
 
 const Point = ({
   point: { id, content, region, category, subCategory, uid, username, hat },
-  canOpen,
 }) => {
   const {
     semscreen: { putHatOn, updatePoint },
     me,
   } = useContext(DataContext);
   const {
-    state: { isEditing },
-    setIsEditing,
-    activateRegion,
-    deactivateRegion,
-  } = useContext(RimContext);
+    rim: {
+      state: { isEditing },
+      state,
+      setIsEditing,
+      activateRegion,
+      deactivateRegion,
+    },
+  } = useContext(UiContext);
 
   const [open, setOpen] = useState(false);
 
@@ -47,13 +49,14 @@ const Point = ({
   function handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
-    console.log('click', isEditing, open);
     if (isEditing) {
       return;
     }
     setOpen(true);
     setIsEditing(true);
-    activateRegion(region);
+    if (region !== state.region) {
+      activateRegion(region);
+    }
   }
 
   // this seems ok, but we can add like a image
@@ -101,7 +104,6 @@ const Point = ({
         initialValue={content}
         handleCancel={handleCancel}
         onPointInputSubmit={handleUpdate}
-        onPointInputBlur={() => deactivateRegion(region)}
       />
     );
   }
@@ -148,7 +150,6 @@ const Point = ({
 
 Point.propTypes = {
   point: PropTypes.object.isRequired,
-  canOpen: PropTypes.bool.isRequired,
 };
 
 const PointPreview = styled.div`

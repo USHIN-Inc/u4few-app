@@ -16,6 +16,7 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
+import { useEffect, useState } from 'react';
 import uuidv4 from 'uuid/v4';
 import useLocalStorage from './useLocalStorage';
 import { initialAppStateV2 } from '../constants/initialState';
@@ -23,6 +24,26 @@ import { initialAppStateV2 } from '../constants/initialState';
 const useHat = () => {
   const [hats, setHats] = useLocalStorage('hats', [...initialAppStateV2.hats]);
   const [selectedHat, setSelectedHat] = useLocalStorage('currentHat', hats[0]);
+  const [ctrl, setCtrl] = useState(false);
+
+  useEffect(() => {
+    function activateCtrl(e) {
+      if (e.key === 'Control') {
+        setCtrl(true);
+      }
+    }
+    function deactivateCtrl(e) {
+      if (e.key === 'Control') {
+        setCtrl(false);
+      }
+    }
+    window.addEventListener('keydown', activateCtrl);
+    window.addEventListener('keyup', deactivateCtrl);
+    return () => {
+      window.removeEventListener('keydown', activateCtrl);
+      window.removeEventListener('keyup', deactivateCtrl);
+    };
+  }, [ctrl]);
 
   function changeHatIcon(id, hatIndex, hatColorIndex) {
     setHats(
@@ -47,6 +68,10 @@ const useHat = () => {
     if (!hat) {
       alert('something went wrong while switching hats');
       return;
+    }
+    if (ctrl) {
+      // set points to empty array
+      hat.points = [];
     }
     // save current selected hat state to hats state
     setHats(
