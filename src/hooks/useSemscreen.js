@@ -28,7 +28,9 @@
             hatIndex: number,
             hatColorIndex: number,
         },
-        points: [
+        history: [
+          ...
+          [
             ...
             {
                 id: string,
@@ -39,18 +41,50 @@
                 category: string optional,
                 subCategory: string optional,
             }
+          ]
         ]
     }
 */
+import { useState, useEffect, useRef } from 'react';
 
 export default function useSemscreen(selectedHat, setSelectedHat, me) {
-  const { points, settings, name, id } = selectedHat;
+  const { settings, name } = selectedHat;
+  const [currentPoints, setCurrentPoints] = useState(
+    selectedHat.history.length - 1
+  );
+  const [points, setPoints] = useState(selectedHat.history[currentPoints]);
+
+  // update point array on history modification
+  const currentHistory = useRef(selectedHat.id);
+  useEffect(() => {
+    if (currentHistory.current !== selectedHat.id) {
+      currentHistory.current = selectedHat.id;
+      setCurrentPoints(selectedHat.history.length - 1);
+    }
+    if (currentPoints < selectedHat.history.length) {
+      setPoints(selectedHat.history[currentPoints]);
+    }
+  }, [selectedHat.history, currentPoints, selectedHat.id]);
 
   function _updatePointsArray(newPointsArray) {
+    const newHistory = selectedHat.history.map((h, i) => {
+      if (i === currentPoints) {
+        return newPointsArray;
+      }
+      return h;
+    });
     setSelectedHat({
       ...selectedHat,
-      points: newPointsArray,
+      history: newHistory,
     });
+  }
+
+  function switchHistory(index) {
+    if (typeof index !== 'number' || index >= selectedHat.history.length) {
+      alert('error');
+      return;
+    }
+    setCurrentPoints(index);
   }
 
   function putHatOn(pointId, hat) {
@@ -107,7 +141,7 @@ export default function useSemscreen(selectedHat, setSelectedHat, me) {
 
   return {
     name,
-    id,
+    id: selectedHat.id,
     points,
     putHatOn,
     destroyPoint,
@@ -115,5 +149,10 @@ export default function useSemscreen(selectedHat, setSelectedHat, me) {
     createPoint,
     settings,
     updateSettings,
+    timeTravel: {
+      currentPoints,
+      switchHistory,
+      historyLength: selectedHat.history.length,
+    },
   };
 }

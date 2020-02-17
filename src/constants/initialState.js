@@ -35,38 +35,40 @@ const initialAppStateV2 = {
         hatIndex: 0,
         hatColorIndex: 0,
       },
-      points: [
-        {
-          id: '1',
-          content: 'U4U',
-          region: 'Topics',
-          uid: meuid,
-        },
-        {
-          id: '2',
-          content: 'Frontend',
-          region: 'Topics',
-          uid: meuid,
-        },
-        {
-          id: '4',
-          content: '@alex Finish the frontend for U4U, like, soon!',
-          region: 'Actions',
-          uid: meuid,
-        },
-        {
-          id: '5',
-          content: 'Development Team',
-          region: 'People',
-          uid: meuid,
-        },
-        {
-          id: '6',
-          content: 'Alex Garcia',
-          region: 'People',
-          uid: paulaid,
-          username: 'paula',
-        },
+      history: [
+        [
+          {
+            id: '1',
+            content: 'U4U',
+            region: 'Topics',
+            uid: meuid,
+          },
+          {
+            id: '2',
+            content: 'Frontend',
+            region: 'Topics',
+            uid: meuid,
+          },
+          {
+            id: '4',
+            content: '@alex Finish the frontend for U4U, like, soon!',
+            region: 'Actions',
+            uid: meuid,
+          },
+          {
+            id: '5',
+            content: 'Development Team',
+            region: 'People',
+            uid: meuid,
+          },
+          {
+            id: '6',
+            content: 'Alex Garcia',
+            region: 'People',
+            uid: paulaid,
+            username: 'paula',
+          },
+        ],
       ],
     },
     // end of first workSpace

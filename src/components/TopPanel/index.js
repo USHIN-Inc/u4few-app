@@ -20,56 +20,32 @@
 
 import React, { useContext } from 'react';
 import styled, { css } from 'styled-components';
-import PropTypes from 'prop-types';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import Tooltip from 'rc-tooltip';
-import Slider from 'rc-slider';
-import 'rc-slider/assets/index.css';
 
 import UiContext from '../../context/UiContext';
-
-const { Handle } = Slider;
-
-const handle = props => {
-  // eslint-disable-next-line react/prop-types
-  const { value, dragging, index, ...restProps } = props;
-  return (
-    <Tooltip
-      prefixCls="rc-slider-tooltip"
-      overlay={value}
-      visible={dragging}
-      placement="top"
-      key={index}
-    >
-      <Handle value={value} {...restProps} />
-    </Tooltip>
-  );
-};
+import HistorySlider from './HistorySlider';
 
 const TopPanel = () => {
   const { topPanelOpen } = useContext(UiContext);
-
   return (
     <PanelContainer id="topPanel" open={topPanelOpen}>
       {topPanelOpen && (
-        <div style={{ width: '80%' }}>
-          <p>Time travel</p>
-          <Slider min={0} max={20} defaultValue={3} handle={handle} />
-        </div>
+        <>
+          <HistorySlider />
+          <Help>
+            <p>Ctrl + click on a hat to start a new session</p>
+          </Help>
+        </>
       )}
     </PanelContainer>
   );
 };
 
-const DeleteIcon = ({ handleDelete }) => (
-  <div style={{ marginLeft: '8px' }}>
-    <Icon onClick={handleDelete} icon={faTimes} />
-  </div>
-);
-DeleteIcon.propTypes = {
-  handleDelete: PropTypes.func.isRequired,
-};
+const Help = styled.div`
+  margin-left: 32px;
+  > p {
+    font-size: 1.5rem;
+  }
+`;
 
 const PanelContainer = styled.div`
   display: flex;
