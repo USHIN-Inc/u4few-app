@@ -69,16 +69,14 @@ const HatItem = ({ hat }) => {
   function handleHatSelection(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (selectedHat.id !== hat.id) {
-      if (region !== 'none') {
-        deactivateRegion(region);
-      }
-      setIsEditing(false);
-      switchSelectedHat(hat.id);
-    } else {
-      // updateSelectedHat(undefined);
-      // TODO: add validation here
+    // NOTE: comment this condition to allow creating new instances without switching
+    if (selectedHat.id === hat.id) return;
+
+    if (region !== 'none') {
+      deactivateRegion(region);
     }
+    setIsEditing(false);
+    switchSelectedHat(hat.id);
   }
 
   function handleDragStart(e) {

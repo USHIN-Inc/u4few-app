@@ -23,9 +23,10 @@ import { initialAppStateV2 } from '../constants/initialState';
 
 const useHat = () => {
   const [hats, setHats] = useLocalStorage('hats', [...initialAppStateV2.hats]);
-  const [selectedHat, setSelectedHat] = useLocalStorage('currentHat', hats[0]);
+  const [selectedHat, setSelectedHat] = useLocalStorage('selectedHat', hats[0]);
+  // controls the state of the ctrl key
   const [ctrl, setCtrl] = useState(false);
-
+  // add event listeners for key up and down
   useEffect(() => {
     function activateCtrl(e) {
       if (e.key === 'Control') {
@@ -64,14 +65,15 @@ const useHat = () => {
   }
 
   function switchSelectedHat(id) {
-    const hat = hats.find(h => h.id === id);
-    if (!hat) {
+    const newHat = hats.find(h => h.id === id);
+    if (!newHat) {
       alert('something went wrong while switching hats');
       return;
     }
-    if (ctrl) {
-      // set points to empty array
-      hat.points = [];
+    // if ctrl and at least one point on screen
+    if (ctrl && newHat.history[newHat.history.length - 1].length > 0) {
+      //  Add new empty points array to history
+      newHat.history.push([]);
     }
     // save current selected hat state to hats state
     setHats(
@@ -83,7 +85,7 @@ const useHat = () => {
       })
     );
     // setSlected hat to new selected hat
-    setSelectedHat(hat);
+    setSelectedHat(newHat);
   }
 
   function createHat(name) {
@@ -103,7 +105,7 @@ const useHat = () => {
         hatIndex: 0,
         hatColorIndex: 0,
       },
-      points: [],
+      history: [[]],
     };
     setHats([...hats, newHat]);
   }
