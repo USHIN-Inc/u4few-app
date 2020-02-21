@@ -31,21 +31,11 @@ const TopPanel = () => {
       {topPanelOpen && (
         <>
           <HistorySlider />
-          <Help>
-            <p>Ctrl + click on a hat to start a new session</p>
-          </Help>
         </>
       )}
     </PanelContainer>
   );
 };
-
-const Help = styled.div`
-  margin-left: 32px;
-  > p {
-    font-size: 1.5rem;
-  }
-`;
 
 const PanelContainer = styled.div`
   display: flex;
