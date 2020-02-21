@@ -17,13 +17,11 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { TwitterPicker } from 'react-color';
 import DataContext from '../context/DataContext';
 
@@ -53,35 +51,27 @@ const backgroundColors = [
   '#CA6EFE',
 ];
 
-// TODO: migrate to react form hook
 // TODO: add option to change hat name
 
 const SettingsModal = ({ show, handleClose }) => {
   const {
     semscreen: { settings, updateSettings },
+    me,
   } = useContext(DataContext);
 
-  function updateSession(values) {
-    const { textColor, backgroundColor } = values;
+  const [values, setValues] = useState({
+    username: me.username,
+    textColor: settings.textColor,
+    backgroundColor: settings.backgroundColor,
+  });
+
+  function updateSession() {
+    const { textColor, backgroundColor, username } = values;
+    console.log(values);
     updateSettings({ textColor, backgroundColor });
+    if (username !== me.username) me.setUsername(username);
     handleClose();
   }
-
-  const formik = useFormik({
-    initialValues: {
-      // username: me.username,
-      textColor: settings.textColor,
-      backgroundColor: settings.backgroundColor,
-    },
-    validationSchema: Yup.object({
-      // username: Yup.string().required('Required'),
-      textColor: Yup.string(),
-      backgroundColor: Yup.string(),
-    }),
-    onSubmit: values => {
-      updateSession(values);
-    },
-  });
 
   return (
     <Modal show={show} onHide={handleClose}>
@@ -90,37 +80,37 @@ const SettingsModal = ({ show, handleClose }) => {
           <Modal.Title>Hat settings</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* <Form.Group controlId="formBasicEmail">
+          <Form.Group>
             <Form.Label>Username</Form.Label>
             <Form.Control
               name="username"
-              {...formik.getFieldProps('username')}
+              value={values.username}
+              onChange={e => setValues({ ...values, username: e.target.value })}
             />
-            {formik.touched.username && formik.errors.username ? (
-              <Alert variant="danger">{formik.errors.username}</Alert>
-            ) : null}
-          </Form.Group> */}
+          </Form.Group>
+
           <Form.Group>
             <Form.Label>Text color</Form.Label>
             <TwitterPicker
               name="textColor"
-              color={formik.values.textColor}
-              onChange={e => formik.setFieldValue('textColor', e.hex)}
+              color={values.textColor}
+              onChange={e => setValues({ ...values, textColor: e.hex })}
               colors={textColors}
             />
           </Form.Group>
+
           <Form.Group>
             <Form.Label>Background color</Form.Label>
             <TwitterPicker
               name="backgroundColor"
-              color={formik.values.backgroundColor}
-              onChange={e => formik.setFieldValue('backgroundColor', e.hex)}
+              color={values.backgroundColor}
+              onChange={e => setValues({ ...values, backgroundColor: e.hex })}
               colors={backgroundColors}
             />
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={formik.handleSubmit} size="sm">
+          <Button variant="primary" onClick={updateSession} size="sm">
             Save Changes
           </Button>
         </Modal.Footer>
