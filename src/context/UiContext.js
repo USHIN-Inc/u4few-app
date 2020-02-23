@@ -20,6 +20,7 @@
 import React, { createContext } from 'react';
 import PropTypes from 'prop-types';
 import useLocalState from '../hooks/useLocalStorage';
+import useRim from '../hooks/useRim';
 
 const UiContext = createContext({
   sidePanelState: null,
@@ -27,6 +28,17 @@ const UiContext = createContext({
   toggleSidePanel: () => {},
   topPanelOpen: null,
   setTopPanelOpen: () => {},
+  rim: {
+    state: {
+      classMame: 'passive',
+      region: 'none',
+      cloud: false,
+      isEditing: false,
+    },
+    activateRegion: () => {},
+    deactivateRegion: () => {},
+    setIsEditing: () => {},
+  },
 });
 
 const UiContextProvider = ({ children }) => {
@@ -50,6 +62,8 @@ const UiContextProvider = ({ children }) => {
 
   const [topPanelOpen, setTopPanelOpen] = useLocalState('topPanel', true);
 
+  const rim = useRim();
+
   return (
     <UiContext.Provider
       value={{
@@ -58,6 +72,7 @@ const UiContextProvider = ({ children }) => {
         toggleSidePanel,
         topPanelOpen,
         setTopPanelOpen,
+        rim,
       }}
     >
       {children}

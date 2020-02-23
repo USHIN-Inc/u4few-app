@@ -16,27 +16,27 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React from 'react';
-import styled from 'styled-components';
+import useLocalStorage from './useLocalStorage';
+import { initialAppStateV2 } from '../constants/initialState';
+/*  me schema
+    me: {
+        username: string,
+        setUsername: function,
+        uid: string,
+    }
+*/
+const useMe = () => {
+  const [me, setMe] = useLocalStorage('me', initialAppStateV2.me);
+  function setUsername(newUsername) {
+    // here goes any kind of validation for the username
+    if (me.username === newUsername) {
+      alert('That username is already in use');
+      return;
+    }
+    setMe({ ...me, username: newUsername });
+  }
 
-import SemanticScreen from './components/SemanticScreen';
+  return { username: me.username, setUsername, uid: me.uid };
+};
 
-import { UiContextProvider } from './context/UiContext';
-import { DataContextProvider } from './context/DataContext';
-
-const Wrapper = styled.div`
-  height: 100%;
-  position: relative;
-`;
-
-const App = () => (
-  <DataContextProvider>
-    <UiContextProvider>
-      <Wrapper>
-        <SemanticScreen />
-      </Wrapper>
-    </UiContextProvider>
-  </DataContextProvider>
-);
-
-export default App;
+export default useMe;

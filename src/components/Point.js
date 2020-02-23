@@ -21,21 +21,27 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import PointInput from './PointInput';
 import PointView from './PointView';
-import DataContext from '../contexts/DataContext';
+import DataContext from '../context/DataContext';
+import UiContext from '../context/UiContext';
 
 const Point = ({
   point: { id, content, region, category, subCategory, uid, username, hat },
 }) => {
   const {
-    session: { session, destroyPoint, putHatOn, updatePoint },
+    semscreen: { putHatOn, updatePoint },
+    me,
   } = useContext(DataContext);
+  const {
+    rim: {
+      state: { isEditing },
+      state,
+      setIsEditing,
+      activateRegion,
+      deactivateRegion,
+    },
+  } = useContext(UiContext);
 
-  const [isEditing, setIsEditing] = useState(false);
-
-  function deletePoint(e) {
-    e.stopPropagation();
-    destroyPoint(id);
-  }
+  const [open, setOpen] = useState(false);
 
   const contentExcerpt =
     content.length > 8 ? `${content.substring(0, 5).trim()}...` : content;
@@ -43,7 +49,14 @@ const Point = ({
   function handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
-    setIsEditing(!isEditing);
+    if (isEditing) {
+      return;
+    }
+    setOpen(true);
+    setIsEditing(true);
+    if (region !== state.region) {
+      activateRegion(region);
+    }
   }
 
   // this seems ok, but we can add like a image
@@ -69,15 +82,19 @@ const Point = ({
     if (e.content !== content) {
       updatePoint(id, { content: e.content });
     }
-    setIsEditing(!isEditing);
+    setOpen(false);
+    setIsEditing(false);
+    deactivateRegion(region);
   }
 
   function handleCancel(e) {
     e.stopPropagation();
+    setOpen(false);
     setIsEditing(false);
+    deactivateRegion(region);
   }
 
-  if (session.me.uid === uid && isEditing) {
+  if (me.uid === uid && open) {
     return (
       <PointInput
         id={id}
@@ -86,13 +103,12 @@ const Point = ({
         subCategory={subCategory}
         initialValue={content}
         handleCancel={handleCancel}
-        handleDelete={deletePoint}
         onPointInputSubmit={handleUpdate}
       />
     );
   }
 
-  if (isEditing) {
+  if (open) {
     return (
       <PointView
         user={uid}
@@ -105,7 +121,7 @@ const Point = ({
       />
     );
   }
-  const isDraggable = uid === session.me.uid;
+  const isDraggable = uid === me.uid;
 
   let subText;
   if (subCategory) {

@@ -17,45 +17,49 @@
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/* eslint-disable global-require */
 import React, { useContext } from 'react';
-import Region from '../Region/Region';
-import DataContext from '../../context/DataContext';
-import Banner from '../Banner';
-import RimView from './RimView';
-import UiContext from '../../context/UiContext';
+import Tooltip from 'rc-tooltip';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
-const Rim = () => {
+import DataContext from '../../context/DataContext';
+
+const { Handle } = Slider;
+
+// eslint-disable-next-line react/prop-types
+const handle = ({ value, dragging, index }) => (
+  <Tooltip
+    prefixCls="rc-slider-tooltip"
+    overlay={value}
+    visible={dragging}
+    placement="top"
+    key={index}
+  >
+    <Handle value={value} />
+  </Tooltip>
+);
+
+const HistorySlider = () => {
   const {
     semscreen: {
-      settings: { textColor, backgroundColor },
+      timeTravel: { currentPoints, historyLength, switchHistory },
     },
   } = useContext(DataContext);
-  const {
-    rim: {
-      state: { className },
-    },
-  } = useContext(UiContext);
 
   return (
-    <RimView
-      id="rim"
-      backgroundColor={backgroundColor}
-      color={textColor}
-      className={className}
-    >
-      <Banner />
-      <Region type="Facts" />
-      <Region type="Merits" />
-      <Region type="People" />
-      <Region type="Thoughts" />
-      <Region type="Focus" />
-      <Region type="Actions" />
-      <Region type="Feelings" />
-      <Region type="Needs" />
-      <Region type="Topics" />
-    </RimView>
+    <div style={{ width: '75%' }}>
+      {historyLength > 1 && (
+        <Slider
+          min={0}
+          max={historyLength - 1}
+          value={currentPoints}
+          onChange={e => switchHistory(e)}
+          dots
+          handle={handle}
+        />
+      )}
+    </div>
   );
 };
 
-export default Rim;
+export default HistorySlider;

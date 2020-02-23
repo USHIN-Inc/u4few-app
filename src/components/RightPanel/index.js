@@ -20,7 +20,7 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 
-import UiContext from '../../contexts/UiContext';
+import UiContext from '../../context/UiContext';
 import Agenda from './Agenda';
 import Hats from './Hats';
 import TrashZone from './TrashZone';

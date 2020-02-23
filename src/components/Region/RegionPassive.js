@@ -20,28 +20,39 @@
   This component will handle showing the small region
   and will show only the small points stuff
 */
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 import { singularize } from 'inflected';
-import renderPoints from './renderPoints';
-import DataContext from '../../contexts/DataContext';
+import DataContext from '../../context/DataContext';
 import PointInput from '../PointInput';
+import Point from '../Point';
+import UiContext from '../../context/UiContext';
 
-const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
+const RegionPassive = ({ points, region }) => {
   const {
-    session: {
-      createPoint,
-      me: { uid },
-    },
-    hat: { selectedHat },
+    semscreen: { createPoint },
+    me: { uid },
   } = useContext(DataContext);
+  const {
+    rim: {
+      state: { isEditing },
+      setIsEditing,
+      activateRegion,
+      deactivateRegion,
+    },
+  } = useContext(UiContext);
 
-  // make this behavior run only once
+  const [pointInput, setPointInput] = useState(null);
   useEffect(() => {
     // Starts the Focus region with a pointInput
-    if (!pointInput && points.length === 0 && region === 'Focus') {
+    if (
+      !pointInput &&
+      points.filter(p => p.region === 'Focus').length === 0 &&
+      region === 'Focus'
+    ) {
+      activateRegion('Focus');
       setPointInput({
         id: uuidv4(),
         uid,
@@ -51,14 +62,19 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
     }
     /* eslint-disable-next-line */
   }, []);
-
   function handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
+    // only allows one editor or point to be open at any given time
+    if (pointInput || isEditing) {
+      return;
+    }
     // prevents Focus area from having more that one point
     if (region === 'Focus' && points.length > 0) {
       return;
     }
+    setIsEditing(true);
+    activateRegion(region);
     setPointInput({
       id: uuidv4(),
       uid,
@@ -71,44 +87,37 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
     this function saves the point to this region
     useState hook
    */
+  function _closePointInput() {
+    setPointInput(null);
+    setIsEditing(false);
+    deactivateRegion(region);
+  }
   function handlePointInputSubmit(e) {
     const { id, content } = e;
     if (content === '') {
-      setPointInput(null);
+      _closePointInput();
       return;
     }
-    createPoint({ id, uid, content, region, hat: selectedHat });
-    setPointInput(null);
-  }
-
-  /*
-    there is a requirement so save on blur
-    that is currently not the case here
-  */
-  function handlePointInputBlur(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const content = e.target.value;
-
-    if (content === '') {
-      setPointInput(null);
-    }
+    createPoint({ id, uid, content, region });
+    _closePointInput();
   }
 
   function handlePointInputCancel(e) {
     e.stopPropagation();
-    setPointInput(null);
+    _closePointInput();
   }
 
   return (
     <RegionPassiveView onClick={handleClick}>
-      {renderPoints(points)}
+      {points.map(point => (
+        <Point point={point} key={point.id} />
+      ))}
       {pointInput && (
         <PointInput
           id={pointInput.id}
           region={pointInput.region}
           placeholderContent={pointInput.placeholderContent}
-          onPointInputBlur={handlePointInputBlur}
+          onPointInputBlur={handlePointInputSubmit}
           handleCancel={handlePointInputCancel}
           onPointInputSubmit={handlePointInputSubmit}
         />
@@ -117,15 +126,9 @@ const RegionPassive = ({ points, region, pointInput, setPointInput }) => {
   );
 };
 
-RegionPassive.defaultProps = {
-  pointInput: null,
-};
-
 RegionPassive.propTypes = {
   points: PropTypes.array.isRequired,
   region: PropTypes.string.isRequired,
-  pointInput: PropTypes.object,
-  setPointInput: PropTypes.func.isRequired,
 };
 
 const RegionPassiveView = styled.div`
