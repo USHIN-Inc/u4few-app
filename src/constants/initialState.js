@@ -35,6 +35,7 @@ const initialAppStateV2 = {
         hatIndex: 0,
         hatColorIndex: 0,
       },
+      versions: [new Date()],
       history: [
         [
           {

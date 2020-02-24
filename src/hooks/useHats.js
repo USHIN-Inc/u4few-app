@@ -52,6 +52,8 @@ const useHat = () => {
     if (newHat.history[newHat.history.length - 1].length > 0) {
       //  Add new empty points array to history
       newHat.history.push([]);
+      // Add date to versions array
+      newHat.versions.push(new Date());
     }
     // save current selected hat state to hats state
     setHats(
@@ -83,6 +85,7 @@ const useHat = () => {
         hatIndex: 0,
         hatColorIndex: 0,
       },
+      versions: [new Date()],
       history: [[]],
     };
     setHats([...hats, newHat]);
