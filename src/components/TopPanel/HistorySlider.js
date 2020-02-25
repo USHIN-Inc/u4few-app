@@ -18,48 +18,46 @@
 */
 
 import React, { useContext } from 'react';
-import Tooltip from 'rc-tooltip';
+import styled from 'styled-components';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
 import DataContext from '../../context/DataContext';
 
-const { Handle } = Slider;
+const { createSliderWithTooltip } = Slider;
 
-// eslint-disable-next-line react/prop-types
-const handle = ({ value, dragging, index }) => (
-  <Tooltip
-    prefixCls="rc-slider-tooltip"
-    overlay={value}
-    visible={dragging}
-    placement="top"
-    key={index}
-  >
-    <Handle value={value} />
-  </Tooltip>
-);
-
+const SliderWithTooltip = createSliderWithTooltip(Slider);
 const HistorySlider = () => {
   const {
     semscreen: {
-      timeTravel: { currentPoints, historyLength, switchHistory },
+      timeTravel: { versions, currentPoints, historyLength, switchHistory },
     },
   } = useContext(DataContext);
 
   return (
-    <div style={{ width: '75%' }}>
+    <HistorySliderContainer>
       {historyLength > 1 && (
-        <Slider
+        <SliderWithTooltip
           min={0}
           max={historyLength - 1}
-          value={currentPoints}
-          onChange={e => switchHistory(e)}
+          defaultValue={currentPoints}
+          onAfterChange={e => switchHistory(e)}
           dots
-          handle={handle}
+          tipFormatter={value => {
+            console.log(versions[value]);
+            const date = new Date(versions[value]).toDateString();
+            return date;
+          }}
         />
       )}
-    </div>
+    </HistorySliderContainer>
   );
 };
+
+const HistorySliderContainer = styled.div`
+  margin-right: auto;
+  margin-left: auto;
+  width: 80vw;
+`;
 
 export default HistorySlider;

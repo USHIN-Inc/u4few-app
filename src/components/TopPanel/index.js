@@ -28,11 +28,7 @@ const TopPanel = () => {
   const { topPanelOpen } = useContext(UiContext);
   return (
     <PanelContainer id="topPanel" open={topPanelOpen}>
-      {topPanelOpen && (
-        <>
-          <HistorySlider />
-        </>
-      )}
+      {topPanelOpen && <HistorySlider />}
     </PanelContainer>
   );
 };

@@ -67,7 +67,7 @@ const PointInput = ({
             name="content"
             as="textarea"
             rows="5"
-            // onBlur={handleSubmit}
+            onBlur={handleSubmit}
           />
           <Card.Footer
             style={{

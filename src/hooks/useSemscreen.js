@@ -150,6 +150,7 @@ export default function useSemscreen(selectedHat, setSelectedHat, me) {
     settings,
     updateSettings,
     timeTravel: {
+      versions: selectedHat.versions,
       currentPoints,
       switchHistory,
       historyLength: selectedHat.history.length,
