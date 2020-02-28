@@ -31,7 +31,7 @@ const UiContext = createContext({
   rim: {
     state: {
       classMame: 'passive',
-      region: 'none',
+      regionActive: 'none',
       cloud: false,
       isEditing: false,
     },

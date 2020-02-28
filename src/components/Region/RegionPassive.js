@@ -24,6 +24,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { singularize } from 'inflected';
 import DataContext from '../../context/DataContext';
 import PointInput from '../PointInput';
@@ -32,95 +34,34 @@ import UiContext from '../../context/UiContext';
 
 const RegionPassive = ({ points, region }) => {
   const {
-    semscreen: { createPoint },
-    me: { uid },
-  } = useContext(DataContext);
-  const {
-    rim: {
-      state: { isEditing },
-      setIsEditing,
-      activateRegion,
-      deactivateRegion,
-    },
-  } = useContext(UiContext);
-
-  const [pointInput, setPointInput] = useState(null);
-  useEffect(() => {
-    // Starts the Focus region with a pointInput
-    if (
-      !pointInput &&
-      points.filter(p => p.region === 'Focus').length === 0 &&
-      region === 'Focus'
-    ) {
-      activateRegion('Focus');
-      setPointInput({
-        id: uuidv4(),
-        uid,
-        placeholderContent: 'Tap, type, or paste anywhere...',
-        region,
-      });
-    }
-    /* eslint-disable-next-line */
-  }, []);
-  function handleClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    // only allows one editor or point to be open at any given time
-    if (pointInput || isEditing) {
-      return;
-    }
-    // prevents Focus area from having more that one point
-    if (region === 'Focus' && points.length > 0) {
-      return;
-    }
-    setIsEditing(true);
-    activateRegion(region);
-    setPointInput({
-      id: uuidv4(),
-      uid,
-      placeholderContent: `new ${singularize(region).toLowerCase()}`,
-      region,
-    });
-  }
-
-  /*
-    this function saves the point to this region
-    useState hook
-   */
-  function _closePointInput() {
-    setPointInput(null);
-    setIsEditing(false);
-    deactivateRegion(region);
-  }
-  function handlePointInputSubmit(e) {
-    const { id, content } = e;
-    if (content === '') {
-      _closePointInput();
-      return;
-    }
-    createPoint({ id, uid, content, region });
-    _closePointInput();
-  }
-
-  function handlePointInputCancel(e) {
-    e.stopPropagation();
-    _closePointInput();
-  }
+    handleCreatePoint,
+    handlePointInputCancel,
+    handlePointInputSubmit,
+    pointInput,
+    isSmall,
+    showCreateButton,
+  } = useRegionPassive({ region, points });
 
   return (
-    <RegionPassiveView onClick={handleClick}>
-      {points.map(point => (
-        <Point point={point} key={point.id} />
-      ))}
-      {pointInput && (
-        <PointInput
-          id={pointInput.id}
-          region={pointInput.region}
-          placeholderContent={pointInput.placeholderContent}
-          onPointInputBlur={handlePointInputSubmit}
-          handleCancel={handlePointInputCancel}
-          onPointInputSubmit={handlePointInputSubmit}
-        />
+    <RegionPassiveView>
+      {!isSmall && (
+        <>
+          {points.map(point => (
+            <Point point={point} regionName={region} key={point.id} />
+          ))}
+          {pointInput && (
+            <PointInput
+              id={pointInput.id}
+              region={pointInput.region}
+              placeholderContent={pointInput.placeholderContent}
+              handleCancel={handlePointInputCancel}
+              onPointInputSubmit={handlePointInputSubmit}
+            />
+          )}
+          {showCreateButton && (
+            <CreatePointButton handleClick={handleCreatePoint} />
+          )}
+        </>
       )}
     </RegionPassiveView>
   );
@@ -144,3 +85,133 @@ const RegionPassiveView = styled.div`
 `;
 
 export default RegionPassive;
+
+const CreatePointButton = ({ handleClick }) => (
+  <CreatePointButtonContainer onClick={handleClick}>
+    <Icon icon={faPlus} size="3x" color="#D3D3D3" />
+  </CreatePointButtonContainer>
+);
+
+CreatePointButton.propTypes = {
+  handleClick: PropTypes.func.isRequired,
+};
+
+const CreatePointButtonContainer = styled.div`
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  padding: 8px;
+`;
+/*
+  ##### useRegionPassive ####
+*/
+const useRegionPassive = ({ region, points }) => {
+  const {
+    semscreen: { createPoint },
+    me: { uid },
+  } = useContext(DataContext);
+  const {
+    rim: {
+      state: { regionActive, isEditing },
+      setIsEditing,
+      activateRegion,
+    },
+  } = useContext(UiContext);
+
+  /*
+    The following logic handles when to show the points
+    in order for the rim animations to look good the
+    points should be hidden while resizing
+    */
+  const [isSmall, setIsSmall] = useState(true);
+  const [timeOut, setTimeOut] = useState(null);
+  useEffect(() => {
+    if (regionActive === 'none') {
+      setTimeOut(
+        setTimeout(() => {
+          setIsSmall(false);
+        }, 1000)
+      );
+    }
+    if (regionActive !== 'none' && region !== regionActive) {
+      clearTimeout(timeOut);
+      setIsSmall(true);
+    }
+    // eslint-disable-next-line
+  }, [region, regionActive]);
+  // End of Is small logic
+
+  // TODO: to solve new point blur or "click outside to close/save" move this
+  // state to a context we can close it from the region component on click
+  const [pointInput, setPointInput] = useState(null);
+  useEffect(() => {
+    // Starts the Focus region with a pointInput
+    if (
+      !pointInput &&
+      points.filter(p => p.region === 'Focus').length === 0 &&
+      region === 'Focus'
+    ) {
+      activateRegion('Focus');
+      setPointInput({
+        id: uuidv4(),
+        uid,
+        placeholderContent: 'Tap, type, or paste anywhere...',
+        region,
+      });
+    }
+    /* eslint-disable-next-line */
+  }, []);
+
+  function handleCreatePoint(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    // only allows one editor or point to be open at any given time
+    if (pointInput || isEditing) {
+      console.log('point input', pointInput);
+      return;
+    }
+    // prevents Focus area from having more that one point
+    if (region === 'Focus' && points.length > 0) {
+      return;
+    }
+    setIsEditing(true);
+    // activateRegion(region);
+    console.log('man');
+    setPointInput({
+      id: uuidv4(),
+      uid,
+      placeholderContent: `new ${singularize(region).toLowerCase()}`,
+      region,
+    });
+  }
+
+  function _closePointInput() {
+    setPointInput(null);
+    setIsEditing(false);
+  }
+  function handlePointInputSubmit(e) {
+    const { id, content } = e;
+    if (content === '') {
+      _closePointInput();
+      return;
+    }
+    createPoint({ id, uid, content, region });
+    _closePointInput();
+  }
+
+  function handlePointInputCancel(e) {
+    e.stopPropagation();
+    _closePointInput();
+  }
+
+  return {
+    handleCreatePoint,
+    handlePointInputCancel,
+    handlePointInputSubmit,
+    isSmall,
+    pointInput,
+    showCreateButton: regionActive === region,
+  };
+};

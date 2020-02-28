@@ -16,7 +16,7 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import PointInput from './PointInput';
@@ -26,6 +26,7 @@ import UiContext from '../context/UiContext';
 
 const Point = ({
   point: { id, content, region, category, subCategory, uid, username, hat },
+  regionName,
 }) => {
   const {
     semscreen: { putHatOn, updatePoint },
@@ -33,15 +34,11 @@ const Point = ({
   } = useContext(DataContext);
   const {
     rim: {
-      state: { isEditing },
-      state,
+      state: { isEditing, regionActive },
       setIsEditing,
       activateRegion,
-      deactivateRegion,
     },
   } = useContext(UiContext);
-
-  const [open, setOpen] = useState(false);
 
   const contentExcerpt =
     content.length > 8 ? `${content.substring(0, 5).trim()}...` : content;
@@ -49,14 +46,22 @@ const Point = ({
   function handleClick(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (isEditing) {
+
+    if (isEditing && isEditing !== id) {
       return;
     }
-    setOpen(true);
-    setIsEditing(true);
-    if (region !== state.region) {
-      activateRegion(region);
+
+    if (!isEditing) {
+      setIsEditing(id);
     }
+
+    if (regionActive === 'none') {
+      activateRegion(regionName);
+    }
+
+    // if (region !== regionActive) {
+    //   activateRegion(region);
+    // }
   }
 
   // this seems ok, but we can add like a image
@@ -82,19 +87,17 @@ const Point = ({
     if (e.content !== content) {
       updatePoint(id, { content: e.content });
     }
-    setOpen(false);
-    setIsEditing(false);
-    deactivateRegion(region);
+    setIsEditing(undefined);
+    // deactivateRegion(region);
   }
 
   function handleCancel(e) {
     e.stopPropagation();
-    setOpen(false);
-    setIsEditing(false);
-    deactivateRegion(region);
+    setIsEditing(undefined);
+    // deactivateRegion(region);
   }
 
-  if (me.uid === uid && open) {
+  if (me.uid === uid && isEditing === id) {
     return (
       <PointInput
         id={id}
@@ -108,7 +111,7 @@ const Point = ({
     );
   }
 
-  if (open) {
+  if (isEditing === id) {
     return (
       <PointView
         user={uid}
@@ -121,7 +124,8 @@ const Point = ({
       />
     );
   }
-  const isDraggable = uid === me.uid;
+
+  const isDraggable = uid === me.uid && !isEditing;
 
   let subText;
   if (subCategory) {
@@ -150,6 +154,7 @@ const Point = ({
 
 Point.propTypes = {
   point: PropTypes.object.isRequired,
+  regionName: PropTypes.string.isRequired,
 };
 
 const PointPreview = styled.div`

@@ -42,7 +42,7 @@ const HatItem = ({ hat }) => {
     rim: {
       setIsEditing,
       deactivateRegion,
-      state: { region },
+      state: { regionActive },
     },
   } = useContext(UiContext);
   const { hatIndex, hatColorIndex } = hat.settings;
@@ -72,8 +72,8 @@ const HatItem = ({ hat }) => {
     // NOTE: comment this condition to allow creating new instances without switching
     if (selectedHat.id === hat.id) return;
 
-    if (region !== 'none') {
-      deactivateRegion(region);
+    if (regionActive !== 'none') {
+      deactivateRegion(regionActive);
     }
     setIsEditing(false);
     switchSelectedHat(hat.id);

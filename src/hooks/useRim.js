@@ -18,19 +18,26 @@
 */
 import { useReducer } from 'react';
 
+const initialRimState = {
+  className: 'passive',
+  regionActive: 'none',
+  cloud: false,
+  isEditing: false,
+};
+
 function reducer(state, action) {
   switch (action.type) {
     case 'activate':
       return {
         ...state,
-        region: action.region,
+        regionActive: action.regionActive,
         className: action.className,
         cloud: action.cloud,
       };
     case 'deactivate':
       return {
         ...state,
-        region: action.region,
+        regionActive: action.regionActive,
         className: action.className,
         cloud: action.cloud,
       };
@@ -43,12 +50,6 @@ function reducer(state, action) {
       return state;
   }
 }
-const initialRimState = {
-  className: 'passive',
-  region: 'none',
-  cloud: false,
-  isEditing: false,
-};
 
 function useRim() {
   const [state, dispatch] = useReducer(reducer, initialRimState);
@@ -56,7 +57,7 @@ function useRim() {
   const activateRegion = (region, cloud) => {
     dispatch({
       type: `activate`,
-      region,
+      regionActive: region,
       className: `activate${region}`,
       cloud,
     });
@@ -65,7 +66,7 @@ function useRim() {
   const deactivateRegion = region => {
     dispatch({
       type: `deactivate`,
-      region: 'none',
+      regionActive: 'none',
       className: `deactivate${region}`,
       cloud: false,
     });

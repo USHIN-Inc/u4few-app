@@ -18,6 +18,7 @@
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from 'react';
 import styled, { css } from 'styled-components';
 
