@@ -49,7 +49,7 @@ const PanelContainer = styled.div`
   position: relative;
   background: white;
   transition: width 1s;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   &.panel__right--closed {
     width: 0px;
