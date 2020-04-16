@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,111 +17,45 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-/*
-  This component will handle showing the small region
-  and will show only the small points stuff
-*/
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
-import { singularize } from 'inflected';
 import DataContext from '../../context/DataContext';
-import PointInput from '../PointInput';
-import Point from '../Point';
+import Point from '../Point.tsx';
 import UiContext from '../../context/UiContext';
+import RegionContentRuler from '../commons/RegionContentRuler.tsx';
 
 const RegionPassive = ({ points, region }) => {
+  // const containerRef = useRef(null);
+
   const {
-    semscreen: { createPoint },
-    me: { uid },
-  } = useContext(DataContext);
-  const {
-    rim: {
-      state: { isEditing },
-      setIsEditing,
-      activateRegion,
-      deactivateRegion,
-    },
-  } = useContext(UiContext);
-
-  const [pointInput, setPointInput] = useState(null);
-  useEffect(() => {
-    // Starts the Focus region with a pointInput
-    if (
-      !pointInput &&
-      points.filter(p => p.region === 'Focus').length === 0 &&
-      region === 'Focus'
-    ) {
-      activateRegion('Focus');
-      setPointInput({
-        id: uuidv4(),
-        uid,
-        placeholderContent: 'Tap, type, or paste anywhere...',
-        region,
-      });
-    }
-    /* eslint-disable-next-line */
-  }, []);
-  function handleClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    // only allows one editor or point to be open at any given time
-    if (pointInput || isEditing) {
-      return;
-    }
-    // prevents Focus area from having more that one point
-    if (region === 'Focus' && points.length > 0) {
-      return;
-    }
-    setIsEditing(true);
-    activateRegion(region);
-    setPointInput({
-      id: uuidv4(),
-      uid,
-      placeholderContent: `new ${singularize(region).toLowerCase()}`,
-      region,
-    });
-  }
-
-  /*
-    this function saves the point to this region
-    useState hook
-   */
-  function _closePointInput() {
-    setPointInput(null);
-    setIsEditing(false);
-    deactivateRegion(region);
-  }
-  function handlePointInputSubmit(e) {
-    const { id, content } = e;
-    if (content === '') {
-      _closePointInput();
-      return;
-    }
-    createPoint({ id, uid, content, region });
-    _closePointInput();
-  }
-
-  function handlePointInputCancel(e) {
-    e.stopPropagation();
-    _closePointInput();
-  }
+    contentRef,
+    regionActive,
+    handlePortal,
+    contentFits,
+    containerRef,
+  } = useRegionPassive({
+    region,
+    points,
+  });
 
   return (
-    <RegionPassiveView onClick={handleClick}>
-      {points.map(point => (
-        <Point point={point} key={point.id} />
-      ))}
-      {pointInput && (
-        <PointInput
-          id={pointInput.id}
-          region={pointInput.region}
-          placeholderContent={pointInput.placeholderContent}
-          onPointInputBlur={handlePointInputSubmit}
-          handleCancel={handlePointInputCancel}
-          onPointInputSubmit={handlePointInputSubmit}
-        />
+    <RegionPassiveView ref={containerRef}>
+      <RegionContentRuler
+        callback={handlePortal}
+        points={points}
+        regionActive={regionActive}
+      />
+      {contentFits === 'fits' && (
+        <ul ref={contentRef} style={{ width: '100%' }}>
+          {points.map(point => (
+            <Point point={point} regionName={region} key={point.id} />
+          ))}
+        </ul>
+      )}
+      {contentFits === 'overflow' && points.length > 0 && (
+        <div>{`${points.length} points, click to expand`}</div>
       )}
     </RegionPassiveView>
   );
@@ -140,7 +75,83 @@ const RegionPassiveView = styled.div`
   justify-content: center;
   align-items: center;
   overflow: auto;
-  font-size: 12px;
 `;
 
 export default RegionPassive;
+
+/* 
+  ##### useRegionPassive ####
+*/
+const useRegionPassive = ({ region, points }) => {
+  const {
+    semscreen: { createPoint },
+  } = useContext(DataContext);
+  const {
+    rim: {
+      state: { regionActive },
+    },
+  } = useContext(UiContext);
+
+  const [preHeight, setPreHeight] = useState(null);
+  const [contentFits, setContentFits] = useState('loading');
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    setContentFits('loading');
+
+    // helper function declaration
+    function handlePointCreation() {
+      if (
+        regionActive === region &&
+        points.length === 0 &&
+        contentFits !== 'loading'
+      ) {
+        const id = uuidv4();
+        createPoint({
+          id,
+          content: '',
+          region,
+        });
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          console.log('newPoint', el.nextSibling);
+          el.nextSibling.focus();
+        }, 100);
+      }
+    }
+
+    const timerId = setTimeout(() => {
+      if (preHeight) {
+        const containerHeigt = containerRef.current.clientHeight;
+        if (preHeight >= containerHeigt - 32) {
+          setContentFits('overflow');
+        } else {
+          setContentFits('fits');
+        }
+      }
+      handlePointCreation();
+    }, 900);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [regionActive, preHeight]);
+
+  function handlePortal(result) {
+    if (result.error) {
+      console.error(result.error);
+      return;
+    }
+    setPreHeight(result.value);
+  }
+
+  const thisActive = regionActive === region;
+  return {
+    thisActive,
+    contentFits,
+    regionActive,
+    handlePortal,
+    containerRef,
+  };
+};

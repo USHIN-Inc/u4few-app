@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,54 +17,129 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import RegionPassive from './RegionPassive';
-import RegionActive from './RegionActive';
+import TagCloud from './TagCloud.tsx';
 import DataContext from '../../context/DataContext';
 import UiContext from '../../context/UiContext';
 
-const Region = ({ type }) => {
+const Region = ({ regionName }) => {
   const {
     semscreen: {
-      points,
-      updatePoint,
       settings: { backgroundColor },
     },
   } = useContext(DataContext);
   const {
     rim: {
-      state: { region, cloud },
-      activateRegion,
-      deactivateRegion,
+      state: { regionActive, cloud },
     },
   } = useContext(UiContext);
 
-  const _points = points.filter(point => point.region === type);
+  const {
+    handleClick,
+    handleDragEnter,
+    handleDragLeave,
+    handleDragOver,
+    handleDrop,
+    regionPoints,
+  } = useRegion({ regionName });
 
-  /*
-    ##### Drag Handlers #####
-  */
+  return (
+    <RegionView
+      onClick={handleClick}
+      background={backgroundColor}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {regionName !== 'Focus' && cloud && regionActive === regionName && (
+        <TagCloud region={regionName} />
+      )}
+      {!cloud && <RegionPassive points={regionPoints} region={regionName} />}
+    </RegionView>
+  );
+};
+
+Region.propTypes = {
+  regionName: PropTypes.string.isRequired,
+};
+
+const RegionView = styled.div`
+  width: 100%;
+  height: 100%;
+  transition: all 1s;
+  background-color: ${props => props.background};
+`;
+
+export default Region;
+
+/* 
+  ##### useRegion ######
+  controller for the region component
+  returns: 
+  {
+    handleDragEnter,
+    handleDragLeave,
+    handleDragOver,
+    handleDrop,
+    regionPoints,
+  };
+*/
+const useRegion = ({ regionName }) => {
+  const {
+    semscreen: {
+      points,
+      updatePoint,
+      // settings: { backgroundColor },
+    },
+  } = useContext(DataContext);
+  const {
+    rim: {
+      state: {
+        regionActive,
+        isEditing,
+        //  cloud
+      },
+      setIsEditing,
+      toggleRegionState,
+    },
+  } = useContext(UiContext);
+
+  const regionPoints = points.filter(point => point.region === regionName);
+
+  function handleClick(e) {
+    e.preventDefault();
+
+    if (isEditing) {
+      setIsEditing(false);
+      return;
+    }
+
+    toggleRegionState(regionName);
+  }
+
   let longEvent;
 
   function handleDragEnter(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (type === 'Focus') {
+    if (regionName === 'Focus') {
       return;
     }
-    if (region !== type && region !== 'none') {
-      deactivateRegion(region);
+    if (regionActive !== regionName && regionActive !== 'none') {
+      toggleRegionState(regionActive);
       window.clearTimeout(longEvent);
       longEvent = setTimeout(() => {
-        activateRegion(type, true);
+        toggleRegionState(regionName, true);
       }, 1000);
-    } else if (region === 'none') {
+    } else if (regionActive === 'none') {
       window.clearTimeout(longEvent);
       longEvent = setTimeout(() => {
         // setRegion(type);
-        activateRegion(type, true);
+        toggleRegionState(regionName, true);
       }, 1000);
     }
   }
@@ -81,74 +157,32 @@ const Region = ({ type }) => {
     // updates the point category
     e.preventDefault();
     clearTimeout(longEvent);
-    if (type === 'Focus' && _points.length > 0) {
+    if (regionName === 'Focus' && regionPoints.length > 0) {
       return;
     }
 
-    if (region !== 'none') {
-      deactivateRegion(region);
+    // closes the region
+    if (regionActive !== 'none') {
+      toggleRegionState(regionActive);
     }
 
     const pointId = e.dataTransfer.getData('text');
 
     // update the point to this area
     updatePoint(pointId, {
-      region: type,
+      region: regionName,
       category: undefined,
       subCategory: undefined,
     });
   }
   // End Drag Handlers
 
-  /*
-    The following logic handles when to show the points
-    in order for the rim animations to look good the
-    points should be hidden while resizing
-  */
-  const [isSmall, setIsSmall] = useState(true);
-  const [timeOut, setTimeOut] = useState(null);
-  useEffect(() => {
-    if (region === 'none') {
-      setTimeOut(
-        setTimeout(() => {
-          setIsSmall(false);
-        }, 1000)
-      );
-    }
-    if (region !== 'none' && region !== type) {
-      clearTimeout(timeOut);
-      setIsSmall(true);
-    }
-    // eslint-disable-next-line
-  }, [region, type]);
-  // End of Is small logic
-
-  return (
-    <RegionView
-      background={backgroundColor}
-      onDragOver={handleDragOver}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
-      {type !== 'Focus' && cloud && region === type && (
-        <RegionActive region={type} />
-      )}
-      {!cloud && !isSmall && <RegionPassive points={_points} region={type} />}
-    </RegionView>
-  );
+  return {
+    handleClick,
+    handleDragEnter,
+    handleDragLeave,
+    handleDragOver,
+    handleDrop,
+    regionPoints,
+  };
 };
-
-Region.propTypes = {
-  type: PropTypes.string.isRequired,
-};
-
-const RegionView = styled.div`
-  width: 100%;
-  height: 100%;
-  transition: all 1s;
-  background-color: ${props => props.background};
-  text-align: center;
-`;
-
-export default Region;

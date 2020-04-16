@@ -30,14 +30,13 @@ const UiContext = createContext({
   setTopPanelOpen: () => {},
   rim: {
     state: {
-      classMame: 'passive',
-      region: 'none',
+      className: 'passive',
+      regionActive: 'none',
       cloud: false,
       isEditing: false,
     },
-    activateRegion: () => {},
-    deactivateRegion: () => {},
     setIsEditing: () => {},
+    toggleRegionState: () => {},
   },
 });
 
@@ -50,13 +49,26 @@ const UiContextProvider = ({ children }) => {
   function toggleSidePanel() {
     switch (sidePanelState) {
       case 'closed':
-        setSidePanelState('open');
+        setSidePanelState('open-1');
+        break;
+      case 'open-1':
+        setSidePanelState('open-2');
+        break;
+      case 'open-2':
+        setSidePanelState('open-3');
+        break;
+      case 'open-3':
+        setSidePanelState('closed');
         break;
       case 'open':
-        setSidePanelState('closed');
+        setSidePanelState('open-2');
         break;
       default:
         console.log('error');
+        break;
+    }
+    if (sidePanelState === 'closed') {
+      setSidePanelState('open');
     }
   }
 

@@ -45,15 +45,15 @@ const Rim = () => {
       className={className}
     >
       <Banner />
-      <Region type="Facts" />
-      <Region type="Merits" />
-      <Region type="People" />
-      <Region type="Thoughts" />
-      <Region type="Focus" />
-      <Region type="Actions" />
-      <Region type="Feelings" />
-      <Region type="Needs" />
-      <Region type="Topics" />
+      <Region regionName="Facts" />
+      <Region regionName="Merits" />
+      <Region regionName="People" />
+      <Region regionName="Thoughts" />
+      <Region regionName="Focus" />
+      <Region regionName="Actions" />
+      <Region regionName="Feelings" />
+      <Region regionName="Needs" />
+      <Region regionName="Topics" />
     </RimView>
   );
 };

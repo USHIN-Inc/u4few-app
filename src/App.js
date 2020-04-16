@@ -26,6 +26,7 @@ import { DataContextProvider } from './context/DataContext';
 
 const Wrapper = styled.div`
   height: 100%;
+  z-index: 999;
   position: relative;
 `;
 

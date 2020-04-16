@@ -4,13 +4,13 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.tsx',
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
+        test: /\.(j|t)sx?$/,
         use: ['babel-loader', 'eslint-loader'],
+        exclude: /node_modules/,
       },
       {
         test: /\.svg$/,
@@ -34,7 +34,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx'],
+    extensions: ['*', '.js', '.ts', '.jsx', '.tsx'],
   },
   plugins: [
     new CleanWebpackPlugin(),

@@ -25,9 +25,13 @@ import UiContext from '../../context/UiContext';
 import HistorySlider from './HistorySlider';
 
 const TopPanel = () => {
-  const { topPanelOpen } = useContext(UiContext);
+  const { topPanelOpen, setTopPanelOpen } = useContext(UiContext);
   return (
-    <PanelContainer id="topPanel" open={topPanelOpen}>
+    <PanelContainer
+      id="topPanel"
+      open={topPanelOpen}
+      onClick={() => setTopPanelOpen(false)}
+    >
       {topPanelOpen && <HistorySlider />}
     </PanelContainer>
   );

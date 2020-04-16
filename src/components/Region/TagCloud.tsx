@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -18,28 +19,27 @@
 */
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import Alert from 'react-bootstrap/Alert';
 import * as TAGS from '../../constants/tags';
 import DataContext from '../../context/DataContext';
 import useDebounce from '../../hooks/useDebounce';
 import UiContext from '../../context/UiContext';
 
-function cancelEvents(e) {
+function cancelEvents(e: any) {
   e.preventDefault();
   e.stopPropagation();
 }
 
-const RegionActive = ({ region }) => {
+const TagCloud: React.FC<{ region: string }> = ({ region }) => {
   const {
     semscreen: { updatePoint },
   } = useContext(DataContext);
   const {
-    rim: { deactivateRegion },
+    rim: { toggleRegionState },
   } = useContext(UiContext);
   const currentTags = Object.keys(TAGS[region]);
-  let longHoverEvent;
-  const [category, setCategory] = useState(null);
+  let longHoverEvent: ReturnType<typeof setTimeout>;
+  const [category, setCategory] = useState<string | null>(null);
   let subCategories;
   if (category) {
     subCategories = TAGS[region][category];
@@ -48,34 +48,37 @@ const RegionActive = ({ region }) => {
   /*
     Categories handlers
   */
-  function handleCategoryDragEnter(e) {
+  function handleCategoryDragEnter(e: React.DragEvent<HTMLDivElement>) {
     cancelEvents(e);
-    e.target.style.padding = '24px';
-    const targetName = e.target.getAttribute('name');
+    const el = e.target as HTMLDivElement;
+    el.style.padding = '24px';
+    const targetName = el.getAttribute('name');
     longHoverEvent = setTimeout(() => {
       setCategory(targetName);
     }, 750);
   }
 
-  function handleCategoryDragLeave(e) {
+  function handleCategoryDragLeave(e: React.DragEvent<HTMLDivElement>) {
     cancelEvents(e);
-    e.target.style.padding = '16px';
+    const el = e.target as HTMLDivElement;
+    el.style.padding = '16px';
     clearTimeout(longHoverEvent);
   }
 
-  function handleCategoryDragOver(e) {
+  function handleCategoryDragOver(e: React.DragEvent<HTMLDivElement>) {
     cancelEvents(e);
   }
 
-  function handleCategoryDrop(e) {
+  function handleCategoryDrop(e: React.DragEvent<HTMLDivElement>) {
     cancelEvents(e);
+    const el = e.target as HTMLDivElement;
     const pointId = e.dataTransfer.getData('text');
-    const targetName = e.target.getAttribute('name');
+    const targetName = el.getAttribute('name');
     updatePoint(pointId, { category: targetName, subCategory: null, region });
-    deactivateRegion(region);
+    toggleRegionState(region);
   }
 
-  function renderCategoriesTags(tags) {
+  function renderCategoriesTags(tags: string[]): React.ReactNodeArray {
     return tags.map(label => (
       <Category
         key={label}
@@ -95,22 +98,25 @@ const RegionActive = ({ region }) => {
     ########### SubCategories Handlers ##############
   */
 
-  function handleSubCategoryDragEnter(e) {
+  function handleSubCategoryDragEnter(e: React.DragEvent<HTMLDivElement>) {
     cancelEvents(e);
-    e.target.style.padding = '24px';
+    const el = e.target as HTMLDivElement;
+    el.style.padding = '24px';
   }
-  function handleSubCategoryDragLeave(e) {
+  function handleSubCategoryDragLeave(e: React.DragEvent<HTMLDivElement>) {
     cancelEvents(e);
-    e.target.style.padding = '16px';
+    const el = e.target as HTMLDivElement;
+    el.style.padding = '16px';
   }
-  function handleSubCategoryDrop(e) {
+  function handleSubCategoryDrop(e: React.DragEvent<HTMLDivElement>) {
     cancelEvents(e);
+    const el = e.target as HTMLDivElement;
     const pointId = e.dataTransfer.getData('text');
-    const targetName = e.target.getAttribute('name');
+    const targetName = el.getAttribute('name');
     updatePoint(pointId, { category, subCategory: targetName, region });
-    deactivateRegion(region);
+    toggleRegionState(region);
   }
-  function renderSubCategoriesTags(tags) {
+  function renderSubCategoriesTags(tags: string[]): React.ReactNodeArray {
     return tags.map(label => (
       <Category
         key={label}
@@ -127,33 +133,35 @@ const RegionActive = ({ region }) => {
   /*
     status event handlers
   */
-  let statusLongHover;
-  function handleStatusDragEnter(e) {
+  let statusLongHover: ReturnType<typeof setTimeout>;
+  function handleStatusDragEnter(e: React.DragEvent<HTMLDivElement>) {
     cancelEvents(e);
-    e.target.style.padding = '24px';
+    const el = e.target as HTMLDivElement;
+    el.style.padding = '24px';
     statusLongHover = setTimeout(() => {
       setCategory(null);
     }, 500);
   }
-  function handleStatusDragLeave(e) {
+  function handleStatusDragLeave(e: React.DragEvent<HTMLDivElement>) {
     cancelEvents(e);
-    e.target.style.padding = '16px';
+    const el = e.target as HTMLDivElement;
+    el.style.padding = '16px';
     clearTimeout(statusLongHover);
   }
   /*
     Active Region handlers
   */
-  function handleRegionOnDrop(e) {
+  function handleRegionOnDrop(e: React.DragEvent<HTMLDivElement>) {
     cancelEvents(e);
     const pointId = e.dataTransfer.getData('text');
     updatePoint(pointId, { category: null, subCategory: null, region });
-    deactivateRegion(region);
+    toggleRegionState(region);
   }
 
   const visible = useDebounce(true, 1000);
 
   return (
-    <RegionActiveView onDrop={handleRegionOnDrop}>
+    <TagCloudView onDrop={handleRegionOnDrop}>
       {visible && (
         <>
           <CategoryContainer>
@@ -170,13 +178,13 @@ const RegionActive = ({ region }) => {
           </Status>
         </>
       )}
-    </RegionActiveView>
+    </TagCloudView>
   );
 };
 
-RegionActive.propTypes = {
-  region: PropTypes.string.isRequired,
-};
+// TagsCloud.propTypes = {
+//   region: PropTypes.string.isRequired,
+// };
 
 const CategoryContainer = styled.div`
   display: flex;
@@ -198,7 +206,8 @@ const Status = styled(Alert)`
   width: 8rem;
 `;
 
-const RegionActiveView = styled.div`
+const TagCloudView = styled.div`
+  text-align: center;
   position: relative;
   height: 100%;
   display: flex;
@@ -208,4 +217,4 @@ const RegionActiveView = styled.div`
   align-items: center;
 `;
 
-export default RegionActive;
+export default TagCloud;

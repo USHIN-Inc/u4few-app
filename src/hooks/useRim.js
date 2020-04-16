@@ -18,19 +18,26 @@
 */
 import { useReducer } from 'react';
 
+const initialRimState = {
+  className: 'passive',
+  regionActive: 'none',
+  cloud: false,
+  isEditing: false,
+};
+
 function reducer(state, action) {
   switch (action.type) {
     case 'activate':
       return {
         ...state,
-        region: action.region,
+        regionActive: action.regionActive,
         className: action.className,
         cloud: action.cloud,
       };
     case 'deactivate':
       return {
         ...state,
-        region: action.region,
+        regionActive: action.regionActive,
         className: action.className,
         cloud: action.cloud,
       };
@@ -43,32 +50,26 @@ function reducer(state, action) {
       return state;
   }
 }
-const initialRimState = {
-  className: 'passive',
-  region: 'none',
-  cloud: false,
-  isEditing: false,
-};
 
 function useRim() {
   const [state, dispatch] = useReducer(reducer, initialRimState);
 
-  const activateRegion = (region, cloud) => {
-    dispatch({
-      type: `activate`,
-      region,
-      className: `activate${region}`,
-      cloud,
-    });
-  };
-
-  const deactivateRegion = region => {
-    dispatch({
-      type: `deactivate`,
-      region: 'none',
-      className: `deactivate${region}`,
-      cloud: false,
-    });
+  const toggleRegionState = (region, cloud) => {
+    if (state.regionActive === region) {
+      dispatch({
+        type: 'deactivate',
+        regionActive: 'none',
+        className: 'passive',
+        cloud: false,
+      });
+    } else {
+      dispatch({
+        type: 'activate',
+        regionActive: region,
+        className: `${region}--active`,
+        cloud,
+      });
+    }
   };
 
   const setIsEditing = value => {
@@ -78,7 +79,11 @@ function useRim() {
     });
   };
 
-  return { state, activateRegion, deactivateRegion, setIsEditing };
+  return {
+    state,
+    setIsEditing,
+    toggleRegionState,
+  };
 }
 
 export default useRim;

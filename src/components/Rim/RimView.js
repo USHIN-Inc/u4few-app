@@ -19,7 +19,7 @@
 import styled from 'styled-components';
 
 const RimView = styled.div`
-  --active-size: 6fr;
+  --active-size: 5fr;
   height: 100%;
   width: 100%;
   position: relative;
@@ -32,45 +32,18 @@ const RimView = styled.div`
 
   background-color: lightgray;
   color: ${props => (props.color ? props.color : 'inherit')};
-
-  /* ##### Default style ##### */
-  &.passive {
-    animation: deactivateFocus 1s ease-in;
-    animation-fill-mode: forwards;
-  }
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  transition: all 1s;
 
   /* ##### Focus styles ##### */
   > .Focus {
     align-self: center;
     justify-self: center;
   }
-  &.activateFocus {
-    animation: activateFocus 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes activateFocus {
-    0% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr var(--active-size) 1fr;
-      grid-template-rows: 1fr var(--active-size) 1fr;
-    }
-  }
-  &.deactivateFocus {
-    animation: deactivateFocus 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes deactivateFocus {
-    0% {
-      grid-template-columns: 1fr var(--active-size) 1fr;
-      grid-template-rows: 1fr var(--active-size) 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
+  &.Focus--active {
+    grid-template-columns: 1fr var(--active-size) 1fr !important;
+    grid-template-rows: 1fr var(--active-size) 1fr !important;
   }
 
   /* ##### Actions styles ##### */
@@ -79,33 +52,9 @@ const RimView = styled.div`
     justify-self: end;
     grid-area: actions;
   }
-  &.activateActions {
-    animation: activateActions 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes activateActions {
-    0% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr 1fr var(--active-size);
-      grid-template-rows: 1fr var(--active-size) 1fr;
-    }
-  }
-  &.deactivateActions {
-    animation: deactivateActions 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes deactivateActions {
-    0% {
-      grid-template-columns: 1fr 1fr var(--active-size);
-      grid-template-rows: 1fr var(--active-size) 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
+  &.Actions--active {
+    grid-template-columns: 1fr 1fr var(--active-size);
+    grid-template-rows: 1fr var(--active-size) 1fr;
   }
 
   /* ##### People styles ##### */
@@ -114,35 +63,9 @@ const RimView = styled.div`
     justify-self: end;
     grid-area: people;
   }
-
-  &.activatePeople {
-    animation: activatePeople 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-
-  @keyframes activatePeople {
-    0% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr 1fr var(--active-size);
-      grid-template-rows: var(--active-size) 1fr 1fr;
-    }
-  }
-  &.deactivatePeople {
-    animation: deactivatePeople 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes deactivatePeople {
-    0% {
-      grid-template-columns: 1fr 1fr var(--active-size);
-      grid-template-rows: var(--active-size) 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
+  &.People--active {
+    grid-template-columns: 1fr 1fr var(--active-size);
+    grid-template-rows: var(--active-size) 1fr 1fr;
   }
 
   /* ###### Merits styles ##### */
@@ -151,33 +74,9 @@ const RimView = styled.div`
     justify-self: center;
     grid-area: merits;
   }
-  &.activateMerits {
-    animation: activateMerits 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes activateMerits {
-    0% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr var(--active-size) 1fr;
-      grid-template-rows: var(--active-size) 1fr 1fr;
-    }
-  }
-  &.deactivateMerits {
-    animation: deactivateMerits 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes deactivateMerits {
-    0% {
-      grid-template-columns: 1fr var(--active-size) 1fr;
-      grid-template-rows: var(--active-size) 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
+  &.Merits--active {
+    grid-template-columns: 1fr var(--active-size) 1fr;
+    grid-template-rows: var(--active-size) 1fr 1fr;
   }
 
   /* ##### Facts styles #####*/
@@ -186,33 +85,9 @@ const RimView = styled.div`
     justify-self: start;
     grid-area: facts;
   }
-  &.activateFacts {
-    animation: activateFacts 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes activateFacts {
-    0% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: var(--active-size) 1fr 1fr;
-      grid-template-rows: var(--active-size) 1fr 1fr;
-    }
-  }
-  &.deactivateFacts {
-    animation: deactivateFacts 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes deactivateFacts {
-    0% {
-      grid-template-columns: var(--active-size) 1fr 1fr;
-      grid-template-rows: var(--active-size) 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
+  &.Facts--active {
+    grid-template-columns: var(--active-size) 1fr 1fr;
+    grid-template-rows: var(--active-size) 1fr 1fr;
   }
 
   /* ##### Thoughts styles ##### */
@@ -221,33 +96,9 @@ const RimView = styled.div`
     justify-self: start;
     grid-area: thoughts;
   }
-  &.activateThoughts {
-    animation: activateThoughts 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes activateThoughts {
-    0% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: var(--active-size) 1fr 1fr;
-      grid-template-rows: 1fr var(--active-size) 1fr;
-    }
-  }
-  &.deactivateThoughts {
-    animation: deactivateThoughts 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes deactivateThoughts {
-    0% {
-      grid-template-columns: var(--active-size) 1fr 1fr;
-      grid-template-rows: 1fr var(--active-size) 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
+  &.Thoughts--active {
+    grid-template-columns: var(--active-size) 1fr 1fr;
+    grid-template-rows: 1fr var(--active-size) 1fr;
   }
 
   /* ##### Feelings active ##### */
@@ -256,33 +107,9 @@ const RimView = styled.div`
     justify-self: start;
     grid-area: feelings;
   }
-  &.activateFeelings {
-    animation: activateFeelings 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes activateFeelings {
-    0% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: var(--active-size) 1fr 1fr;
-      grid-template-rows: 1fr 1fr var(--active-size);
-    }
-  }
-  &.deactivateFeelings {
-    animation: deactivateFeelings 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes deactivateFeelings {
-    0% {
-      grid-template-columns: var(--active-size) 1fr 1fr;
-      grid-template-rows: 1fr 1fr var(--active-size);
-    }
-    100% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
+  &.Feelings--active {
+    grid-template-columns: var(--active-size) 1fr 1fr;
+    grid-template-rows: 1fr 1fr var(--active-size);
   }
 
   /* ##### Needs styles ##### */
@@ -291,33 +118,9 @@ const RimView = styled.div`
     justify-self: center;
     grid-area: needs;
   }
-  &.activateNeeds {
-    animation: activateNeeds 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes activateNeeds {
-    0% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr var(--active-size) 1fr;
-      grid-template-rows: 1fr 1fr var(--active-size);
-    }
-  }
-  &.deactivateNeeds {
-    animation: deactivateNeeds 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes deactivateNeeds {
-    0% {
-      grid-template-columns: 1fr var(--active-size) 1fr;
-      grid-template-rows: 1fr 1fr var(--active-size);
-    }
-    100% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
+  &.Needs--active {
+    grid-template-columns: 1fr var(--active-size) 1fr;
+    grid-template-rows: 1fr 1fr var(--active-size);
   }
 
   /* ##### Topics styles ##### */
@@ -326,33 +129,9 @@ const RimView = styled.div`
     justify-self: end;
     grid-area: topics;
   }
-  &.activateTopics {
-    animation: activateTopics 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes activateTopics {
-    0% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
-    100% {
-      grid-template-columns: 1fr 1fr var(--active-size);
-      grid-template-rows: 1fr 1fr var(--active-size);
-    }
-  }
-  &.deactivateTopics {
-    animation: deactivateTopics 1s ease-in;
-    animation-fill-mode: forwards;
-  }
-  @keyframes deactivateTopics {
-    0% {
-      grid-template-columns: 1fr 1fr var(--active-size);
-      grid-template-rows: 1fr 1fr var(--avtive-size);
-    }
-    100% {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
+  &.Topics--active {
+    grid-template-columns: 1fr 1fr var(--active-size);
+    grid-template-rows: 1fr 1fr var(--active-size);
   }
 `;
 

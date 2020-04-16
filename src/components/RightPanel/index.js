@@ -18,7 +18,7 @@
 */
 
 import React, { useContext } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import UiContext from '../../context/UiContext';
 import Agenda from './Agenda';
@@ -49,7 +49,7 @@ const PanelContainer = styled.div`
   position: relative;
   background: white;
   transition: width 1s;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   &.panel__right--closed {
     width: 0px;
@@ -58,6 +58,23 @@ const PanelContainer = styled.div`
   &.panel__right--open {
     width: calc(512px - 128px);
   }
+
+  &.panel__right--open-2 {
+    width: calc(512px + 128px);
+  }
+
+  &.panel__right--open-3 {
+    width: 1024px;
+  }
+
+  ${props =>
+    props.open
+      ? css`
+          width: calc(512px - 128px);
+        `
+      : css`
+          width: 0px;
+        `};
 `;
 
 export default RightPanel;
