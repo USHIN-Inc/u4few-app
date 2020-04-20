@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,31 +17,22 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React, { createContext } from 'react';
 import PropTypes from 'prop-types';
+import useRim, { UseRimI } from '../hooks/useRim';
 import useLocalState from '../hooks/useLocalStorage';
-import useRim from '../hooks/useRim';
 
-const UiContext = createContext({
-  sidePanelState: null,
-  setSidePanelState: () => {},
-  toggleSidePanel: () => {},
-  topPanelOpen: null,
-  setTopPanelOpen: () => {},
-  rim: {
-    state: {
-      className: 'passive',
-      regionActive: 'none',
-      cloud: false,
-      isEditing: false,
-    },
-    setIsEditing: () => {},
-    toggleRegionState: () => {},
-  },
-});
+interface UiContextI {
+  sidePanelState: string;
+  setSidePanelState: (newState: string) => void;
+  toggleSidePanel: () => void;
+  topPanelOpen: boolean;
+  setTopPanelOpen: (newState: boolean) => void;
+  rim: UseRimI;
+}
+const UiContext = createContext<UiContextI | null>(null);
 
-const UiContextProvider = ({ children }) => {
+const UiContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [sidePanelState, setSidePanelState] = useLocalState(
     'sidePanel',
     'closed'
