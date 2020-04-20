@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,16 +17,30 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
-import uuidv4 from 'uuid';
+import uuidv4 from 'uuid/v4';
 import useLocalStorage from './useLocalStorage';
 
-export default function useAgenda() {
+interface AgendaItemI {
+  id: string;
+  text: string;
+}
+
+type DestroyAgendaItemI = (id: string) => void;
+
+type CreateAgendaItemI = (text: string) => void;
+
+interface UseAgendaI {
+  agendaItems: AgendaItemI[];
+  createAgendaItem: CreateAgendaItemI;
+  destroyAgendaItem: DestroyAgendaItemI;
+}
+
+export default function useAgenda(): UseAgendaI {
   const [agendaItems, setAgendaItems] = useLocalStorage('agendaItems', [
-    { id: 1, text: 'Add an Item' },
+    { id: '1', text: 'Add an Item' },
   ]);
 
-  function createAgendaItem(text) {
+  const createAgendaItem: CreateAgendaItemI = text => {
     setAgendaItems([
       ...agendaItems,
       {
@@ -33,19 +48,20 @@ export default function useAgenda() {
         text,
       },
     ]);
-  }
+  };
 
-  function destroyAgendaItem(id) {
-    const newItems = agendaItems.filter(item => item.id !== id);
+  const destroyAgendaItem: DestroyAgendaItemI = id => {
+    const newItems = agendaItems.filter((item: AgendaItemI) => item.id !== id);
     setAgendaItems(newItems);
-  }
+  };
 
   const agenda = {
     agendaItems,
-    setAgendaItems,
     createAgendaItem,
     destroyAgendaItem,
   };
 
   return agenda;
 }
+
+export { AgendaItemI, UseAgendaI, DestroyAgendaItemI, CreateAgendaItemI };
