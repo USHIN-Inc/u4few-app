@@ -21,9 +21,9 @@ import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import Alert from 'react-bootstrap/Alert';
 import * as TAGS from '../../constants/tags';
-import DataContext from '../../context/DataContext';
+import DataContext from '../../context/DataContext.tsx';
 import useDebounce from '../../hooks/useDebounce';
-import UiContext from '../../context/UiContext';
+import UiContext from '../../context/UiContext.tsx';
 
 function cancelEvents(e: any) {
   e.preventDefault();

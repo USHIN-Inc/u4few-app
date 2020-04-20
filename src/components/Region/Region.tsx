@@ -1,4 +1,4 @@
-/* eslint-disable no-use-before-define */
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -18,24 +18,23 @@
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import RegionPassive from './RegionPassive';
-import TagCloud from './TagCloud.tsx';
+import TagCloud from './TagCloud';
 import DataContext from '../../context/DataContext';
 import UiContext from '../../context/UiContext';
 
-const Region = ({ regionName }) => {
+const Region = ({ regionName }: { regionName: string }) => {
   const {
     semscreen: {
       settings: { backgroundColor },
     },
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
   const {
     rim: {
       state: { regionActive, cloud },
     },
-  } = useContext(UiContext);
+  } = useContext(UiContext)!;
 
   const {
     handleClick,
@@ -63,11 +62,11 @@ const Region = ({ regionName }) => {
   );
 };
 
-Region.propTypes = {
-  regionName: PropTypes.string.isRequired,
-};
+interface RegionViewProps {
+  background: string;
+}
 
-const RegionView = styled.div`
+const RegionView = styled.div<RegionViewProps>`
   width: 100%;
   height: 100%;
   transition: all 1s;
@@ -88,29 +87,21 @@ export default Region;
     regionPoints,
   };
 */
-const useRegion = ({ regionName }) => {
+const useRegion = ({ regionName }: { regionName: string }) => {
   const {
-    semscreen: {
-      points,
-      updatePoint,
-      // settings: { backgroundColor },
-    },
-  } = useContext(DataContext);
+    semscreen: { points, updatePoint },
+  } = useContext(DataContext)!;
   const {
     rim: {
-      state: {
-        regionActive,
-        isEditing,
-        //  cloud
-      },
+      state: { regionActive, isEditing },
       setIsEditing,
       toggleRegionState,
     },
-  } = useContext(UiContext);
+  } = useContext(UiContext)!;
 
   const regionPoints = points.filter(point => point.region === regionName);
 
-  function handleClick(e) {
+  function handleClick(e: React.MouseEvent<HTMLDivElement>) {
     e.preventDefault();
 
     if (isEditing) {
@@ -121,16 +112,16 @@ const useRegion = ({ regionName }) => {
     toggleRegionState(regionName);
   }
 
-  let longEvent;
+  let longEvent: number;
 
-  function handleDragEnter(e) {
+  function handleDragEnter(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     e.stopPropagation();
     if (regionName === 'Focus') {
       return;
     }
     if (regionActive !== regionName && regionActive !== 'none') {
-      toggleRegionState(regionActive);
+      toggleRegionState(regionActive!);
       window.clearTimeout(longEvent);
       longEvent = setTimeout(() => {
         toggleRegionState(regionName, true);
@@ -144,16 +135,16 @@ const useRegion = ({ regionName }) => {
     }
   }
 
-  function handleDragLeave(e) {
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     window.clearTimeout(longEvent);
   }
 
-  function handleDragOver(e) {
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
   }
 
-  function handleDrop(e) {
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     // updates the point category
     e.preventDefault();
     clearTimeout(longEvent);
@@ -163,7 +154,7 @@ const useRegion = ({ regionName }) => {
 
     // closes the region
     if (regionActive !== 'none') {
-      toggleRegionState(regionActive);
+      toggleRegionState(regionActive!);
     }
 
     const pointId = e.dataTransfer.getData('text');

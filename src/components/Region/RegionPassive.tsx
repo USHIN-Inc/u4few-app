@@ -1,4 +1,4 @@
-/* eslint-disable no-use-before-define */
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -22,15 +22,20 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 import DataContext from '../../context/DataContext';
-import Point from '../Point.tsx';
+import Point from '../Point';
 import UiContext from '../../context/UiContext';
-import RegionContentRuler from '../commons/RegionContentRuler.tsx';
+import RegionContentRuler from '../commons/RegionContentRuler';
 
-const RegionPassive = ({ points, region }) => {
+const RegionPassive = ({
+  points,
+  region,
+}: {
+  points: any[];
+  region: string;
+}) => {
   // const containerRef = useRef(null);
 
   const {
-    contentRef,
     regionActive,
     handlePortal,
     contentFits,
@@ -38,7 +43,7 @@ const RegionPassive = ({ points, region }) => {
   } = useRegionPassive({
     region,
     points,
-  });
+  })!;
 
   return (
     <RegionPassiveView ref={containerRef}>
@@ -48,7 +53,7 @@ const RegionPassive = ({ points, region }) => {
         regionActive={regionActive}
       />
       {contentFits === 'fits' && (
-        <ul ref={contentRef} style={{ width: '100%' }}>
+        <ul style={{ width: '100%' }}>
           {points.map(point => (
             <Point point={point} regionName={region} key={point.id} />
           ))}
@@ -82,17 +87,23 @@ export default RegionPassive;
 /* 
   ##### useRegionPassive ####
 */
-const useRegionPassive = ({ region, points }) => {
+const useRegionPassive = ({
+  region,
+  points,
+}: {
+  region: string;
+  points: any[];
+}) => {
   const {
     semscreen: { createPoint },
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
   const {
     rim: {
       state: { regionActive },
     },
-  } = useContext(UiContext);
+  } = useContext(UiContext)!;
 
-  const [preHeight, setPreHeight] = useState(null);
+  const [preHeight, setPreHeight] = useState<number | null>(null);
   const [contentFits, setContentFits] = useState('loading');
   const containerRef = useRef(null);
 
@@ -113,17 +124,18 @@ const useRegionPassive = ({ region, points }) => {
           region,
         });
         setTimeout(() => {
-          const el = document.getElementById(id);
-          console.log('newPoint', el.nextSibling);
-          el.nextSibling.focus();
+          const el = document.getElementById(id)
+            ?.nextSibling! as HTMLTextAreaElement;
+          el.focus();
         }, 100);
       }
     }
 
     const timerId = setTimeout(() => {
       if (preHeight) {
-        const containerHeigt = containerRef.current.clientHeight;
-        if (preHeight >= containerHeigt - 32) {
+        const el = containerRef.current! as HTMLDivElement;
+        const containerHeigt = el.clientHeight;
+        if (preHeight! >= containerHeigt - 32) {
           setContentFits('overflow');
         } else {
           setContentFits('fits');
@@ -138,7 +150,7 @@ const useRegionPassive = ({ region, points }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [regionActive, preHeight]);
 
-  function handlePortal(result) {
+  function handlePortal(result: { error?: string; value: number }) {
     if (result.error) {
       console.error(result.error);
       return;
