@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,9 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import {
   faHatCowboy,
@@ -30,24 +29,25 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import DeleteIcon from '../commons/DeleteIcon';
 import DataContext from '../../context/DataContext';
 import UiContext from '../../context/UiContext';
+import { HatI } from '../../hooks/useHats';
 
 const hatOptions = [faHatCowboy, faHatWizard, faGraduationCap];
 const colorOptions = ['black', 'red', 'blue', 'green'];
 
-const HatItem = ({ hat }) => {
+const HatItem = ({ hat }: { hat: HatI }) => {
   const {
     hats: { destroyHat, selectedHat, switchSelectedHat, changeHatIcon },
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
   const {
     rim: {
       setIsEditing,
       toggleRegionState,
       state: { regionActive },
     },
-  } = useContext(UiContext);
+  } = useContext(UiContext)!;
   const { hatIndex, hatColorIndex } = hat.settings;
 
-  function handleHatIconChange(e) {
+  function handleHatIconChange(e: React.MouseEvent<SVGSVGElement, MouseEvent>) {
     e.preventDefault();
     e.stopPropagation();
     let newHat;
@@ -66,20 +66,20 @@ const HatItem = ({ hat }) => {
     changeHatIcon(hat.id, newHat, newColor);
   }
 
-  function handleHatSelection(e) {
+  function handleHatSelection(e: React.MouseEvent<HTMLAnchorElement>) {
     e.preventDefault();
     e.stopPropagation();
     // NOTE: comment this condition to allow creating new instances without switching
     if (selectedHat.id === hat.id) return;
 
     if (regionActive !== 'none') {
-      toggleRegionState(regionActive);
+      toggleRegionState(regionActive!);
     }
     setIsEditing(false);
     switchSelectedHat(hat.id);
   }
 
-  function handleDragStart(e) {
+  function handleDragStart(e: React.DragEvent<HTMLAnchorElement>) {
     e.dataTransfer.setData('hat', hat.name);
     e.dataTransfer.dropEffect = 'copy';
   }
@@ -104,10 +104,6 @@ const HatItem = ({ hat }) => {
       <DeleteIcon handleClick={() => destroyHat(hat.id)} />
     </ListGroup.Item>
   );
-};
-
-HatItem.propTypes = {
-  hat: PropTypes.object.isRequired,
 };
 
 export default HatItem;

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,9 +17,8 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React, { useContext } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import UiContext from '../../context/UiContext';
 import Agenda from './Agenda';
@@ -26,11 +26,11 @@ import Hats from './Hats';
 import TrashZone from './TrashZone';
 
 const RightPanel = () => {
-  const { sidePanelState, toggleSidePanel } = useContext(UiContext);
+  const { sidePanelState, toggleSidePanel } = useContext(UiContext)!;
 
   const className = `panel__right--${sidePanelState}`;
 
-  function handleClick(e) {
+  function handleClick(e: React.MouseEvent<HTMLDivElement>) {
     e.preventDefault();
     e.stopPropagation();
     toggleSidePanel();
@@ -66,15 +66,6 @@ const PanelContainer = styled.div`
   &.panel__right--open-3 {
     width: 1024px;
   }
-
-  ${props =>
-    props.open
-      ? css`
-          width: calc(512px - 128px);
-        `
-      : css`
-          width: 0px;
-        `};
 `;
 
 export default RightPanel;

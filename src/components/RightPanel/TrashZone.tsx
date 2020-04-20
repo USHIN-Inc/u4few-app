@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,7 +17,6 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
@@ -24,29 +24,29 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import DataContext from '../../context/DataContext';
 
-const TrashZone = ({ sidePanelState }) => {
+const TrashZone = ({ sidePanelState }: { sidePanelState: string }) => {
   const {
     semscreen: { destroyPoint },
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
   const [active, setActive] = useState(false);
 
   const className = `btn__trash-zone--${sidePanelState}`;
 
-  function handleDragEnter(e) {
+  function handleDragEnter(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     setActive(true);
   }
 
-  function handleDragLeave(e) {
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     setActive(false);
   }
 
-  function handleDragOver(e) {
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
   }
 
-  function handleDrop(e) {
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const pointId = e.dataTransfer.getData('text');
     destroyPoint(pointId);

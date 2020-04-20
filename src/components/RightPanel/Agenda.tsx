@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,7 +17,6 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React, { useContext } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import DeleteIconButton from '../commons/DeleteIcon';
@@ -27,17 +27,17 @@ import SimpleForm from '../commons/SimpleForm';
 const Agenda = () => {
   const {
     agenda: { createAgendaItem, agendaItems, destroyAgendaItem },
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
 
   const title = `Agenda ${new Date().toDateString()}`;
 
-  function handleDelete(e, id) {
+  function handleDelete(e: React.MouseEvent<HTMLDivElement>, id: string) {
     e.preventDefault();
     e.stopPropagation();
     destroyAgendaItem(id);
   }
 
-  function handleClick(e) {
+  function handleClick(e: React.MouseEvent<HTMLAnchorElement>) {
     e.preventDefault();
     e.stopPropagation();
   }
@@ -54,7 +54,11 @@ const Agenda = () => {
               onClick={handleClick}
             >
               {item.text}
-              <DeleteIconButton handleClick={e => handleDelete(e, item.id)} />
+              <DeleteIconButton
+                handleClick={(e: React.MouseEvent<HTMLDivElement>) =>
+                  handleDelete(e, item.id)
+                }
+              />
             </ListGroup.Item>
           ))}
         </ListGroup>

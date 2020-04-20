@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,7 +17,6 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React, { useContext, useState } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 
@@ -29,22 +29,22 @@ import HatItem from './HatItem';
 const Hats = () => {
   const {
     hats: { hats, createHat },
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
 
   const [search, setSearch] = useState('');
 
-  function handleCreateHat(value) {
+  function handleCreateHat(value: string) {
     createHat(value);
     setSearch('');
   }
 
-  function byQuery(query) {
-    return function(item) {
+  function byQuery(query: string) {
+    return function(item: any) {
       return !query || item.name.toLowerCase().includes(query.toLowerCase());
     };
   }
 
-  function handleChange(value) {
+  function handleChange(value: string) {
     setSearch(value);
   }
 
