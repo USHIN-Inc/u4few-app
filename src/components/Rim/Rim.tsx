@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,8 +17,6 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
-/* eslint-disable global-require */
 import React, { useContext } from 'react';
 import Region from '../Region/Region';
 import DataContext from '../../context/DataContext';
@@ -28,19 +27,18 @@ import UiContext from '../../context/UiContext';
 const Rim = () => {
   const {
     semscreen: {
-      settings: { textColor, backgroundColor },
+      settings: { textColor },
     },
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
   const {
     rim: {
       state: { className },
     },
-  } = useContext(UiContext);
+  } = useContext(UiContext)!;
 
   return (
     <RimView
       id="rim"
-      backgroundColor={backgroundColor}
       color={textColor}
       className={className}
     >
