@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -31,7 +31,7 @@ const Banner = () => {
     semscreen: {
       settings: { textColor },
     },
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
   const [editing, setEditing] = useState(false);
 
   function handleClose() {
