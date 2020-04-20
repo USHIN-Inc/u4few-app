@@ -18,7 +18,11 @@
 */
 import styled from 'styled-components';
 
-const RimView = styled.div`
+interface Props {
+  color?: string;
+}
+
+const RimView = styled.div<Props>`
   --active-size: 5fr;
   height: 100%;
   width: 100%;
