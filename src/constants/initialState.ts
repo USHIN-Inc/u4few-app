@@ -20,7 +20,32 @@ const meuid = '736f3b18';
 const paulaid = 'b3efdd3';
 const ws1 = 'dss7dsha2';
 
-const initialAppStateV2 = {
+interface AppSchema {
+  me: {
+    username: string;
+    uid: string;
+  };
+  hats: {
+    name: string;
+    id: string;
+    settings: {
+      textColor: string;
+      backgroundColor: string;
+      hatIndex: number;
+      hatColorIndex: number;
+    };
+    versions: Date[];
+    history: {
+      id: string;
+      content: string;
+      region: string;
+      uid: string;
+      username?: string;
+    }[][];
+  }[];
+}
+
+const initialAppStateV2: AppSchema = {
   me: {
     username: 'anonymous',
     uid: meuid,
