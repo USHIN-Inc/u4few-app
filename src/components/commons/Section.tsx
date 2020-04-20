@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,17 +17,20 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import UiContext from '../../context/UiContext';
 
-const Section = ({ title, children }) => {
-  const { sidePanelState } = useContext(UiContext);
+interface Props {
+  title: string;
+  children: React.ReactNode;
+}
+
+const Section = ({ title, children }: Props) => {
+  const { sidePanelState } = useContext(UiContext)!;
 
   const [open, setOpen] = useState(true);
-  function handleOpen(e) {
+  function handleOpen(e: React.MouseEvent<HTMLHeadingElement>) {
     e.preventDefault();
     e.stopPropagation();
     setOpen(!open);
@@ -46,11 +50,6 @@ const Section = ({ title, children }) => {
       {open && children}
     </SectionContainer>
   );
-};
-
-Section.propTypes = {
-  title: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
 };
 
 const SectionHeader = styled.div`

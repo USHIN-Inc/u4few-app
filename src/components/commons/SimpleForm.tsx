@@ -16,34 +16,42 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 
-const SimpleForm = ({ placeholder, onSubmit, onChange }) => {
+interface Props {
+  placeholder?: string;
+  onSubmit: (value: string) => void;
+  onChange?: (value: string) => void;
+}
+
+const SimpleForm = ({ placeholder, onSubmit, onChange }: Props) => {
   const [value, setValue] = useState('');
 
-  function handleCreateItem(e) {
+  function handleCreateItem(
+    e: React.KeyboardEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>
+  ) {
     e.preventDefault();
     e.stopPropagation();
     if (value !== '') onSubmit(value);
     setValue('');
   }
 
-  function handleChange(e) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     setValue(e.target.value);
-    onChange(e.target.value);
+    if (onChange !== undefined) {
+      onChange(e.target.value);
+    }
   }
 
-  function handleEnter(e) {
+  function handleEnter(e: React.KeyboardEvent<HTMLDivElement>) {
     e.preventDefault();
     if (e.keyCode === 0) {
       handleCreateItem(e);
     }
   }
 
-  function handleInputClick(e) {
+  function handleInputClick(e: React.MouseEvent<HTMLInputElement>) {
     e.preventDefault();
     e.stopPropagation();
   }
@@ -74,12 +82,6 @@ const SimpleForm = ({ placeholder, onSubmit, onChange }) => {
 SimpleForm.defaultProps = {
   placeholder: '',
   onChange: () => {},
-};
-
-SimpleForm.propTypes = {
-  placeholder: PropTypes.string,
-  onChange: PropTypes.func,
-  onSubmit: PropTypes.func.isRequired,
 };
 
 export default SimpleForm;

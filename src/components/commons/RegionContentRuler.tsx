@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -22,50 +23,48 @@ import styled from 'styled-components';
 import ReactDOM from 'react-dom';
 
 interface PortalProps {
-  callback: ({
-    error,
-    value,
-  }: {
-    error: null | string;
-    value?: number;
-  }) => void;
+  callback: ({error, value}: {error: null | string, value?: number }) => void;
   regionActive: string;
-  points: { id: string; content: string }[];
+  points: { id: string, content: string }[];
 }
 
-export default function RegionContentRuler({
-  callback,
-  regionActive,
-  points,
-}: PortalProps) {
+export default function RegionContentRuler({ callback, regionActive, points }: PortalProps) {
   const portalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useEffect(()=> {
     if (portalRef.current) {
       const contentHeight = portalRef.current.clientHeight;
       callback({ error: null, value: contentHeight });
     }
-  }, [callback, regionActive]);
+  }, [regionActive])
 
   const rootEl = document.getElementById('app');
 
-  if (!rootEl) {
+  if(!rootEl) {
     return callback({ error: 'root element not found' });
   }
 
   return ReactDOM.createPortal(
     <PortalView ref={portalRef} id="portal">
-      <ul style={{ width: '30vw' }}>
-        {points.map(point => (
-          <div key={point.id} style={{ height: '3.2rem' }}>
-            {point.content}
-          </div>
-        ))}
-      </ul>
+        <List>
+          {points.map(point => (
+            <div key={point.id}>
+              {point.content}
+            </div>
+          ))}
+        </List>
     </PortalView>,
     rootEl
   );
 }
+
+const List = styled.ul`
+  width: '30vw';
+  color: white;
+  >div {
+    height: 3.2rem;
+  }
+`;
 
 const PortalView = styled.div`
   z-index: 1;

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,14 +17,15 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-const DeleteIconButton = ({ handleClick }) => (
+type Props = {
+  handleClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+};
+const DeleteIconButton: React.FC<Props> = ({ handleClick }) => (
   <Container role="button" onClick={handleClick}>
     <Icon icon={faTimes} />
   </Container>
@@ -33,9 +35,9 @@ DeleteIconButton.defaultProps = {
   handleClick: () => {},
 };
 
-DeleteIconButton.propTypes = {
-  handleClick: PropTypes.func,
-};
+// DeleteIconButton.propTypes = {
+//   handleClick: PropTypes.func,
+// };
 
 const Container = styled.div`
   display: inline;
