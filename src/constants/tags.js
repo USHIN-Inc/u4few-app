@@ -62,7 +62,7 @@ export const Needs = {
     'Passion',
   ],
 
-  integrity: [
+  Integrity: [
     'Self–Worth',
     'Authenticity',
     'Confidence',
