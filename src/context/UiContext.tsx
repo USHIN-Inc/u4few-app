@@ -39,28 +39,10 @@ const UiContextProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   function toggleSidePanel() {
-    switch (sidePanelState) {
-      case 'closed':
-        setSidePanelState('open-1');
-        break;
-      case 'open-1':
-        setSidePanelState('open-2');
-        break;
-      case 'open-2':
-        setSidePanelState('open-3');
-        break;
-      case 'open-3':
-        setSidePanelState('closed');
-        break;
-      case 'open':
-        setSidePanelState('open-2');
-        break;
-      default:
-        console.log('error');
-        break;
-    }
-    if (sidePanelState === 'closed') {
-      setSidePanelState('open');
+    if (sidePanelState === 'open') {
+      setSidePanelState('closed');
+    } else if (sidePanelState === 'closed') {
+      setSidePanelState('open')
     }
   }
 

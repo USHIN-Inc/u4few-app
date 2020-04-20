@@ -50,21 +50,11 @@ const PanelContainer = styled.div`
   background: white;
   transition: width 1s;
   overflow-y: auto;
-
   &.panel__right--closed {
     width: 0px;
   }
-
   &.panel__right--open {
     width: calc(512px - 128px);
-  }
-
-  &.panel__right--open-2 {
-    width: calc(512px + 128px);
-  }
-
-  &.panel__right--open-3 {
-    width: 1024px;
   }
 `;
 
