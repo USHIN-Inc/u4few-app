@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -17,19 +17,18 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React, { useContext } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import UiContext from '../../context/UiContext';
 import HistorySlider from './HistorySlider';
 
 const TopPanel = () => {
-  const { topPanelOpen, setTopPanelOpen } = useContext(UiContext);
+  const { topPanelOpen, setTopPanelOpen } = useContext(UiContext)!;
   return (
     <PanelContainer
       id="topPanel"
-      open={topPanelOpen}
+      className={topPanelOpen ? 'open' : 'close'}
       onClick={() => setTopPanelOpen(false)}
     >
       {topPanelOpen && <HistorySlider />}
@@ -44,14 +43,12 @@ const PanelContainer = styled.div`
   padding-left: 32px;
   background: white;
   transition: height 1s;
-  ${props =>
-    props.open
-      ? css`
-          height: calc(128px + 32px);
-        `
-      : css`
-          height: 0px;
-        `}
+  &.open {
+    height: calc(128px + 32px);
+  }
+  &.close {
+    height: 0px;
+  }
 `;
 
 export default TopPanel;

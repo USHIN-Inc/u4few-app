@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,7 +17,6 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import Slider from 'rc-slider';
@@ -32,7 +32,7 @@ const HistorySlider = () => {
     semscreen: {
       timeTravel: { versions, currentPoints, historyLength, switchHistory },
     },
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
 
   return (
     <HistorySliderContainer>
@@ -41,9 +41,9 @@ const HistorySlider = () => {
           min={0}
           max={historyLength - 1}
           defaultValue={currentPoints}
-          onAfterChange={e => switchHistory(e)}
+          onAfterChange={(e: number) => switchHistory(e)}
           dots
-          tipFormatter={value => {
+          tipFormatter={(value: number) => {
             console.log(versions[value]);
             const date = new Date(versions[value]).toDateString();
             return date;
