@@ -1,32 +1,57 @@
-/*
-  Copyright (C) 2019 by USHIN, Inc.
-
-  This file is part of U4U.
-
-  U4U is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-
-  U4U is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with U4U.  If not, see <https://www.gnu.org/licenses/>.
-*/
+/* eslint-disable */
 import uuidv4 from 'uuid/v4';
 import useLocalStorage from './useLocalStorage';
 import { initialAppStateV2 } from '../constants/initialState';
 
-const useHat = () => {
+interface HatI {
+  name: string;
+  id: string;
+  settings: {
+    textColor: string;
+    backgroundColor: string;
+    hatIndex: number;
+    hatColorIndex: number;
+  };
+  versions: string[];
+  history: {
+    id: string;
+    content: string;
+    region: string;
+    uid: string;
+  }[][];
+}
+
+type ChangeHatIconI = (
+  id: string,
+  hatIndex: number,
+  hatColorIndex: number
+) => void;
+
+type SwitchSelectedHatI = (id: string) => void;
+
+type CreateHatI = (name: string) => void;
+
+type DestroyHatI = (id: string) => void;
+
+interface UseHatsI {
+  hats: HatI[];
+  createHat: CreateHatI;
+  destroyHat: DestroyHatI;
+  selectedHat: HatI;
+  setSelectedHat: (hat: HatI) => void;
+  switchSelectedHat: SwitchSelectedHatI;
+  changeHatIcon: ChangeHatIconI;
+}
+
+// NOTE: the selected hat is not on the schema
+
+export default function useHats(): UseHatsI {
   const [hats, setHats] = useLocalStorage('hats', [...initialAppStateV2.hats]);
   const [selectedHat, setSelectedHat] = useLocalStorage('selectedHat', hats[0]);
 
-  function changeHatIcon(id, hatIndex, hatColorIndex) {
+  const changeHatIcon: ChangeHatIconI = (id, hatIndex, hatColorIndex) => {
     setHats(
-      hats.map(h => {
+      hats.map((h: HatI) => {
         if (h.id === id) {
           return {
             ...h,
@@ -40,15 +65,15 @@ const useHat = () => {
         return h;
       })
     );
-  }
+  };
 
-  function switchSelectedHat(id) {
-    const newHat = hats.find(h => h.id === id);
+  const switchSelectedHat: SwitchSelectedHatI = id => {
+    const newHat = hats.find((h: HatI) => h.id === id);
     if (!newHat) {
       alert('something went wrong while switching hats');
       return;
     }
-    // if ctrl and at least one point on screen
+    // if at least one point on screen
     if (newHat.history[newHat.history.length - 1].length > 0) {
       //  Add new empty points array to history
       newHat.history.push([]);
@@ -57,7 +82,7 @@ const useHat = () => {
     }
     // save current selected hat state to hats state
     setHats(
-      hats.map(h => {
+      hats.map((h: HatI) => {
         if (h.id === selectedHat.id) {
           return selectedHat;
         }
@@ -66,11 +91,11 @@ const useHat = () => {
     );
     // setSlected hat to new selected hat
     setSelectedHat(newHat);
-  }
+  };
 
-  function createHat(name) {
+  const createHat: CreateHatI = name => {
     // filter to check name is not in use
-    const inUse = hats.find(h => h.name === name);
+    const inUse = hats.find((h: HatI) => h.name === name);
     if (inUse) {
       alert('that hat name is already in use');
       return;
@@ -89,12 +114,11 @@ const useHat = () => {
       history: [[]],
     };
     setHats([...hats, newHat]);
-  }
+  };
 
-  function destroyHat(id) {
-    // filter the array exclude id
-    setHats(hats.filter(h => h.id !== id)); // go and try do this on java ha!
-  }
+  const destroyHat: DestroyHatI = id => {
+    setHats(hats.filter((h: HatI) => h.id !== id));
+  };
 
   return {
     hats,
@@ -105,6 +129,6 @@ const useHat = () => {
     switchSelectedHat,
     changeHatIcon,
   };
-};
+}
 
-export default useHat;
+export { UseHatsI, HatI };

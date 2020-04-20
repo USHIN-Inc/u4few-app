@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -16,38 +17,61 @@
   You should have received a copy of the GNU General Public License
   along with U4U.  If not, see <https://www.gnu.org/licenses/>.
 */
-
-/*
-    hat schema
-    {
-        name: string,
-        id: string,
-        settings: {
-            textColor: hexadecimal color,
-            backgroundColor: hexadecimal color,
-            hatIndex: number,
-            hatColorIndex: number,
-        },
-        history: [
-          ...
-          [
-            ...
-            {
-                id: string,
-                uid: string,
-                username: string,
-                content: string,
-                region: string,
-                category: string optional,
-                subCategory: string optional,
-            }
-          ]
-        ]
-    }
-*/
 import { useState, useEffect, useRef } from 'react';
 
-export default function useSemscreen(selectedHat, setSelectedHat, me) {
+interface Point {
+  id: string;
+  content: string;
+  region: string;
+  category?: string;
+  subCategory?: string;
+  uid?: string;
+  username?: string;
+  hat?: string;
+}
+
+type PutHatOnI = (pointId: string, hat: string) => void;
+
+type DestroyPointI = (pointId: string) => void;
+
+type UpdatePointI = (pointId: string, data: any) => void;
+
+type CreatePointI = (newPoint: Point) => void;
+
+interface SettingsI {
+  textColor?: string;
+  backgroundColor?: string;
+  hatIndex?: number;
+  hatColorIndex?: number;
+}
+
+type UpdateSettingsI = (newSettings: SettingsI) => void;
+
+type SwitchHistoryI = (index: number) => void;
+
+interface UseSemscreenI {
+  name: string;
+  id: string;
+  points: Point[];
+  putHatOn: PutHatOnI;
+  destroyPoint: DestroyPointI;
+  updatePoint: UpdatePointI;
+  createPoint: CreatePointI;
+  settings: SettingsI;
+  updateSettings: UpdateSettingsI;
+  timeTravel: {
+    versions: string[];
+    currentPoints: number; // TODO: rename this to something better
+    switchHistory: SwitchHistoryI;
+    historyLength: number;
+  };
+}
+
+export default function useSemscreen(
+  selectedHat: any,
+  setSelectedHat: any,
+  me: any
+): UseSemscreenI {
   const { settings, name } = selectedHat;
   const [currentPoints, setCurrentPoints] = useState(
     selectedHat.history.length - 1
@@ -66,8 +90,8 @@ export default function useSemscreen(selectedHat, setSelectedHat, me) {
     }
   }, [selectedHat.history, currentPoints, selectedHat.id]);
 
-  function _updatePointsArray(newPointsArray) {
-    const newHistory = selectedHat.history.map((h, i) => {
+  function _updatePointsArray(newPointsArray: Point[]) {
+    const newHistory = selectedHat.history.map((h: Point[], i: number) => {
       if (i === currentPoints) {
         return newPointsArray;
       }
@@ -79,57 +103,60 @@ export default function useSemscreen(selectedHat, setSelectedHat, me) {
     });
   }
 
-  function switchHistory(index) {
-    if (typeof index !== 'number' || index >= selectedHat.history.length) {
+  const switchHistory: SwitchHistoryI = (index: number) => {
+    if (index >= selectedHat.history.length) {
       alert('error');
       return;
     }
     setCurrentPoints(index);
-  }
+  };
 
-  function putHatOn(pointId, hat) {
+  const putHatOn: PutHatOnI = (pointId, hat) => {
     // search for the point
-    const point = points.find(p => p.id === pointId);
+    const point = points.find((p: Point) => p.id === pointId);
     // put hat on
     point.hat = hat;
     // save new changes
-    _updatePointsArray([...points.filter(p => p.id !== pointId), point]);
-  }
+    _updatePointsArray([
+      ...points.filter((p: Point) => p.id !== pointId),
+      point,
+    ]);
+  };
 
-  function createPoint(newPoint) {
+  const createPoint: CreatePointI = newPoint => {
     const newArray = [
       ...points,
       { ...newPoint, uid: me.uid, username: me.username },
     ];
     _updatePointsArray(newArray);
-  }
+  };
 
-  function updatePoint(pointId, data) {
+  const updatePoint: UpdatePointI = (pointId, data) => {
     // search point
-    const point = points.find(p => p.id === pointId);
+    const point = points.find((p: Point) => p.id === pointId);
     // spread data into point to update
     const newPoint = {
       ...point,
       ...data,
     };
     // save new point
-    const newPointsArray = points.map(p => {
+    const newPointsArray = points.map((p: Point) => {
       if (p.id === pointId) {
         return newPoint;
       }
       return p;
     });
     _updatePointsArray(newPointsArray);
-  }
+  };
 
-  function destroyPoint(pointId) {
+  const destroyPoint: DestroyPointI = pointId => {
     // filter the points array
-    const newPointsArray = points.filter(p => p.id !== pointId);
+    const newPointsArray = points.filter((p: Point) => p.id !== pointId);
     // save the new array
     _updatePointsArray(newPointsArray);
-  }
+  };
 
-  function updateSettings(newSettings) {
+  const updateSettings: UpdateSettingsI = newSettings => {
     setSelectedHat({
       ...selectedHat,
       settings: {
@@ -137,7 +164,7 @@ export default function useSemscreen(selectedHat, setSelectedHat, me) {
         ...newSettings,
       },
     });
-  }
+  };
 
   return {
     name,
@@ -157,3 +184,5 @@ export default function useSemscreen(selectedHat, setSelectedHat, me) {
     },
   };
 }
+
+export { UseSemscreenI };

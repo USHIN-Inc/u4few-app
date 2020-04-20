@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -18,14 +19,29 @@
 */
 import { useReducer } from 'react';
 
-const initialRimState = {
+const initialRimState: RimState = {
   className: 'passive',
   regionActive: 'none',
   cloud: false,
   isEditing: false,
 };
 
-function reducer(state, action) {
+interface RimState {
+  className?: string;
+  regionActive?: string;
+  cloud?: boolean;
+  isEditing?: boolean;
+}
+
+interface Actions {
+  type: string;
+  regionActive?: string;
+  className?: string;
+  cloud?: boolean;
+  isEditing?: boolean;
+}
+
+function reducer(state: RimState, action: Actions) {
   switch (action.type) {
     case 'activate':
       return {
@@ -39,7 +55,7 @@ function reducer(state, action) {
         ...state,
         regionActive: action.regionActive,
         className: action.className,
-        cloud: action.cloud,
+        cloud: false,
       };
     case 'set_editing':
       return {
@@ -51,16 +67,25 @@ function reducer(state, action) {
   }
 }
 
-function useRim() {
+type SetIsEditingI = (value: boolean) => void;
+
+type ToggleRegionState = (region: string, cloud?: boolean) => void;
+
+type UseRimI = {
+  state: RimState;
+  setIsEditing: SetIsEditingI;
+  toggleRegionState: ToggleRegionState;
+};
+
+export default function useRim(): UseRimI {
   const [state, dispatch] = useReducer(reducer, initialRimState);
 
-  const toggleRegionState = (region, cloud) => {
+  const toggleRegionState: ToggleRegionState = (region, cloud) => {
     if (state.regionActive === region) {
       dispatch({
         type: 'deactivate',
         regionActive: 'none',
         className: 'passive',
-        cloud: false,
       });
     } else {
       dispatch({
@@ -72,7 +97,7 @@ function useRim() {
     }
   };
 
-  const setIsEditing = value => {
+  const setIsEditing: SetIsEditingI = value => {
     dispatch({
       type: 'set_editing',
       isEditing: value,
@@ -86,4 +111,4 @@ function useRim() {
   };
 }
 
-export default useRim;
+export { UseRimI };

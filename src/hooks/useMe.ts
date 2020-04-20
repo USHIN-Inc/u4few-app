@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -18,17 +19,20 @@
 */
 import useLocalStorage from './useLocalStorage';
 import { initialAppStateV2 } from '../constants/initialState';
-/*  me schema
-    me: {
-        username: string,
-        setUsername: function,
-        uid: string,
-    }
-*/
-const useMe = () => {
+
+interface MeI {
+  username: string;
+  uid: string;
+}
+
+interface UseMeI extends MeI {
+  setUsername: (newUsername: string) => void;
+}
+
+export default function useMe(): UseMeI {
   const [me, setMe] = useLocalStorage('me', initialAppStateV2.me);
-  function setUsername(newUsername) {
-    // here goes any kind of validation for the username
+  function setUsername(newUsername: string): void {
+    //   here goes any kind of validation for the username
     if (me.username === newUsername) {
       alert('That username is already in use');
       return;
@@ -37,6 +41,6 @@ const useMe = () => {
   }
 
   return { username: me.username, setUsername, uid: me.uid };
-};
+}
 
-export default useMe;
+export { MeI, UseMeI };
