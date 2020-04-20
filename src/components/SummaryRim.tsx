@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -21,7 +22,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import SummaryRegion from './SummaryRegion';
 
-const SummaryRim = ({ children }) => (
+const SummaryRim: React.FC = ({ children }) => (
   <Summary id="rim">
     <SummaryRegion type="Facts" />
     <SummaryRegion type="Merits" />

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -20,8 +21,8 @@ import React from 'react';
 import styled from 'styled-components';
 import Rim from './Rim/Rim';
 import SummaryRim from './SummaryRim';
-import RightPanel from './RightPanel';
-import TopPanel from './TopPanel';
+import RightPanel from './RightPanel/index';
+import TopPanel from './TopPanel/index';
 
 const SemanticScreen = () => (
   <Container id="semanticScreen">

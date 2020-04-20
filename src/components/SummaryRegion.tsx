@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -22,10 +22,10 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import UiContext from '../context/UiContext';
 
-const SummaryRegion = ({ type }) => {
+const SummaryRegion = ({ type }: { type: string }) => {
   const { toggleSidePanel, topPanelOpen, setTopPanelOpen } = useContext(
     UiContext
-  );
+  )!;
 
   function handleOnclick() {
     if (type === 'Actions') {

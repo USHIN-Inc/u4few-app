@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -45,13 +45,13 @@ const Point: React.FC<PointProps> = ({
   const {
     me,
     semscreen: { updatePoint, createPoint, destroyPoint },
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
   const {
     rim: {
       state: { isEditing, regionActive },
       toggleRegionState,
     },
-  } = useContext(UiContext);
+  } = useContext(UiContext)!;
 
   // ** local state **
 
@@ -65,11 +65,11 @@ const Point: React.FC<PointProps> = ({
   const pointRef = useRef<HTMLLIElement>(null);
 
   //  ** computed values **
-  const tag = subCategory || category || null;
+  const tag = subCategory ? subCategory : category ? category : null;
   let contentExcerpt =
     content.length > 70
-      ? `${content.substring(0, 50).trim()}... ${tag ? `- ${tag}` : ''}`
-      : `${content} ${tag ? `- ${tag}` : ''}`;
+      ? `${content.substring(0, 50).trim()}... ${tag ? '- ' + tag : ''}`
+      : `${content} ${tag ? '- ' + tag : ''}`;
   if (focused && contentExcerpt !== content) contentExcerpt = content;
   const isDraggable = uid === me.uid && !isEditing;
   const own = me.uid === uid;
@@ -91,7 +91,7 @@ const Point: React.FC<PointProps> = ({
     e.dataTransfer.setData('text', el.id);
     // sets the drag image to the partent element so we have a full
     // view of the point text
-    e.dataTransfer.setDragImage(el.parentElement, 0, 0);
+    e.dataTransfer.setDragImage(el.parentElement!, 0, 0);
     e.dataTransfer.dropEffect = 'move';
   }
 
@@ -133,8 +133,7 @@ const Point: React.FC<PointProps> = ({
       });
 
       setTimeout(() => {
-        const nextPoint =
-          pointRef.current?.nextSibling?.firstChild?.nextSibling;
+        const nextPoint = pointRef.current?.nextSibling?.firstChild?.nextSibling! as HTMLTextAreaElement;
         nextPoint.focus();
       }, 100);
     }
@@ -147,10 +146,14 @@ const Point: React.FC<PointProps> = ({
   }
 
   return (
-    <ListElement ref={pointRef} onClick={handleOnclick} onDrop={handleDrop}>
-      <BulletPoint
+    <ListElement
+      ref={pointRef}
+      onClick={handleOnclick}
+      onDrop={handleDrop}
+    >
+      <BulletPoint 
         id={id}
-        draggable={isDraggable}
+        draggable={isDraggable} 
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       />

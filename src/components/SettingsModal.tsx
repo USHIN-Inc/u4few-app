@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable */
 /*
   Copyright (C) 2019 by USHIN, Inc.
 
@@ -53,11 +53,16 @@ const backgroundColors = [
 
 // TODO: add option to change hat name
 
-const SettingsModal = ({ show, handleClose }) => {
+interface Props {
+  show: boolean;
+  handleClose: () => void;
+}
+
+const SettingsModal = ({ show, handleClose }: Props) => {
   const {
     semscreen: { settings, updateSettings },
     me,
-  } = useContext(DataContext);
+  } = useContext(DataContext)!;
 
   const [values, setValues] = useState({
     username: me.username,
@@ -85,7 +90,9 @@ const SettingsModal = ({ show, handleClose }) => {
             <Form.Control
               name="username"
               value={values.username}
-              onChange={e => setValues({ ...values, username: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValues({ ...values, username: e.target.value })
+              }
             />
           </Form.Group>
 
