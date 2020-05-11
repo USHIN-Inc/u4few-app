@@ -27,6 +27,11 @@ type ChangeHatIconI = (
   hatColorIndex: number
 ) => void;
 
+type SetHatNameI = (
+  id: string,
+  name: string,
+) => void;
+
 type SwitchSelectedHatI = (id: string) => void;
 
 type CreateHatI = (name: string) => void;
@@ -39,6 +44,7 @@ interface UseHatsI {
   destroyHat: DestroyHatI;
   selectedHat: HatI;
   setSelectedHat: (hat: HatI) => void;
+  setHatName: SetHatNameI;
   switchSelectedHat: SwitchSelectedHatI;
   changeHatIcon: ChangeHatIconI;
 }
@@ -48,6 +54,20 @@ interface UseHatsI {
 export default function useHats(): UseHatsI {
   const [hats, setHats] = useLocalStorage('hats', [...initialAppStateV2.hats]);
   const [selectedHat, setSelectedHat] = useLocalStorage('selectedHat', hats[0]);
+
+  const setHatName: SetHatNameI = (id, name) => {
+    setHats(
+      hats.map((h: HatI) => {
+        if (h.id === id) {
+          return {
+            ...h,
+            name,
+          };
+        }
+        return h;
+      })
+    );
+  };
 
   const changeHatIcon: ChangeHatIconI = (id, hatIndex, hatColorIndex) => {
     setHats(
@@ -127,6 +147,7 @@ export default function useHats(): UseHatsI {
     selectedHat,
     setSelectedHat,
     switchSelectedHat,
+    setHatName,
     changeHatIcon,
   };
 }

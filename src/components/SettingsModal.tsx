@@ -51,8 +51,6 @@ const backgroundColors = [
   '#CA6EFE',
 ];
 
-// TODO: add option to change hat name
-
 interface Props {
   show: boolean;
   handleClose: () => void;
@@ -62,19 +60,22 @@ const SettingsModal = ({ show, handleClose }: Props) => {
   const {
     semscreen: { settings, updateSettings },
     me,
+    hats: { selectedHat, setHatName },
   } = useContext(DataContext)!;
 
   const [values, setValues] = useState({
     username: me.username,
+    hatName: selectedHat.name,
     textColor: settings.textColor,
     backgroundColor: settings.backgroundColor,
   });
 
   function updateSession() {
-    const { textColor, backgroundColor, username } = values;
+    const { textColor, backgroundColor, username, hatName } = values;
     console.log(values);
     updateSettings({ textColor, backgroundColor });
     if (username !== me.username) me.setUsername(username);
+    if (hatName !== selectedHat.name) setHatName(selectedHat.id, hatName);
     handleClose();
   }
 
@@ -86,12 +87,23 @@ const SettingsModal = ({ show, handleClose }: Props) => {
         </Modal.Header>
         <Modal.Body>
           <Form.Group>
-            <Form.Label>Username</Form.Label>
+            <Form.Label>Notetaker</Form.Label>
             <Form.Control
               name="username"
               value={values.username}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setValues({ ...values, username: e.target.value })
+              }
+            />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Hat</Form.Label>
+            <Form.Control
+              name="hatName"
+              value={values.hatName}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValues({ ...values, hatName: e.target.value })
               }
             />
           </Form.Group>
